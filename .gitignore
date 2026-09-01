@@ -1,0 +1,9 @@
+node_modules/
+test-results/
+test-report/
+.env
+.env.local
+auth.json
+*.log
+.DS_Store
+.vscode/
