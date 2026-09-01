@@ -5,7 +5,7 @@ export async function assertProductListPage(page: Page, totalCount: number) {
   // header
   await expect.soft(page.getByTestId('catalog-heading')).toHaveText('Product Catalog');
   // sub-header
-  await expect.soft(page.getByTestId('catalog-product-count')).toHaveText(`Browse our complete selection of ${totalCount} products`,);
+  await expect.soft(page.getByTestId('catalog-product-count')).toHaveText(`Browse our complete selection of ${totalCount} products`);
 }
 
 export async function assertProductInList(page: Page, product: ProductData) {
