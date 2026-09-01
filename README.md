@@ -130,9 +130,9 @@ Besides the tests themselves, this repo automates the process around them.
 
 ### PR review against conventions
 
-`.github/workflows/pr-test-review.yml` — on every PR that touches `tests/**` or
+`.github/workflows/qa-pr-review.yml` — on every PR that touches `tests/**` or
 `playwright.config.ts`, Claude reviews the diff against the conventions above (prompt:
-[`pr-test-review.md`](.github/prompts/pr-test-review.md)) and posts inline PR comments citing the
+[`qa-pr-review.md`](.github/prompts/qa-pr-review.md)) and posts inline PR comments citing the
 specific convention violated, with a fix in the repo's existing style. If nothing violates a
 convention, it says so instead of manufacturing nitpicks. PRs opened by bots (the marker PRs
 below) are skipped.
@@ -155,9 +155,9 @@ separate API billing).
 
 ### Automated failure analysis
 
-`.github/workflows/test-failure-analysis.yml` — triggered by `workflow_run` when the run above
+`.github/workflows/qa-results-analysis.yml` — triggered by `workflow_run` when the run above
 fails (a separate workflow because Claude Code Action can't be triggered by `push` directly).
-Claude (prompt: [`test-failure-analysis.md`](.github/prompts/test-failure-analysis.md)) inspects
+Claude (prompt: [`qa-results-analysis.md`](.github/prompts/qa-results-analysis.md)) inspects
 the JSON report, failure screenshots, and 2fps video frames for each failing/flaky test, and for
 each one:
 

@@ -1,4 +1,4 @@
-name: Test Failure Analysis
+name: QA Results Analysis
 
 # Runs after "Playwright Tests" finishes. Split into its own workflow (rather
 # than a step in playwright.yml) because Claude Code Action only supports
@@ -59,7 +59,7 @@ jobs:
         run: |
           {
             echo 'FAILURE_ANALYSIS_PROMPT<<PROMPT_EOF'
-            cat .github/prompts/test-failure-analysis.md
+            cat .github/prompts/qa-results-analysis.md
             echo PROMPT_EOF
           } >> "$GITHUB_ENV"
 

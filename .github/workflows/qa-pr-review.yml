@@ -1,4 +1,4 @@
-name: PR Test Framework Review
+name: QA PR Review
 
 on:
   pull_request:
@@ -15,7 +15,7 @@ permissions:
 jobs:
   review:
     # Skip PRs opened by bots (e.g. the known-failure marker PRs from
-    # test-failure-analysis.yml) — this review is for human-authored test
+    # qa-results-analysis.yml) — this review is for human-authored test
     # changes, and claude-code-action refuses to run for a bot actor anyway.
     if: github.event.pull_request.user.type != 'Bot'
     runs-on: ubuntu-latest
@@ -29,7 +29,7 @@ jobs:
         run: |
           {
             echo 'PR_REVIEW_PROMPT<<PROMPT_EOF'
-            cat .github/prompts/pr-test-review.md
+            cat .github/prompts/qa-pr-review.md
             echo PROMPT_EOF
           } >> "$GITHUB_ENV"
 
