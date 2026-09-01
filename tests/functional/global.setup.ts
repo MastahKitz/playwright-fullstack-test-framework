@@ -1,7 +1,7 @@
 import { chromium, devices } from '@playwright/test';
 import { environment } from './config/environments';
 import { login } from './auth/auth.flow';
-import { waitForAuthentication } from './auth/auth.actions';
+import { saveSignedInState, waitForAuthentication } from './auth/auth.actions';
 
 export default async function globalSetup() {
   const browser = await chromium.launch();
@@ -15,7 +15,7 @@ export default async function globalSetup() {
     const authenticated = waitForAuthentication(page);
     await login(page);
     await authenticated;
-    await context.storageState({ path: 'auth.json' });
+    await saveSignedInState(context, 'auth.json');
   } finally {
     await context.close();
     await browser.close();

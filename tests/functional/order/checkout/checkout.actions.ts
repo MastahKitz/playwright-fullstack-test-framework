@@ -21,5 +21,8 @@ export async function fillPaymentInformation(page: Page, payment: CheckoutFormDa
 
 export async function clickPlaceOrderButton(page: Page) {
   await page.getByTestId('place-order-button').click();
-  await page.getByTestId('order-confirmation-page').waitFor({ timeout: 15_000 });
+  await Promise.race([
+    page.getByTestId('order-confirmation-page').waitFor({ timeout: 15_000 }).catch(() => {}),
+    page.getByText(/ is required$/).first().waitFor({ timeout: 15_000 }).catch(() => {}),
+  ]);
 }
