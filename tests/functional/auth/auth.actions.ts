@@ -23,6 +23,15 @@ export async function clickSignInButton(page: Page) {
   await page.waitForLoadState('networkidle');
 }
 
+export function waitForAuthentication(page: Page) {
+  return page.waitForResponse(
+    (res) =>
+      new URL(res.url()).pathname === '/api/auth/login' &&
+      res.request().method() === 'POST' &&
+      res.ok(),
+  );
+}
+
 export async function clickSignOutButton(page: Page) {
   await page.getByTestId('navbar-logout-button').click();
   await page.waitForLoadState('networkidle');
