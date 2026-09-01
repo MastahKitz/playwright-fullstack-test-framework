@@ -1,7 +1,7 @@
 import { test, Page } from '@playwright/test';
 import { openHomePage } from '../../auth/auth.actions';
 import { clickViewCartButton } from './cart.actions';
-import { fitnessTracker } from '../../product/product.data';
+import { fitnessTracker, laptopBackpack } from '../../product/product.data';
 import {
   addProductToCart,
   viewCartAndIncreaseProductQuantity,
@@ -31,21 +31,34 @@ test.describe('cart', { tag: '@cart' }, () => {
     await assertCartDetails(page, { items: [{ product: fitnessTracker, quantity: 1 }] });
   });
 
+  test('validate user can add another product to the cart', async () => {
+    await openHomePage(page);
+    await addProductToCart(page, laptopBackpack);
+    await clickViewCartButton(page);
+    await assertCartDetails(page, { items: [{ product: fitnessTracker, quantity: 1 },{ product: laptopBackpack, quantity: 1 }] });
+  });
+
   test('validate user can increase product quantity in the cart', async () => {
     await openHomePage(page);
     await viewCartAndIncreaseProductQuantity(page, fitnessTracker.name);
-    await assertCartDetails(page, { items: [{ product: fitnessTracker, quantity: 2 }] });
+    await assertCartDetails(page, { items: [{ product: fitnessTracker, quantity: 2 },{ product: laptopBackpack, quantity: 1 }] });
   });
 
   test('validate user can decrease product quantity in the cart', async () => {
     await openHomePage(page);
     await viewCartAndDecreaseProductQuantity(page, fitnessTracker.name);
-    await assertCartDetails(page, { items: [{ product: fitnessTracker, quantity: 1 }] });
+    await assertCartDetails(page, { items: [{ product: fitnessTracker, quantity: 1 },{ product: laptopBackpack, quantity: 1 }] });
   });
 
-  test('validate user can remove product from the cart', async () => {
+  test('validate user can remove a product from the cart', async () => {
     await openHomePage(page);
     await viewCartAndRemoveProduct(page, fitnessTracker.name);
+    await assertCartDetails(page, { items: [{ product: laptopBackpack, quantity: 1 }] });
+  });
+
+  test('validate user can remove anotherproduct from the cart', async () => {
+    await openHomePage(page);
+    await viewCartAndRemoveProduct(page, laptopBackpack.name);
     await assertCartIsEmpty(page);
   });
 });
