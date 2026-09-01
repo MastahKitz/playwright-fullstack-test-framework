@@ -11,6 +11,11 @@ export async function assertOrderConfirmation(page: Page, cart: CartData, form: 
   await expect.soft(page.getByTestId('order-success-header').getByText("Thank you for your order. We'll send you updates soon.", { exact: true })).toBeVisible();
   await expect.soft(page.getByTestId('order-confirmation-number')).toHaveText(/^Order #\d+$/);
 
+  // order status
+  await expect.soft(confirmation.getByText('Order Status', { exact: true })).toBeVisible();
+  await expect.soft(page.getByTestId('order-confirmation-date')).toHaveText(todayLongDate());
+  await expect.soft(confirmation.getByText('Pending', { exact: true })).toBeVisible();
+
   // shipping info
   await expect.soft(page.getByTestId('order-shipping-name')).toHaveText(`${shippingInfo.firstName} ${shippingInfo.lastName}`);
   await expect.soft(page.getByTestId('order-shipping-address')).toHaveText(shippingInfo.address);
@@ -38,3 +43,8 @@ function parsePrice(price: string): number {
 function formatPrice(amount: number): string {
   return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 }
+
+function todayLongDate(): string {
+  return new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
