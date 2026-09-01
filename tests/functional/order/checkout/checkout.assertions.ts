@@ -39,6 +39,34 @@ export async function assertOrderConfirmation(page: Page, cart: CartData, form: 
   await expect.soft(confirmation.getByText(`Paid with card ending in ${lastFour}`, { exact: true })).toBeVisible();
 }
 
+export async function assertFirstNameRequiredError(page: Page) {
+  await expect.soft(page.getByText('First name is required', { exact: true })).toBeVisible();
+}
+
+export async function assertLastNameRequiredError(page: Page) {
+  await expect.soft(page.getByText('Last name is required', { exact: true })).toBeVisible();
+}
+
+export async function assertAddressRequiredError(page: Page) {
+  await expect.soft(page.getByText('Address is required', { exact: true })).toBeVisible();
+}
+
+export async function assertCardNumberRequiredError(page: Page) {
+  await expect.soft(page.getByText('Card number is required', { exact: true })).toBeVisible();
+}
+
+export async function assertExpiryRequiredError(page: Page) {
+  await expect.soft(page.getByText('Expiry is required', { exact: true })).toBeVisible();
+}
+
+export async function assertCvvRequiredError(page: Page) {
+  await expect.soft(page.getByText('CVV is required', { exact: true })).toBeVisible();
+}
+
+export async function assertNameOnCardRequiredError(page: Page) {
+  await expect.soft(page.getByText('Name is required', { exact: true })).toBeVisible();
+}
+
 function parsePrice(price: string): number {
   return Number(price.replace(/[^0-9.]/g, ''));
 }
