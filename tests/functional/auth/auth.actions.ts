@@ -40,9 +40,10 @@ export async function clickSignOutButton(page: Page) {
 }
 
 /**
- * Writes the context's storage state to `path`, minus `session_id` — that key
- * is the anonymous cart identity, and if every test context loaded the same one
- * they would all share a single server-side cart.
+ * Writes the context's storage state to `path`, minus `session_id`. That
+ * localStorage value is an anonymous id the server keys the cart by (sent as the
+ * `x-session-id` header); if every test context loaded the same one from
+ * auth.json they would all read and write one shared server-side cart.
  */
 export async function saveSignedInState(context: BrowserContext, path: string) {
   const state = await context.storageState();
