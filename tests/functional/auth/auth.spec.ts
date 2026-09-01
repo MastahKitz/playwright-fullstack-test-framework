@@ -14,7 +14,7 @@ test.describe('auth', { tag: '@auth' }, () => {
 
   test('validate admin user can login', async ({ page }) => {
     await login(page, credentials.adminUser.username, credentials.adminUser.password);
-    await assertLoggedIn(page);
+    await assertLoggedIn(page, credentials.adminUser.username);
     await assertAdminMenuAvailable(page);
   });
 
