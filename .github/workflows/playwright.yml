@@ -1,0 +1,73 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# qademo is a small shared demo server — the suite already runs single-worker
+# for that reason (playwright.config.ts). Queue runs so two never hammer its API
+# at once, rather than cancelling in-progress runs.
+concurrency:
+  group: qademo-qa-e2e
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      QA_STANDARD_USER_USERNAME: ${{ secrets.QA_STANDARD_USER_USERNAME }}
+      QA_STANDARD_USER_PASSWORD: ${{ secrets.QA_STANDARD_USER_PASSWORD }}
+      QA_LOCKED_USER_USERNAME: ${{ secrets.QA_LOCKED_USER_USERNAME }}
+      QA_LOCKED_USER_PASSWORD: ${{ secrets.QA_LOCKED_USER_PASSWORD }}
+      QA_ADMIN_USER_USERNAME: ${{ secrets.QA_ADMIN_USER_USERNAME }}
+      QA_ADMIN_USER_PASSWORD: ${{ secrets.QA_ADMIN_USER_PASSWORD }}
+    steps:
+      # Check out the repo at the pushed commit so the workflow can run its code.
+      - uses: actions/checkout@v4
+
+      # Install Node.js 20 and put it on PATH for later steps.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Install exact dependency versions from package-lock.json (clean, reproducible install).
+      - name: Install dependencies
+        run: npm ci
+
+      # Download the Chromium build Playwright needs, plus its OS-level libraries.
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      # Run the end-to-end suite against the live demo site.
+      - name: Run Playwright tests
+        run: npx playwright test
+
+      # Post-process the run's results and fail the build if any test only passed on retry.
+      - name: Fail build if any test was flaky
+        run: node scripts/check-flaky.js test-report/results.json
+
+      # Publish the HTML report as a downloadable artifact, even when earlier steps failed.
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: test-report/
+          retention-days: 14
+
+      # Upload the screenshots/traces/videos from failed tests only when the run
+      # failed. Consumed by the AI failure-triage workflow, which runs in a
+      # separate job (workflow_run) since Claude Code Action doesn't support the
+      # `push` event this job runs on.
+      - name: Upload failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: test-results/
+          retention-days: 14

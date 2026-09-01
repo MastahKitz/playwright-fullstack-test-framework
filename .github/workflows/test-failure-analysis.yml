@@ -1,0 +1,80 @@
+name: Test Failure Analysis
+
+# Runs after "Playwright Tests" finishes. Split into its own workflow (rather
+# than a step in playwright.yml) because Claude Code Action only supports
+# being triggered by a fixed set of events, and `push` — what playwright.yml
+# runs on — isn't one of them. `workflow_run` is, so this workflow watches
+# that one instead and pulls its artifacts across.
+on:
+  workflow_run:
+    workflows: ['Playwright Tests']
+    types: [completed]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: read
+  id-token: write
+
+jobs:
+  analyze:
+    if: github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Download test report
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-report
+          path: test-report/
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download failure screenshots
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-test-results
+          path: test-results/
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Extract video frames from failed attempts
+        run: |
+          shopt -s globstar nullglob
+          for video in test-results/**/video.webm; do
+            dir=$(dirname "$video")
+            mkdir -p "$dir/video-frames"
+            ffmpeg -loglevel error -i "$video" -vf fps=2 "$dir/video-frames/frame-%03d.png"
+          done
+
+      - name: Load failure analysis prompt
+        run: |
+          {
+            echo 'FAILURE_ANALYSIS_PROMPT<<PROMPT_EOF'
+            cat .github/prompts/test-failure-analysis.md
+            echo PROMPT_EOF
+          } >> "$GITHUB_ENV"
+
+      - name: Analyze test failures
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          show_full_output: true
+          prompt: |
+            REPO: ${{ github.repository }}
+            RUN ID: ${{ github.event.workflow_run.id }}
+            RUN URL: ${{ github.event.workflow_run.html_url }}
+            COMMIT: ${{ github.event.workflow_run.head_sha }}
+
+            ${{ env.FAILURE_ANALYSIS_PROMPT }}
+
+          claude_args: |
+            --allowedTools "Read,Grep,Glob,Edit,Bash(git checkout:*),Bash(git config:*),Bash(git add:*),Bash(git commit:*),Bash(git push:*),Bash(gh issue create:*),Bash(gh issue view:*),Bash(gh pr create:*)"
