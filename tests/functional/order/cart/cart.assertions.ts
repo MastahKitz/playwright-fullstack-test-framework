@@ -11,11 +11,16 @@ export async function assertCartDetails(page: Page, cart: CartData) {
     await assertCartItem(page, item);
   }
   // order summary
+  const summary = page.getByTestId('order-summary-heading').locator('..');
   const expectedTotal = formatPrice(
     cart.items.reduce((sum, item) => sum + parsePrice(item.product.price) * item.quantity, 0),
   );
+  await expect.soft(page.getByTestId('order-summary-heading')).toHaveText('Order Summary');
+  await expect.soft(summary.getByText('Subtotal', { exact: true })).toBeVisible();
   await expect.soft(page.getByTestId('order-subtotal')).toHaveText(expectedTotal);
+  await expect.soft(summary.getByText('Shipping', { exact: true })).toBeVisible();
   await expect.soft(page.getByTestId('order-shipping')).toHaveText('Free');
+  await expect.soft(summary.getByText('Total', { exact: true })).toBeVisible();
   await expect.soft(page.getByTestId('order-total')).toHaveText(expectedTotal);
 }
 
@@ -39,7 +44,8 @@ async function assertCartItem(page: Page, item: CartItemData) {
   await expect.soft(cartItem.getByTestId(/^cart-item-price-\d+$/)).toHaveText(product.price);
   // quantity
   await expect.soft(cartItem.getByTestId(/^cart-item-quantity-\d+$/)).toHaveText(String(quantity));
-  // subtotal price
+  // subtotal
+  await expect.soft(cartItem.getByText('Subtotal', { exact: true })).toBeVisible();
   await expect.soft(cartItem.getByTestId(/^cart-item-subtotal-\d+$/)).toHaveText(formatPrice(parsePrice(product.price) * quantity));
 }
 
