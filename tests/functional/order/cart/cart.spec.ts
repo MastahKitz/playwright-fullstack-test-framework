@@ -56,7 +56,7 @@ test.describe('cart', { tag: '@cart' }, () => {
     await assertCartDetails(page, { items: [{ product: laptopBackpack, quantity: 1 }] });
   });
 
-  test('validate user can remove anotherproduct from the cart', async () => {
+  test('validate user can remove another product from the cart', async () => {
     await openHomePage(page);
     await viewCartAndRemoveProduct(page, laptopBackpack.name);
     await assertCartIsEmpty(page);

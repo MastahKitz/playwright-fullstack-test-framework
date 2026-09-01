@@ -22,6 +22,7 @@ async function mutateCart(
       /\/api\/cart\/items(\/\d+)?$/.test(new URL(res.url()).pathname) &&
       res.request().method() === method &&
       res.ok(),
+    { timeout: 15_000 },
   );
   await click();
   await response;
