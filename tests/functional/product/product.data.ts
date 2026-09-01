@@ -1,4 +1,4 @@
-export const TOTAL_PRODUCTS_COUNT = 22;
+export const TOTAL_PRODUCTS_COUNT = 21;
 
 // Static, identical on every product detail page — not per-product data.
 export const PRODUCT_DETAIL_FEATURES = [

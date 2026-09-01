@@ -16,6 +16,17 @@ export async function assertProductInList(page: Page, product: ProductData) {
   await expect.soft(card.getByTestId(/^product-description-/)).toHaveText(product.description);
   // price
   await expect.soft(card.getByTestId(/^product-price-/)).toHaveText(product.price);
+  // out-of-stock badge + add to cart button (enabled only when in stock)
+  const outOfStockBadge = card.getByTestId(/^product-out-of-stock-badge-/);
+  const addToCartButton = card.getByTestId(/^product-add-to-cart-\d+$/);
+  await expect.soft(addToCartButton).toBeVisible();
+  if (product.inStock) {
+    await expect.soft(outOfStockBadge).not.toBeVisible();
+    await expect.soft(addToCartButton).toBeEnabled();
+  } else {
+    await expect.soft(outOfStockBadge).toBeVisible();
+    await expect.soft(addToCartButton).toBeDisabled();
+  }
 }
 
 export async function assertProductDetails(page: Page, product: ProductData) {
