@@ -19,7 +19,13 @@ don't invent rules that aren't actually followed elsewhere in the repo).
    `auth` and `product` keep these files flat in the domain folder; add a `<feature>/`
    subfolder only for independently-testable sub-features (`order/cart`, `order/checkout`). A
    change that dumps locators or assertions directly into a `.spec.ts` or `.flow.ts` breaks
-   this split.
+   this split. A domain's API-layer tests get their own file set with an `-api` suffix on the
+   same base name, sitting alongside the UI files in the same domain folder and following the
+   identical split — `auth-api.actions.ts` / `auth-api.assertions.ts` / `auth-api.data.ts` /
+   `auth-api.flow.ts` / `auth-api.spec.ts` (+ `auth-api-error.spec.ts`) next to `auth.actions.ts`
+   etc. Only the interaction layer differs — raw `request.fetch(...)` calls via `api.utils.ts`
+   instead of `page.*` — the actions/assertions/data/flow/spec split and every other convention
+   here apply exactly the same way.
 
 2. **`.spec.ts` files contain no raw `page.*` calls and no raw `expect(...)`.** They call
    flow/assertion helpers. Calling a single named **action** directly from a spec is fine when

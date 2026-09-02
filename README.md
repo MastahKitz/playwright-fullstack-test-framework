@@ -61,8 +61,15 @@ when the children are independently-testable features in their own right — `or
 are just views of one feature, so they stay flat siblings (`product-list.spec.ts`,
 `product-details.spec.ts`).
 
-Current modules: `auth` (+ `auth-error`), `product` (list + details), `order/cart`,
-`order/checkout` (+ `checkout-error`). Config and base URLs come from
+A domain's API-layer tests reuse the exact same split, in the same domain folder, just with an
+`-api` suffix on every file — `auth-api.actions.ts` / `auth-api.assertions.ts` /
+`auth-api.data.ts` / `auth-api.flow.ts` / `auth-api.spec.ts` (+ `auth-api-error.spec.ts`) sit
+alongside `auth.actions.ts` etc. The only real difference is the interaction layer: `.actions.ts`
+calls `sendApiRequest(...)` (`utils/api.utils.ts`) instead of `page.*`, and `.assertions.ts` uses
+`assertResponseStatus`/`assertResponseBody` instead of locator-based `expect.soft(...)` checks.
+
+Current modules: `auth` (+ `auth-error`, `auth-api`, `auth-api-error`), `product` (list +
+details), `order/cart`, `order/checkout` (+ `checkout-error`). Config and base URLs come from
 `tests/functional/config/`.
 
 Pure helpers shared across two or more features (no Playwright dependency — parsing, formatting,
@@ -79,7 +86,10 @@ list as the source of truth rather than any one existing file.
    `<name>.assertions.ts` / `<name>.data.ts` / `<name>.flow.ts` / `<name>.spec.ts` as described
    under [Test structure](#test-structure). Domains keep files flat; add a `<feature>/`
    subfolder only for independently-testable sub-features. Dumping locators or assertions
-   straight into a `.spec.ts` or `.flow.ts` breaks the split.
+   straight into a `.spec.ts` or `.flow.ts` breaks the split. A domain's API-layer tests get
+   their own `-api`-suffixed file set in the same domain folder (`auth-api.actions.ts` next to
+   `auth.actions.ts`, etc.) — same split, same conventions, just swapping `page.*` interactions
+   for `request.fetch(...)` calls via `api.utils.ts`.
 2. **`.spec.ts` files contain no raw `page.*` calls and no raw `expect(...)`.** They call
    flow/assertion helpers; calling a single named action directly is fine when there's no
    multi-step journey to name (the suite does this with `openHomePage`, `clickViewCartButton`).
