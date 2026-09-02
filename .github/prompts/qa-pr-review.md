@@ -69,7 +69,9 @@ don't invent rules that aren't actually followed elsewhere in the repo).
    match to make it pass.
 
 9. **Every `test.describe(...)` has a `{ tag: '@xxx' }`** consistent with its domain (existing
-   tags: `@auth`, `@product`, `@cart`, `@checkout`).
+   tags: `@auth`, `@product`, `@cart`, `@checkout`). API-layer specs carry a second `@api` tag
+   alongside their domain tag — e.g. `{ tag: ['@auth', '@api'] }` in `auth-api.spec.ts` — so the
+   API suite can be run or filtered independently of the UI suite.
 
 10. **`test.describe.configure({ mode: 'serial' })`** is required when a suite's tests depend on
     state left behind by earlier tests in the same file. When that state lives in one browser

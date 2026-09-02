@@ -115,7 +115,9 @@ list as the source of truth rather than any one existing file.
    value (order number, today's date, stock count) use an anchored regex
    (`toHaveText(/^Order #\d+$/)`) or compute the expected value — don't loosen the match.
 9. **Every `test.describe(...)` has a `{ tag: '@xxx' }`** matching its domain (`@auth`,
-   `@product`, `@cart`, `@checkout`).
+   `@product`, `@cart`, `@checkout`). API-layer specs carry a second `@api` tag alongside their
+   domain tag — e.g. `{ tag: ['@auth', '@api'] }` in `auth-api.spec.ts` — so the API suite can be
+   run or filtered independently of the UI suite.
 10. **`test.describe.configure({ mode: 'serial' })`** whenever tests depend on state left by
     earlier tests in the file. When that state lives in one browser context (the cart, an auth
     session), the suite also shares a single `page` created in

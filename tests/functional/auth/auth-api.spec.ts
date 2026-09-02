@@ -4,7 +4,7 @@ import { standardUserLoginBody, adminUserLoginBody } from './auth-api.data';
 import { assertLoginSuccess } from './auth-api.assertions';
 import { credentials } from './auth.data';
 
-test.describe('auth api', { tag: '@auth' }, () => {
+test.describe('auth api', { tag: ['@auth', '@api'] }, () => {
 
   test('validate standard user can login', async ({ request }) => {
     const response = await sendLoginRequest(request, standardUserLoginBody);
