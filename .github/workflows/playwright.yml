@@ -25,7 +25,7 @@ jobs:
       QA_LOCKED_USER_USERNAME: ${{ secrets.QA_LOCKED_USER_USERNAME }}
       QA_LOCKED_USER_PASSWORD: ${{ secrets.QA_LOCKED_USER_PASSWORD }}
       QA_ADMIN_USER_USERNAME: ${{ secrets.QA_ADMIN_USER_USERNAME }}
-      QA_ADMIN_USER_PASSWORD: ${{ secrets.QA_ADMIN_USER_PASSWORD }}
+      QA_ADMIN_USER_PASSWORD_PREFIX: ${{ secrets.QA_ADMIN_USER_PASSWORD_PREFIX }}
     steps:
       # Check out the repo at the pushed commit so the workflow can run its code.
       - uses: actions/checkout@v4
