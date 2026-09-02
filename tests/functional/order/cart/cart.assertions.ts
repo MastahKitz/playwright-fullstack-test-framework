@@ -1,5 +1,6 @@
 import { Page, expect } from '@playwright/test';
 import { CartData, CartItemData } from './cart.data';
+import { parsePrice, formatPrice } from '../../utils/data.utils';
 
 export async function assertCartDetails(page: Page, cart: CartData) {
   // header
@@ -22,14 +23,6 @@ export async function assertCartDetails(page: Page, cart: CartData) {
   await expect.soft(page.getByTestId('order-shipping')).toHaveText('Free');
   await expect.soft(summary.getByText('Total', { exact: true })).toBeVisible();
   await expect.soft(page.getByTestId('order-total')).toHaveText(expectedTotal);
-}
-
-function parsePrice(price: string): number {
-  return Number(price.replace(/[^0-9.]/g, ''));
-}
-
-function formatPrice(amount: number): string {
-  return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 }
 
 async function assertCartItem(page: Page, item: CartItemData) {
