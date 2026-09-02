@@ -40,7 +40,13 @@ don't invent rules that aren't actually followed elsewhere in the repo).
    exempt: those live in `.assertions.ts`, baked into a named assertion function (one per
    message), the way `auth.assertions.ts` and `checkout.assertions.ts` do it. A type/interface
    declared inside a `.assertions.ts` file, or a hardcoded error string sitting in `.data.ts`, are
-   both smells.
+   both smells. A negative test that only overrides one or two fields of an existing fixture does
+   **not** get a new named fixture — spread the base fixture and override inline at the call site
+   (`{ ...standardCheckoutForm, shippingInfo: { ...standardCheckoutForm.shippingInfo, firstName: '' } }`
+   in `checkout-error.spec.ts`; `{ ...standardUserLoginBody, password: '' }` in
+   `auth-api-error.spec.ts`). Declaring a dedicated `blankFirstNameForm`/`blankUsernameLoginBody`
+   fixture per field doesn't scale — a 30-field form testing every required field would clutter
+   `.data.ts` with one fixture per field.
 
 5. **Reusable utility functions live in `tests/functional/utils/<name>.utils.ts`, not
    duplicated per feature.** A pure helper with no Playwright dependency (parsing, formatting,

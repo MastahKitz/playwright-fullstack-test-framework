@@ -92,7 +92,13 @@ list as the source of truth rather than any one existing file.
    Only the literal expected values the app produces — error messages, headings, status text —
    are exempt: those live in `.assertions.ts` as a named assertion function, one per message (see
    `auth.assertions.ts`, `checkout.assertions.ts`). A type/interface declared inside a
-   `.assertions.ts` file is a smell, same as a hardcoded error string in `.data.ts`.
+   `.assertions.ts` file is a smell, same as a hardcoded error string in `.data.ts`. A negative
+   test that only overrides one or two fields of an existing fixture doesn't get a new named
+   fixture either — spread the base fixture and override inline at the call site, the way
+   `checkout-error.spec.ts` and `auth-api-error.spec.ts` do it (e.g.
+   `{ ...standardUserLoginBody, password: '' }`). A dedicated fixture per field doesn't scale —
+   a 30-field form testing every required field would otherwise clutter `.data.ts` with one
+   fixture per field.
 5. **Reusable utility functions live in `tests/functional/utils/<name>.utils.ts`, not
    duplicated per feature.** A pure helper with no Playwright dependency (parsing, formatting,
    date math) needed by more than one feature belongs in a shared `.utils.ts` file under
