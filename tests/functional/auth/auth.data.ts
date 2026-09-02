@@ -16,6 +16,16 @@ function requireEnv(name: string): string {
   return value;
 }
 
+// The admin account's password rotates daily to <prefix> + today's date as
+// DDMMYYYY (e.g. "01" + "09" + "2026"). Only the fixed prefix is a secret;
+// the date suffix is computed here so it never needs manual updating.
+function todayDateSuffix(): string {
+  const now = new Date();
+  const dd = String(now.getDate()).padStart(2, '0');
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  return `${dd}${mm}${now.getFullYear()}`;
+}
+
 export const credentials = {
   standardUser: {
     username: requireEnv('QA_STANDARD_USER_USERNAME'),
@@ -27,6 +37,6 @@ export const credentials = {
   } as UserCredentials,
   adminUser: {
     username: requireEnv('QA_ADMIN_USER_USERNAME'),
-    password: requireEnv('QA_ADMIN_USER_PASSWORD'),
+    password: `${requireEnv('QA_ADMIN_USER_PASSWORD_PREFIX')}${todayDateSuffix()}`,
   } as UserCredentials,
 };

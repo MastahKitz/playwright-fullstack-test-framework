@@ -161,7 +161,9 @@ screenshots/videos/traces on failure.
 
 Credentials are supplied as GitHub Actions secrets: `QA_STANDARD_USER_USERNAME` /
 `QA_STANDARD_USER_PASSWORD`, `QA_LOCKED_USER_USERNAME` / `QA_LOCKED_USER_PASSWORD`,
-`QA_ADMIN_USER_USERNAME` / `QA_ADMIN_USER_PASSWORD`. The Claude workflows also need
+`QA_ADMIN_USER_USERNAME` / `QA_ADMIN_USER_PASSWORD_PREFIX`. The admin password rotates daily to
+`<prefix><DDMMYYYY>`; the date suffix is computed in `auth.data.ts`, so only the fixed prefix is
+stored as a secret. The Claude workflows also need
 `CLAUDE_CODE_OAUTH_TOKEN` (from `claude setup-token` — uses your Claude subscription, no
 separate API billing).
 
