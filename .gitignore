@@ -1,6 +1,8 @@
 node_modules/
 test-results/
 test-report/
+public/
+gh-pages/
 .env
 .env.local
 auth.json

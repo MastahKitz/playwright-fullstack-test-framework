@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: read
+  contents: write   # the dashboard step force-pushes the report site to gh-pages
 
 jobs:
   test:
@@ -71,3 +71,38 @@ jobs:
           name: playwright-test-results
           path: test-results/
           retention-days: 14
+
+      # ---------------------------------------------------------------------
+      # Publish this run to the GitHub Pages dashboard: last 5 runs with their
+      # counts and a link to each run's full HTML report, served inline so there
+      # is nothing to download. Runs even when tests failed, so the dashboard
+      # always reflects the latest state.
+      # ---------------------------------------------------------------------
+
+      # Grab the currently-published site so the builder can carry the four most
+      # recent prior reports forward. First ever run: the branch doesn't exist,
+      # so this is allowed to fail and the builder starts from an empty list.
+      - name: Check out existing dashboard
+        if: always()
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Build dashboard site
+        if: always()
+        run: node scripts/build-report-dashboard.js test-report/results.json test-report gh-pages public
+
+      # Force-push the assembled ./public wholesale — the branch only ever holds
+      # the last 5 runs, so purging is automatic.
+      - name: Publish dashboard to gh-pages
+        if: always()
+        working-directory: public
+        run: |
+          git init -q -b gh-pages
+          git add -A
+          git -c user.name='github-actions[bot]' \
+              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              commit -q -m "test dashboard: run #${GITHUB_RUN_NUMBER}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
