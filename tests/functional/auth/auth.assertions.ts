@@ -2,6 +2,7 @@ import { Page, expect } from '@playwright/test';
 import { credentials } from './auth.data';
 
 export async function assertLoggedIn(page: Page, username: string = credentials.standardUser.username) {
+  // KNOWN-FAILURE(#11): stale QA_ADMIN_USER_PASSWORD secret vs qademo's daily-rotating admin password — retriage if this changes
   await expect.soft(page.getByTestId('navbar-username')).toHaveText(username);
   await expect.soft(page.getByTestId('navbar-logout-button')).toBeVisible();
   await expect.soft(page.getByTestId('navbar-signin-link')).not.toBeVisible();
