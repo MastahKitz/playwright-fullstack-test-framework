@@ -55,12 +55,17 @@ don't invent rules that aren't actually followed elsewhere in the repo).
    `.data.ts` with one fixture per field.
 
 5. **Reusable utility functions live in `tests/functional/utils/<name>.utils.ts`, not
-   duplicated per feature.** A pure helper with no Playwright dependency (parsing, formatting,
-   date math) that's needed by more than one feature belongs in a shared `.utils.ts` file under
-   `tests/functional/utils/` and gets imported — e.g. `parsePrice`/`formatPrice` live in
-   `utils/data.utils.ts` and are imported by both `cart.assertions.ts` and
-   `checkout.assertions.ts`. The same function copy-pasted into two feature files instead of
-   shared is a duplication bug, not a style nit.
+   duplicated per feature.** A helper needed by more than one feature — a pure function (parsing,
+   formatting, date math) or a shared Playwright-touching primitive (sending a request, asserting
+   a response) alike — belongs in a shared `.utils.ts` file under `tests/functional/utils/` and
+   gets imported, not copy-pasted. `utils/data.utils.ts` holds `parsePrice`/`formatPrice`,
+   imported by both `cart.assertions.ts` and `checkout.assertions.ts`. `utils/api.utils.ts` holds
+   the API-layer primitives every domain's API tests build on — `sendApiRequest`,
+   `assertResponseStatus`, `assertResponseBody` — so a domain's `.actions.ts` calls
+   `sendApiRequest` rather than `request.fetch(...)` directly, and its `.assertions.ts` builds
+   named assertions on top of `assertResponseStatus`/`assertResponseBody` rather than
+   reimplementing status/body checks inline. The same function copy-pasted into two feature files
+   instead of shared is a duplication bug, not a style nit.
 
 6. **Locators are testid-first.** Use `getByTestId(...)` (including regex testids like
    `getByTestId(/^cart-item-\d+$/)`) for element identity — clicks, scoping, reading a field's
@@ -78,7 +83,15 @@ don't invent rules that aren't actually followed elsewhere in the repo).
    match. Assert an element's full text via its testid rather than fishing for a fragment. When
    a value really is dynamic — an order number, today's date, a stock count — match an anchored
    regex (`toHaveText(/^Order #\d+$/)`) or compute the expected value; don't loosen to a partial
-   match to make it pass.
+   match to make it pass. The same principle applies to API response bodies:
+   `assertResponseBody(actual, expected, options)` (`utils/api.utils.ts`) defaults to a partial
+   match (`toMatchObject`) so unlisted fields aren't a problem, but pass `{ exact: true }` once
+   the full response shape is known, so an unexpected extra field gets caught (see
+   `assertLoginSuccess` in `auth-api.assertions.ts`). For a field that's genuinely dynamic every
+   run — a JWT, a generated id — mix an asymmetric matcher like `expect.stringMatching(/regex/)`
+   into the same `expected` object alongside the exact fields, the same way an anchored regex
+   handles a dynamic value in the UI; don't drop to a full partial match just because one field
+   is dynamic.
 
 9. **Every `test.describe(...)` has a `{ tag: '@xxx' }`** consistent with its domain (existing
    tags: `@auth`, `@product`, `@cart`, `@checkout`). API-layer specs carry a second `@api` tag

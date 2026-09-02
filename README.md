@@ -1,8 +1,9 @@
 # playwright-fullstack-test-framework
 
 Playwright test automation for the [QA Demo](https://qademo.com) storefront — a React app
-backed by a JSON REST API (`/api/*`). The suite covers the web UI today; the API layer
-(`tests/functional/auth/auth-api.*`) is stubbed and coming next.
+backed by a JSON REST API (`/api/*`). The suite covers both the web UI and, starting with auth
+(`tests/functional/auth/auth-api.*`), the API layer directly — more domains' API coverage is
+coming next.
 
 ## Getting started
 
@@ -72,10 +73,13 @@ Current modules: `auth` (+ `auth-error`, `auth-api`, `auth-api-error`), `product
 details), `order/cart`, `order/checkout` (+ `checkout-error`). Config and base URLs come from
 `tests/functional/config/`.
 
-Pure helpers shared across two or more features (no Playwright dependency — parsing, formatting,
-date math) live in `tests/functional/utils/<name>.utils.ts` instead of being duplicated per
-feature — e.g. `utils/data.utils.ts` holds `parsePrice`/`formatPrice`, used by both `order/cart`
-and `order/checkout`.
+Helpers shared across two or more features — pure functions (parsing, formatting, date math) or
+shared Playwright-touching primitives (sending a request, asserting a response) alike — live in
+`tests/functional/utils/<name>.utils.ts` instead of being duplicated per feature.
+`utils/data.utils.ts` holds `parsePrice`/`formatPrice`, used by both `order/cart` and
+`order/checkout`. `utils/api.utils.ts` holds the primitives every domain's API layer builds on:
+`sendApiRequest` (wraps `request.fetch(...)`), `assertResponseStatus`, and `assertResponseBody`
+(see rule 8 below for its exact-vs-partial matching).
 
 ## Coding conventions
 
@@ -110,12 +114,17 @@ list as the source of truth rather than any one existing file.
    a 30-field form testing every required field would otherwise clutter `.data.ts` with one
    fixture per field.
 5. **Reusable utility functions live in `tests/functional/utils/<name>.utils.ts`, not
-   duplicated per feature.** A pure helper with no Playwright dependency (parsing, formatting,
-   date math) needed by more than one feature belongs in a shared `.utils.ts` file under
-   `tests/functional/utils/` and gets imported — e.g. `parsePrice`/`formatPrice` live in
-   `utils/data.utils.ts` and are imported by both `cart.assertions.ts` and
-   `checkout.assertions.ts`. Copy-pasting the same function into two feature files instead of
-   sharing it is a duplication bug, not a style nit.
+   duplicated per feature.** A helper needed by more than one feature — a pure function (parsing,
+   formatting, date math) or a shared Playwright-touching primitive (sending a request, asserting
+   a response) alike — belongs in a shared `.utils.ts` file under `tests/functional/utils/` and
+   gets imported, not copy-pasted. `utils/data.utils.ts` holds `parsePrice`/`formatPrice`,
+   imported by both `cart.assertions.ts` and `checkout.assertions.ts`. `utils/api.utils.ts` holds
+   the API-layer primitives every domain's API tests build on — `sendApiRequest`,
+   `assertResponseStatus`, `assertResponseBody` — so a domain's `.actions.ts` calls
+   `sendApiRequest` rather than `request.fetch(...)` directly, and its `.assertions.ts` builds
+   named assertions on top of `assertResponseStatus`/`assertResponseBody` rather than
+   reimplementing status/body checks inline. Copy-pasting the same function into two feature
+   files instead of sharing it is a duplication bug, not a style nit.
 6. **Locators are testid-first.** `getByTestId(...)` (including regex testids like
    `getByTestId(/^cart-item-\d+$/)`) for element identity — clicks, scoping, reading a field's
    value. Fall back to `getByRole` / `getByLabel` only where there's no testid (e.g. the login
@@ -129,7 +138,15 @@ list as the source of truth rather than any one existing file.
    over `toContainText(...)`, and `getByText(..., { exact: true })` over a substring match;
    assert an element's full text via its testid rather than a fragment. For a genuinely dynamic
    value (order number, today's date, stock count) use an anchored regex
-   (`toHaveText(/^Order #\d+$/)`) or compute the expected value — don't loosen the match.
+   (`toHaveText(/^Order #\d+$/)`) or compute the expected value — don't loosen the match. The
+   same principle applies to API response bodies: `assertResponseBody(actual, expected, options)`
+   (`utils/api.utils.ts`) defaults to a partial match (`toMatchObject`) so unlisted fields aren't
+   a problem, but pass `{ exact: true }` once the full response shape is known, so an unexpected
+   extra field gets caught (see `assertLoginSuccess` in `auth-api.assertions.ts`). For a field
+   that's genuinely dynamic every run — a JWT, a generated id — mix an asymmetric matcher like
+   `expect.stringMatching(/regex/)` into the same `expected` object alongside the exact fields,
+   the same way an anchored regex handles a dynamic value in the UI; don't drop to a full partial
+   match just because one field is dynamic.
 9. **Every `test.describe(...)` has a `{ tag: '@xxx' }`** matching its domain (`@auth`,
    `@product`, `@cart`, `@checkout`). API-layer specs carry a second `@api` tag alongside their
    domain tag — e.g. `{ tag: ['@auth', '@api'] }` in `auth-api.spec.ts` — so the API suite can be
