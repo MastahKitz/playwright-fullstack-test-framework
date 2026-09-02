@@ -212,7 +212,8 @@ The same workflow publishes a dashboard to **GitHub Pages**
 ([mastahkitz.github.io/playwright-fullstack-test-framework](https://mastahkitz.github.io/playwright-fullstack-test-framework/))
 after every run, pass or fail. It keeps the **last 5 runs** — status, test/pass/fail/flaky/skipped
 counts, commit, duration, and a link to that run's full Playwright HTML report served inline (no
-artifact download). [`scripts/build-report-dashboard.js`](scripts/build-report-dashboard.js) reads
+artifact download) — plus an inline trend chart across those runs (total test count as a line, a
+green "passed" area and a hatched "not passed" wedge beneath it, with a per-run hover breakdown). [`scripts/build-report-dashboard.js`](scripts/build-report-dashboard.js) reads
 `test-report/results.json`, copies this run's report in, carries the four most recent prior reports
 forward from the existing `gh-pages` checkout, regenerates `index.html`, and the workflow
 force-pushes the assembled site to the `gh-pages` branch — older runs are purged automatically. A
