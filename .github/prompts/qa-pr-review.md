@@ -31,11 +31,16 @@ don't invent rules that aren't actually followed elsewhere in the repo).
    single action is pointless indirection — it should be deleted and the action called
    directly.
 
-4. **`.data.ts` holds input fixtures only** (form values, product data, quantities). Expected
-   output that the app produces — error messages, headings, status text — lives in
-   `.assertions.ts`, baked into a named assertion function (one per message), the way
-   `auth.assertions.ts` and `checkout.assertions.ts` do it. Error strings in `.data.ts` are a
-   smell.
+4. **`.data.ts` holds every typed data-shape declaration — interfaces/types for both input
+   fixtures and expected/response structures — regardless of whether it's used as input or as an
+   expected value.** `CartData`/`CartItemData` (`cart.data.ts`), `CheckoutFormData`
+   (`checkout.data.ts`), and `LoginResponseBody`/`ExpectedLoginUser` (`auth-api.data.ts`) all live
+   in `.data.ts` even though some are passed in and some describe what the app returns. Only the
+   literal expected *values* that the app produces — error messages, headings, status text — are
+   exempt: those live in `.assertions.ts`, baked into a named assertion function (one per
+   message), the way `auth.assertions.ts` and `checkout.assertions.ts` do it. A type/interface
+   declared inside a `.assertions.ts` file, or a hardcoded error string sitting in `.data.ts`, are
+   both smells.
 
 5. **Reusable utility functions live in `tests/functional/utils/<name>.utils.ts`, not
    duplicated per feature.** A pure helper with no Playwright dependency (parsing, formatting,

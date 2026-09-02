@@ -86,9 +86,13 @@ list as the source of truth rather than any one existing file.
    A new interaction or check belongs in `.actions.ts` / `.assertions.ts`, never inline.
 3. **`.flow.ts` functions compose two or more actions/flows.** A flow that just forwards to one
    action is pointless indirection — delete it and call the action directly.
-4. **`.data.ts` holds input fixtures only.** Expected output the app produces — error messages,
-   headings, status text — lives in `.assertions.ts` as a named assertion function, one per
-   message (see `auth.assertions.ts`, `checkout.assertions.ts`).
+4. **`.data.ts` holds every typed data-shape declaration** — interfaces/types for input fixtures
+   and expected/response structures alike, regardless of whether it's used as input or as an
+   expected value (`CartData`, `CheckoutFormData`, `LoginResponseBody`/`ExpectedLoginUser`, ...).
+   Only the literal expected values the app produces — error messages, headings, status text —
+   are exempt: those live in `.assertions.ts` as a named assertion function, one per message (see
+   `auth.assertions.ts`, `checkout.assertions.ts`). A type/interface declared inside a
+   `.assertions.ts` file is a smell, same as a hardcoded error string in `.data.ts`.
 5. **Reusable utility functions live in `tests/functional/utils/<name>.utils.ts`, not
    duplicated per feature.** A pure helper with no Playwright dependency (parsing, formatting,
    date math) needed by more than one feature belongs in a shared `.utils.ts` file under

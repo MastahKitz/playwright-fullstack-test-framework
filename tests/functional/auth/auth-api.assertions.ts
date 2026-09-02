@@ -1,12 +1,6 @@
 import { APIResponse, expect } from '@playwright/test';
 import { assertResponseStatus, assertResponseBody } from '../utils/api.utils';
-import { LoginResponseBody } from './auth-api.data';
-
-interface ExpectedLoginUser {
-  id: number;
-  username: string;
-  userType: string;
-}
+import { LoginResponseBody, ExpectedLoginUser } from './auth-api.data';
 
 export async function assertLoginSuccess(response: APIResponse, expectedUser: ExpectedLoginUser) {
   assertResponseStatus(response, 200);

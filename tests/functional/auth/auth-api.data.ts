@@ -26,3 +26,5 @@ export interface LoginResponseBody {
     };
   };
 }
+
+export type ExpectedLoginUser = LoginResponseBody['data']['user'];
