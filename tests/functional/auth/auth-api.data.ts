@@ -15,6 +15,11 @@ export const adminUserLoginBody: LoginRequestBody = {
   password: credentials.adminUser.password,
 };
 
+export const lockedUserLoginBody: LoginRequestBody = {
+  username: credentials.lockedUser.username,
+  password: credentials.lockedUser.password,
+};
+
 export interface LoginResponseBody {
   success: boolean;
   data: {
@@ -28,3 +33,27 @@ export interface LoginResponseBody {
 }
 
 export type ExpectedLoginUser = LoginResponseBody['data']['user'];
+
+export interface AuthErrorResponseBody {
+  success: boolean;
+  error: {
+    code: string;
+    message: string;
+  };
+}
+
+export interface ValidationErrorResponseBody {
+  success: boolean;
+  error: {
+    issues: Array<{
+      code: string;
+      minimum: number;
+      type: string;
+      inclusive: boolean;
+      exact: boolean;
+      message: string;
+      path: string[];
+    }>;
+    name: string;
+  };
+}
