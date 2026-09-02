@@ -2,6 +2,7 @@ import { Page, expect } from '@playwright/test';
 import { credentials } from './auth.data';
 
 export async function assertLoggedIn(page: Page, username: string = credentials.standardUser.username) {
+  // KNOWN-FAILURE(#15): slow qademo login response can outrun the 5s soft-assertion timeout — retriage if this changes
   await expect.soft(page.getByTestId('navbar-username')).toHaveText(username);
   await expect.soft(page.getByTestId('navbar-logout-button')).toBeVisible();
   await expect.soft(page.getByTestId('navbar-signin-link')).not.toBeVisible();
