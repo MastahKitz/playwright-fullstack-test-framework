@@ -101,10 +101,10 @@ list as the source of truth rather than any one existing file.
    value. Fall back to `getByRole` / `getByLabel` only where there's no testid (e.g. the login
    form inputs). Keep `getByRole` / `getByText` where the *visible semantics* are what's under
    test — a user-facing error message, an accessible name, a heading level. Raw CSS/XPath only
-   when there's genuinely no testid and no role (e.g. `.locator('xpath=../..')` to a parent
-   row), with a short comment.
-7. **Assertions use `expect.soft(...)`** inside `.assertions.ts` files, so one run surfaces
-   every failing check.
+   when there's genuinely no testid and no meaningful role (e.g. `.locator('xpath=../..')` to a
+   parent row), with a short comment.
+7. **Assertions use `expect.soft(...)`**, not bare `expect(...)`, inside `.assertions.ts` files,
+   so one run surfaces every failing check instead of stopping at the first.
 8. **Assertions match exactly unless the value genuinely isn't fixed.** Prefer `toHaveText(...)`
    over `toContainText(...)`, and `getByText(..., { exact: true })` over a substring match;
    assert an element's full text via its testid rather than a fragment. For a genuinely dynamic
