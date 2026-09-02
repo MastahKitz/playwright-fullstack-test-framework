@@ -1,6 +1,7 @@
 import { Page, expect } from '@playwright/test';
 import { CartData } from '../cart/cart.data';
 import { CheckoutFormData } from './checkout.data';
+import { parsePrice, formatPrice } from '../../utils/data.utils';
 
 export async function assertOrderConfirmation(page: Page, cart: CartData, form: CheckoutFormData) {
   const confirmation = page.getByTestId('order-confirmation-page');
@@ -65,14 +66,6 @@ export async function assertCvvRequiredError(page: Page) {
 
 export async function assertNameOnCardRequiredError(page: Page) {
   await expect.soft(page.getByText('Name is required', { exact: true })).toBeVisible();
-}
-
-function parsePrice(price: string): number {
-  return Number(price.replace(/[^0-9.]/g, ''));
-}
-
-function formatPrice(amount: number): string {
-  return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 }
 
 function todayLongDate(): string {

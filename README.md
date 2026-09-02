@@ -65,6 +65,11 @@ Current modules: `auth` (+ `auth-error`), `product` (list + details), `order/car
 `order/checkout` (+ `checkout-error`). Config and base URLs come from
 `tests/functional/config/`.
 
+Pure helpers shared across two or more features (no Playwright dependency — parsing, formatting,
+date math) live in `tests/functional/utils/<name>.utils.ts` instead of being duplicated per
+feature — e.g. `utils/data.utils.ts` holds `parsePrice`/`formatPrice`, used by both `order/cart`
+and `order/checkout`.
+
 ## Coding conventions
 
 Enforced on every PR by the [PR review workflow](#pr-review-against-conventions) — treat this
@@ -84,39 +89,46 @@ list as the source of truth rather than any one existing file.
 4. **`.data.ts` holds input fixtures only.** Expected output the app produces — error messages,
    headings, status text — lives in `.assertions.ts` as a named assertion function, one per
    message (see `auth.assertions.ts`, `checkout.assertions.ts`).
-5. **Locators are testid-first.** `getByTestId(...)` (including regex testids like
+5. **Reusable utility functions live in `tests/functional/utils/<name>.utils.ts`, not
+   duplicated per feature.** A pure helper with no Playwright dependency (parsing, formatting,
+   date math) needed by more than one feature belongs in a shared `.utils.ts` file under
+   `tests/functional/utils/` and gets imported — e.g. `parsePrice`/`formatPrice` live in
+   `utils/data.utils.ts` and are imported by both `cart.assertions.ts` and
+   `checkout.assertions.ts`. Copy-pasting the same function into two feature files instead of
+   sharing it is a duplication bug, not a style nit.
+6. **Locators are testid-first.** `getByTestId(...)` (including regex testids like
    `getByTestId(/^cart-item-\d+$/)`) for element identity — clicks, scoping, reading a field's
    value. Fall back to `getByRole` / `getByLabel` only where there's no testid (e.g. the login
    form inputs). Keep `getByRole` / `getByText` where the *visible semantics* are what's under
    test — a user-facing error message, an accessible name, a heading level. Raw CSS/XPath only
    when there's genuinely no testid and no role (e.g. `.locator('xpath=../..')` to a parent
    row), with a short comment.
-6. **Assertions use `expect.soft(...)`** inside `.assertions.ts` files, so one run surfaces
+7. **Assertions use `expect.soft(...)`** inside `.assertions.ts` files, so one run surfaces
    every failing check.
-7. **Assertions match exactly unless the value genuinely isn't fixed.** Prefer `toHaveText(...)`
+8. **Assertions match exactly unless the value genuinely isn't fixed.** Prefer `toHaveText(...)`
    over `toContainText(...)`, and `getByText(..., { exact: true })` over a substring match;
    assert an element's full text via its testid rather than a fragment. For a genuinely dynamic
    value (order number, today's date, stock count) use an anchored regex
    (`toHaveText(/^Order #\d+$/)`) or compute the expected value — don't loosen the match.
-8. **Every `test.describe(...)` has a `{ tag: '@xxx' }`** matching its domain (`@auth`,
+9. **Every `test.describe(...)` has a `{ tag: '@xxx' }`** matching its domain (`@auth`,
    `@product`, `@cart`, `@checkout`).
-9. **`test.describe.configure({ mode: 'serial' })`** whenever tests depend on state left by
-   earlier tests in the file. When that state lives in one browser context (the cart, an auth
-   session), the suite also shares a single `page` created in
-   `test.beforeAll(async ({ browser }) => { page = await browser.newPage(); })` and closed in
-   `test.afterAll` — see `cart.spec.ts` and `checkout-error.spec.ts`.
-10. **Every click is followed by a deterministic wait** — `await page.waitForLoadState('networkidle')`,
+10. **`test.describe.configure({ mode: 'serial' })`** whenever tests depend on state left by
+    earlier tests in the file. When that state lives in one browser context (the cart, an auth
+    session), the suite also shares a single `page` created in
+    `test.beforeAll(async ({ browser }) => { page = await browser.newPage(); })` and closed in
+    `test.afterAll` — see `cart.spec.ts` and `checkout-error.spec.ts`.
+11. **Every click is followed by a deterministic wait** — `await page.waitForLoadState('networkidle')`,
     a specific locator/state (`getByTestId('...').waitFor()`, `expect(...).toBeVisible()`), or
     `await page.waitForResponse(...)` for a click that fires an API call (armed **before** the
     click). **Never `page.waitForTimeout(...)` or any hardcoded sleep.**
-11. **Cart and order mutations confirm the server round-trip.** `/api/cart/items` and
+12. **Cart and order mutations confirm the server round-trip.** `/api/cart/items` and
     `/api/orders` calls are confirmed with `page.waitForResponse(...)` armed before the click —
     the app reloads cart/order state from the server, so navigating before the request settles
     loses the change. See `mutateCart` in `order/cart/cart.actions.ts`. There is no
     click-and-retry helper.
-12. **Test titles read as `'validate user can/cannot <do something>'`**, matching the rest of
+13. **Test titles read as `'validate user can/cannot <do something>'`**, matching the rest of
     the suite.
-13. **Base URL comes from `tests/functional/config/environments.ts`; credentials from the
+14. **Base URL comes from `tests/functional/config/environments.ts`; credentials from the
     module's own `<name>.data.ts` via `requireEnv(...)`** (e.g. `auth/auth.data.ts`) — never a
     hardcoded URL, username, or password in a test.
 
