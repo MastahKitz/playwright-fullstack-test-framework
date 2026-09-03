@@ -14,6 +14,7 @@ function expectedProductBody(expected: ExpectedProduct) {
     slug: expected.slug,
     description: expected.description,
     price: expected.price,
+    // exact count drifts run-to-run; the 0-vs-positive check is assertStockCount.
     stock: expect.any(Number),
     imageKey: expected.imageKey,
     imageUrl: expected.imageUrl,
@@ -21,6 +22,14 @@ function expectedProductBody(expected: ExpectedProduct) {
     createdAt: expect.stringMatching(TIMESTAMP),
     updatedAt: expect.stringMatching(TIMESTAMP),
   };
+}
+
+function assertStockCount(stock: number | undefined, expected: ExpectedProduct) {
+  if (expected.inStock) {
+    expect.soft(stock, `"${expected.name}" should be in stock`).toBeGreaterThan(0);
+  } else {
+    expect.soft(stock, `"${expected.name}" should be out of stock`).toBe(0);
+  }
 }
 
 export async function assertProductListSuccess(response: APIResponse) {
@@ -38,6 +47,7 @@ export async function assertProductInList(response: APIResponse, expected: Expec
   const product = body.data.find((item) => item.name === expected.name);
   expect.soft(product, `product "${expected.name}" should be in the list`).toBeDefined();
   assertResponseBody(product ?? {}, expectedProductBody(expected), { exact: true });
+  assertStockCount(product?.stock, expected);
 }
 
 export async function assertProductDetailsSuccess(response: APIResponse, expected: ExpectedProduct) {
@@ -47,4 +57,5 @@ export async function assertProductDetailsSuccess(response: APIResponse, expecte
     success: true,
     data: expectedProductBody(expected),
   }, { exact: true });
+  assertStockCount(body.data.stock, expected);
 }

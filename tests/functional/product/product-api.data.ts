@@ -32,8 +32,10 @@ export interface ProductData {
   updatedAt: string;
 }
 
-// removed dynamic fields
-export type ExpectedProduct = Omit<ProductData, 'stock' | 'createdAt' | 'updatedAt'>;
+// removed dynamic fields and added inStock for asserting in-stock vs out-of-stock without relying on the exact stock count
+export type ExpectedProduct = Omit<ProductData, 'stock' | 'createdAt' | 'updatedAt'> & {
+  inStock: boolean;
+};
 
 export const fitnessTracker: ExpectedProduct = {
   id: 5,
@@ -44,6 +46,7 @@ export const fitnessTracker: ExpectedProduct = {
   imageKey: 'products/fitness_tracker.jpg',
   imageUrl: '/api/images/products/fitness_tracker.jpg',
   isActive: true,
+  inStock: fitnessTrackerUi.inStock,
 };
 
 export const laptopBackpack: ExpectedProduct = {
@@ -55,6 +58,7 @@ export const laptopBackpack: ExpectedProduct = {
   imageKey: 'products/laptop_backpack.jpg',
   imageUrl: '/api/images/products/laptop_backpack.jpg',
   isActive: true,
+  inStock: laptopBackpackUi.inStock,
 };
 
 export const snoopyOfficeMug: ExpectedProduct = {
@@ -66,4 +70,5 @@ export const snoopyOfficeMug: ExpectedProduct = {
   imageKey: 'products/1787901873172-56e70ccf.jpg',
   imageUrl: '/api/images/products/1787901873172-56e70ccf.jpg',
   isActive: true,
+  inStock: snoopyOfficeMugUi.inStock,
 };
