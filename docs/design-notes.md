@@ -49,9 +49,9 @@ anything `GET`/`POST` and the existing `beforeAll`/`afterAll` fixtures don't.
 Both were built up as candidates and declined.
 
 ### Custom ESLint convention rules
-The AI PR-review workflow enforces the [coding conventions](../README.md#coding-conventions)
-in context — it can weigh "is this the right abstraction" where a lint rule
-only sees syntax. A parallel ESLint ruleset would be upkeep for partial overlap.
+The AI PR-review workflow enforces the [conventions](conventions.md) in context
+— it can weigh "is this the right abstraction" where a lint rule only sees
+syntax. A parallel ESLint ruleset would be upkeep for partial overlap.
 
 ### Accessibility — axe-core
 A separate discipline. Adding a few `axe` scans would dilute the framework's
