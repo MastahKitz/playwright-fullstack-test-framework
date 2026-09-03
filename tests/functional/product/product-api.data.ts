@@ -3,6 +3,7 @@ import {
   laptopBackpack as laptopBackpackUi,
   snoopyOfficeMug as snoopyOfficeMugUi,
 } from './product.data';
+import { parsePrice } from '../utils/data.utils';
 
 export interface ProductListResponseBody {
   success: boolean;
@@ -34,7 +35,7 @@ export const fitnessTracker: ExpectedProduct = {
   name: fitnessTrackerUi.name,
   slug: 'fitness-tracker',
   description: fitnessTrackerUi.description,
-  price: 89.99,
+  price: parsePrice(fitnessTrackerUi.price),
   imageKey: 'products/fitness_tracker.jpg',
   imageUrl: '/api/images/products/fitness_tracker.jpg',
   isActive: true,
@@ -45,7 +46,7 @@ export const laptopBackpack: ExpectedProduct = {
   name: laptopBackpackUi.name,
   slug: 'laptop-backpack',
   description: laptopBackpackUi.description,
-  price: 49.99,
+  price: parsePrice(laptopBackpackUi.price),
   imageKey: 'products/laptop_backpack.jpg',
   imageUrl: '/api/images/products/laptop_backpack.jpg',
   isActive: true,
@@ -56,7 +57,7 @@ export const snoopyOfficeMug: ExpectedProduct = {
   name: snoopyOfficeMugUi.name,
   slug: 'snoopy-office-mug',
   description: snoopyOfficeMugUi.description,
-  price: 10,
+  price: parsePrice(snoopyOfficeMugUi.price),
   imageKey: 'products/1787901873172-56e70ccf.jpg',
   imageUrl: '/api/images/products/1787901873172-56e70ccf.jpg',
   isActive: true,
