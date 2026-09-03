@@ -18,6 +18,14 @@ export interface ProductDetailsResponseBody {
   data: ProductData;
 }
 
+export interface ProductErrorResponseBody {
+  success: boolean;
+  error: {
+    code: string;
+    message: string;
+  };
+}
+
 export interface ProductData {
   id: number;
   name: string;

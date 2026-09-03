@@ -1,6 +1,6 @@
 import { APIResponse, expect } from '@playwright/test';
 import { assertResponseStatus, assertResponseBody } from '../utils/api.utils';
-import { ProductListResponseBody, ProductDetailsResponseBody, ExpectedProduct } from './product-api.data';
+import { ProductListResponseBody, ProductDetailsResponseBody, ProductErrorResponseBody, ExpectedProduct } from './product-api.data';
 import { TOTAL_PRODUCTS_COUNT } from './product.data';
 
 // "YYYY-MM-DD HH:MM:SS" — the shape the API returns for createdAt/updatedAt.
@@ -58,4 +58,13 @@ export async function assertProductDetailsSuccess(response: APIResponse, expecte
     data: expectedProductBody(expected),
   }, { exact: true });
   assertStockCount(body.data.stock, expected);
+}
+
+export async function assertProductNotFoundError(response: APIResponse) {
+  assertResponseStatus(response, 404);
+  const body: ProductErrorResponseBody = await response.json();
+  assertResponseBody(body, {
+    success: false,
+    error: { code: 'NOT_FOUND', message: 'Product not found' },
+  }, { exact: true });
 }
