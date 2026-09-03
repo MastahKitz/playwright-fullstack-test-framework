@@ -35,10 +35,12 @@ function assertStockCount(stock: number | undefined, expected: ExpectedProduct) 
 export async function assertProductListSuccess(response: APIResponse) {
   assertResponseStatus(response, 200);
   const body: ProductListResponseBody = await response.json();
+  // KNOWN-FAILURE(#32): TOTAL_PRODUCTS_COUNT (22) is stale — live catalog currently has 20 products — retriage if this changes
   assertResponseBody(body, {
     success: true,
     meta: { total: TOTAL_PRODUCTS_COUNT },
   }, { exact: false });
+  // KNOWN-FAILURE(#32): TOTAL_PRODUCTS_COUNT (22) is stale — live catalog currently has 20 products — retriage if this changes
   expect.soft(body.data).toHaveLength(TOTAL_PRODUCTS_COUNT);
 }
 

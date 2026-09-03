@@ -5,6 +5,7 @@ export async function assertProductListPage(page: Page, totalCount: number) {
   // header
   await expect.soft(page.getByTestId('catalog-heading')).toHaveText('Product Catalog');
   // sub-header
+  // KNOWN-FAILURE(#33): TOTAL_PRODUCTS_COUNT (22) is stale — live catalog currently has 20 products — retriage if this changes
   await expect.soft(page.getByTestId('catalog-product-count')).toHaveText(`Browse our complete selection of ${totalCount} products`);
 }
 
