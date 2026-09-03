@@ -1,9 +1,11 @@
 # playwright-fullstack-test-framework
 
 Playwright test automation for the [QA Demo](https://qademo.com) storefront — a React app
-backed by a JSON REST API (`/api/*`). The suite covers both the web UI and, starting with auth
-(`tests/functional/auth/auth-api.*`), the API layer directly — more domains' API coverage is
-coming next.
+backed by a JSON REST API (`/api/*`). The suite covers both the web UI and the API layer
+directly (the `*-api.*` specs), across the auth and product domains.
+
+What's deliberately *not* in the framework, and why — plus a few non-obvious calls — is written
+up in [docs/design-notes.md](docs/design-notes.md).
 
 ## Getting started
 
@@ -80,99 +82,20 @@ shared Playwright-touching primitives (sending a request, asserting a response) 
 `utils/data.utils.ts` holds `parsePrice`/`formatPrice`, used by both `order/cart` and
 `order/checkout`. `utils/api.utils.ts` holds the primitives every domain's API layer builds on:
 `sendApiRequest` (wraps `request.fetch(...)`), `assertResponseStatus`, and `assertResponseBody`
-(see rule 8 below for its exact-vs-partial matching).
+(see [convention 8](docs/conventions.md) for its exact-vs-partial matching).
 
 ## Coding conventions
 
-Enforced on every PR by the [PR review workflow](#pr-review-against-conventions) — treat this
-list as the source of truth rather than any one existing file.
+The suite follows a strict per-feature file split (`.actions` / `.assertions` / `.data` /
+`.flow` / `.spec`, with `-api` variants for the API layer) plus 14 numbered rules covering
+locators, soft assertions, exact-vs-dynamic matching, tagging, serial-mode state, deterministic
+waits, and naming.
 
-1. **File split per feature** — separate concerns into `<name>.actions.ts` /
-   `<name>.assertions.ts` / `<name>.data.ts` / `<name>.flow.ts` / `<name>.spec.ts` as described
-   under [Test structure](#test-structure). Domains keep files flat; add a `<feature>/`
-   subfolder only for independently-testable sub-features. Dumping locators or assertions
-   straight into a `.spec.ts` or `.flow.ts` breaks the split. A domain's API-layer tests get
-   their own `-api`-suffixed file set in the same domain folder (`auth-api.actions.ts` next to
-   `auth.actions.ts`, etc.) — same split, same conventions, just swapping `page.*` interactions
-   for `request.fetch(...)` calls via `api.utils.ts`.
-2. **`.spec.ts` files contain no raw `page.*` calls and no raw `expect(...)`.** They call
-   flow/assertion helpers; calling a single named action directly is fine when there's no
-   multi-step journey to name (the suite does this with `openHomePage`, `clickViewCartButton`).
-   A new interaction or check belongs in `.actions.ts` / `.assertions.ts`, never inline.
-3. **`.flow.ts` functions compose two or more actions/flows.** A flow that just forwards to one
-   action is pointless indirection — delete it and call the action directly.
-4. **`.data.ts` holds every typed data-shape declaration** — interfaces/types for input fixtures
-   and expected/response structures alike, regardless of whether it's used as input or as an
-   expected value (`CartData`, `CheckoutFormData`, `LoginResponseBody`/`ExpectedLoginUser`, ...).
-   Only the literal expected values the app produces — error messages, headings, status text —
-   are exempt: those live in `.assertions.ts` as a named assertion function, one per message (see
-   `auth.assertions.ts`, `checkout.assertions.ts`). A type/interface declared inside a
-   `.assertions.ts` file is a smell, same as a hardcoded error string in `.data.ts`. A negative
-   test that only overrides one or two fields of an existing fixture doesn't get a new named
-   fixture either — spread the base fixture and override inline at the call site, the way
-   `checkout-error.spec.ts` and `auth-api-error.spec.ts` do it (e.g.
-   `{ ...standardUserLoginBody, password: '' }`). A dedicated fixture per field doesn't scale —
-   a 30-field form testing every required field would otherwise clutter `.data.ts` with one
-   fixture per field.
-5. **Reusable utility functions live in `tests/functional/utils/<name>.utils.ts`, not
-   duplicated per feature.** A helper needed by more than one feature — a pure function (parsing,
-   formatting, date math) or a shared Playwright-touching primitive (sending a request, asserting
-   a response) alike — belongs in a shared `.utils.ts` file under `tests/functional/utils/` and
-   gets imported, not copy-pasted. `utils/data.utils.ts` holds `parsePrice`/`formatPrice`,
-   imported by both `cart.assertions.ts` and `checkout.assertions.ts`. `utils/api.utils.ts` holds
-   the API-layer primitives every domain's API tests build on — `sendApiRequest`,
-   `assertResponseStatus`, `assertResponseBody` — so a domain's `.actions.ts` calls
-   `sendApiRequest` rather than `request.fetch(...)` directly, and its `.assertions.ts` builds
-   named assertions on top of `assertResponseStatus`/`assertResponseBody` rather than
-   reimplementing status/body checks inline. Copy-pasting the same function into two feature
-   files instead of sharing it is a duplication bug, not a style nit.
-6. **Locators are testid-first.** `getByTestId(...)` (including regex testids like
-   `getByTestId(/^cart-item-\d+$/)`) for element identity — clicks, scoping, reading a field's
-   value. Fall back to `getByRole` / `getByLabel` only where there's no testid (e.g. the login
-   form inputs). Keep `getByRole` / `getByText` where the *visible semantics* are what's under
-   test — a user-facing error message, an accessible name, a heading level. Raw CSS/XPath only
-   when there's genuinely no testid and no meaningful role (e.g. `.locator('xpath=../..')` to a
-   parent row), with a short comment.
-7. **Assertions use `expect.soft(...)`**, not bare `expect(...)`, inside `.assertions.ts` files,
-   so one run surfaces every failing check instead of stopping at the first.
-8. **Assertions match exactly unless the value genuinely isn't fixed.** Prefer `toHaveText(...)`
-   over `toContainText(...)`, and `getByText(..., { exact: true })` over a substring match;
-   assert an element's full text via its testid rather than a fragment. For a genuinely dynamic
-   value (order number, today's date, stock count) use an anchored regex
-   (`toHaveText(/^Order #\d+$/)`) or compute the expected value — don't loosen the match. The
-   same principle applies to API response bodies: `assertResponseBody(actual, expected, options)`
-   (`utils/api.utils.ts`) defaults to a partial match (`toMatchObject`) so unlisted fields aren't
-   a problem, but pass `{ exact: true }` once the full response shape is known, so an unexpected
-   extra field gets caught (see `assertLoginSuccess` in `auth-api.assertions.ts`). For a field
-   that's genuinely dynamic every run — a JWT, a generated id — mix an asymmetric matcher like
-   `expect.stringMatching(/regex/)` into the same `expected` object alongside the exact fields,
-   the same way an anchored regex handles a dynamic value in the UI; don't drop to a full partial
-   match just because one field is dynamic.
-9. **Every `test.describe(...)` has a `{ tag: '@xxx' }`** matching its domain (`@auth`,
-   `@product`, `@cart`, `@checkout`). API-layer specs carry a second `@api` tag alongside their
-   domain tag — e.g. `{ tag: ['@auth', '@api'] }` in `auth-api.spec.ts` — so the API suite can be
-   run or filtered independently of the UI suite.
-10. **`test.describe.configure({ mode: 'serial' })`** whenever tests depend on state left by
-    earlier tests in the file. When that state lives in one browser context (the cart, an auth
-    session), the suite also shares a single `page` created in
-    `test.beforeAll(async ({ browser }) => { page = await browser.newPage(); })` and closed in
-    `test.afterAll` — see `cart.spec.ts` and `checkout-error.spec.ts`.
-11. **Every click is followed by a deterministic wait** — `await page.waitForLoadState('networkidle')`,
-    a specific locator/state (`getByTestId('...').waitFor()`, `expect(...).toBeVisible()`), or
-    `await page.waitForResponse(...)` for a click that fires an API call (armed **before** the
-    click). **Never `page.waitForTimeout(...)` or any hardcoded sleep.**
-12. **Cart and order mutations confirm the server round-trip.** `/api/cart/items` and
-    `/api/orders` calls are confirmed with `page.waitForResponse(...)` armed before the click —
-    the app reloads cart/order state from the server, so navigating before the request settles
-    loses the change. See `mutateCart` in `order/cart/cart.actions.ts`. There is no
-    click-and-retry helper.
-13. **Test titles read as `'validate user can/cannot <do something>'`**, matching the rest of
-    the suite.
-14. **Base URL comes from `tests/functional/config/environments.ts`; credentials from the
-    module's own `<name>.data.ts` via `requireEnv(...)`** (e.g. `auth/auth.data.ts`) — never a
-    hardcoded URL, username, or password in a test.
+The full list is in **[docs/conventions.md](docs/conventions.md)** — the single source of truth,
+enforced on every PR by the [review workflow](#pr-review-against-conventions), which cites
+violations by number.
 
-Tests are commonly drafted with AI pair-programming assistance — the PR review workflow is what
+Tests are commonly drafted with AI pair-programming assistance — that review workflow is what
 keeps AI-authored and human-authored changes alike to these conventions, rather than trusting
 the drafting process itself.
 
@@ -180,12 +103,34 @@ the drafting process itself.
 
 Besides the tests themselves, this repo automates the process around them.
 
+```mermaid
+flowchart TD
+    PR["Pull request — touches tests/**"]
+    Review["qa-pr-review.yml<br/>Claude reviews vs. conventions"]
+    Main["push to main"]
+    Run["playwright.yml<br/>full suite vs. live storefront"]
+    Dash["Dashboard on GitHub Pages<br/>last 5 runs + trend chart"]
+    Triage["qa-results-analysis.yml<br/>Claude triages screenshots + video"]
+    Issue["GitHub issue per new failure<br/>bug / script / infra / inconclusive"]
+    Marker["KNOWN-FAILURE marker PR<br/>review bot skips it"]
+
+    PR --> Review
+    Review -->|inline comments| PR
+    PR -->|merge| Main
+    Main --> Run
+    Run --> Dash
+    Run -->|failure or flaky| Triage
+    Triage --> Issue
+    Triage --> Marker
+    Marker -->|merge| Main
+```
+
 ### PR review against conventions
 
 `.github/workflows/qa-pr-review.yml` — on every PR that touches `tests/**` or
-`playwright.config.ts`, Claude reviews the diff against the conventions above (prompt:
-[`qa-pr-review.md`](.github/prompts/qa-pr-review.md)) and posts inline PR comments citing the
-specific convention violated, with a fix in the repo's existing style. If nothing violates a
+`playwright.config.ts`, Claude reviews the diff against [docs/conventions.md](docs/conventions.md)
+(prompt: [`qa-pr-review.md`](.github/prompts/qa-pr-review.md)) and posts inline PR comments citing
+the specific convention violated, with a fix in the repo's existing style. If nothing violates a
 convention, it says so instead of manufacturing nitpicks. PRs opened by bots (the marker PRs
 below) are skipped.
 

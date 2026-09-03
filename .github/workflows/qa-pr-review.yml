@@ -26,10 +26,17 @@ jobs:
           fetch-depth: 1
 
       - name: Load review prompt
+        # The prompt references docs/conventions.md as the source of truth; inline it
+        # here so the conventions are guaranteed to be in context, not just fetchable.
         run: |
           {
             echo 'PR_REVIEW_PROMPT<<PROMPT_EOF'
             cat .github/prompts/qa-pr-review.md
+            echo
+            echo '---'
+            echo '# docs/conventions.md'
+            echo
+            cat docs/conventions.md
             echo PROMPT_EOF
           } >> "$GITHUB_ENV"
 
