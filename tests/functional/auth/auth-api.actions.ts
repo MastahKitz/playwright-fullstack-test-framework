@@ -15,3 +15,11 @@ export async function captureAccessToken(response: APIResponse): Promise<string>
   const body: LoginResponseBody = await response.json();
   return body.data.accessToken;
 }
+
+export async function sendLogoutRequest(request: APIRequestContext, accessToken: string) {
+  return sendApiRequest(request, {
+    method: 'POST',
+    url: '/api/auth/logout',
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}

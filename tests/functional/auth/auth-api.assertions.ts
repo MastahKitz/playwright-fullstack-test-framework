@@ -1,6 +1,6 @@
 import { APIResponse, expect } from '@playwright/test';
 import { assertResponseStatus, assertResponseBody } from '../utils/api.utils';
-import { LoginResponseBody, ExpectedLoginUser, AuthErrorResponseBody, ValidationErrorResponseBody } from './auth-api.data';
+import { LoginResponseBody, LogoutResponseBody, ExpectedLoginUser, AuthErrorResponseBody, ValidationErrorResponseBody } from './auth-api.data';
 
 export async function assertLoginSuccess(response: APIResponse, expectedUser: ExpectedLoginUser) {
   assertResponseStatus(response, 200);
@@ -12,6 +12,15 @@ export async function assertLoginSuccess(response: APIResponse, expectedUser: Ex
       accessToken: expect.stringMatching(/^[\w-]+\.[\w-]+\.[\w-]+$/),
       user: expectedUser,
     },
+  }, { exact: true });
+}
+
+export async function assertLogoutSuccess(response: APIResponse) {
+  assertResponseStatus(response, 200);
+  const body: LogoutResponseBody = await response.json();
+  assertResponseBody(body, {
+    success: true,
+    data: { message: 'Logged out successfully' },
   }, { exact: true });
 }
 
