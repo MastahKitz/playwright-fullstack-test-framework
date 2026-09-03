@@ -1,9 +1,11 @@
 # playwright-fullstack-test-framework
 
 Playwright test automation for the [QA Demo](https://qademo.com) storefront — a React app
-backed by a JSON REST API (`/api/*`). The suite covers both the web UI and, starting with auth
-(`tests/functional/auth/auth-api.*`), the API layer directly — more domains' API coverage is
-coming next.
+backed by a JSON REST API (`/api/*`). The suite covers both the web UI and the API layer
+directly (the `*-api.*` specs), across the auth and product domains.
+
+What's deliberately *not* in the framework, and why — plus a few non-obvious calls — is written
+up in [docs/design-notes.md](docs/design-notes.md).
 
 ## Getting started
 
@@ -179,6 +181,28 @@ the drafting process itself.
 ## Automated workflow
 
 Besides the tests themselves, this repo automates the process around them.
+
+```mermaid
+flowchart TD
+    PR["Pull request — touches tests/**"]
+    Review["qa-pr-review.yml<br/>Claude reviews vs. conventions"]
+    Main["push to main"]
+    Run["playwright.yml<br/>full suite vs. live storefront"]
+    Dash["Dashboard on GitHub Pages<br/>last 5 runs + trend chart"]
+    Triage["qa-results-analysis.yml<br/>Claude triages screenshots + video"]
+    Issue["GitHub issue per new failure<br/>bug / script / infra / inconclusive"]
+    Marker["KNOWN-FAILURE marker PR<br/>review bot skips it"]
+
+    PR --> Review
+    Review -->|inline comments| PR
+    PR -->|merge| Main
+    Main --> Run
+    Run --> Dash
+    Run -->|failure or flaky| Triage
+    Triage --> Issue
+    Triage --> Marker
+    Marker -->|merge| Main
+```
 
 ### PR review against conventions
 
