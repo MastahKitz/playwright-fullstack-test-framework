@@ -34,6 +34,13 @@ export interface LoginResponseBody {
 
 export type ExpectedLoginUser = LoginResponseBody['data']['user'];
 
+export interface LogoutResponseBody {
+  success: boolean;
+  data: {
+    message: string;
+  };
+}
+
 export interface AuthErrorResponseBody {
   success: boolean;
   error: {
