@@ -7,3 +7,10 @@ export async function sendProductListRequest(request: APIRequestContext) {
     url: '/api/products',
   });
 }
+
+export async function sendProductDetailsRequest(request: APIRequestContext, slug: string) {
+  return sendApiRequest(request, {
+    method: 'GET',
+    url: `/api/products/${slug}`,
+  });
+}

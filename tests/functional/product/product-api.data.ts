@@ -13,6 +13,11 @@ export interface ProductListResponseBody {
   };
 }
 
+export interface ProductDetailsResponseBody {
+  success: boolean;
+  data: ProductData;
+}
+
 export interface ProductData {
   id: number;
   name: string;
