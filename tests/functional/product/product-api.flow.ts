@@ -31,6 +31,7 @@ export async function deleteProduct(
 
 export async function assertProductExists(request: APIRequestContext, expected: ExpectedProduct) {
   const listResponse = await sendProductListRequest(request);
+  assertResponseStatus(listResponse, 200);
   await assertProductInList(listResponse, expected);
   const detailsResponse = await sendProductDetailsRequest(request, expected.slug);
   await assertProductDetailsSuccess(detailsResponse, expected);
