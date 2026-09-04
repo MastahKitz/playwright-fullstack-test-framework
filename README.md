@@ -87,9 +87,9 @@ shared Playwright-touching primitives (sending a request, asserting a response) 
 ## Coding conventions
 
 The suite follows a strict per-feature file split (`.actions` / `.assertions` / `.data` /
-`.flow` / `.spec`, with `-api` variants for the API layer) plus 14 numbered rules covering
+`.flow` / `.spec`, with `-api` variants for the API layer) plus a set of numbered rules covering
 locators, soft assertions, exact-vs-dynamic matching, tagging, serial-mode state, deterministic
-waits, and naming.
+waits, arrange/cleanup assertion scope, and naming.
 
 The full list is in **[docs/conventions.md](docs/conventions.md)** — the single source of truth,
 enforced on every PR by the [review workflow](#pr-review-against-conventions), which cites

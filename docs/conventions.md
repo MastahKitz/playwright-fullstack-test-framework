@@ -115,3 +115,13 @@ elsewhere in the repo.
 14. **Base URL comes from `tests/functional/config/environments.ts`; credentials come from the
     module's own `<name>.data.ts` via `requireEnv(...)`** (e.g. `auth/auth.data.ts`) — never a
     hardcoded URL, username, or password in a test.
+
+15. **Arrange / cleanup asserts status only; the owning spec asserts the body.** When a test sets
+    up or tears down state by calling a write endpoint it isn't there to test — logging in to get
+    a token, creating a product to exercise delete, deleting the created product in `afterEach` —
+    that call is confirmed with `assertResponseStatus(...)` alone, wrapped in a thin `.flow.ts`
+    helper (`generateAccessToken`, and `createProduct` / `deleteProduct` = `send…Request` +
+    assert status). The full `{ exact: true }` response-body assertion (`assertLoginSuccess`,
+    `assertProductCreateSuccess`, `assertProductDeleteSuccess`) belongs only in the `.spec.ts`
+    that owns that operation. Re-asserting the body at the arrange / cleanup site is the
+    redundancy rule 3 guards against, one layer up.
