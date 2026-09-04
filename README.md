@@ -55,7 +55,7 @@ Tests live under `tests/functional/<domain>/[<feature>/]`, split by concern:
 | `<name>.actions.ts` | Raw Playwright interactions/locators |
 | `<name>.assertions.ts` | Checks, written with `expect.soft(...)` |
 | `<name>.data.ts` | Typed **input** fixtures (form values, product data) |
-| `<name>.flow.ts` | Multi-step flows composed from 2+ actions |
+| `<name>.flow.ts` | Multi-step flows composed from 2+ steps — actions, assertions, other flows (may mix) |
 | `<name>.spec.ts` | Test cases — call flow/assertion helpers (a single named action is fine too), no raw `page.*` / `expect(...)` |
 
 Domain folders (`auth`, `product`) keep their files flat. Add a `<feature>/` subfolder only
@@ -89,7 +89,7 @@ shared Playwright-touching primitives (sending a request, asserting a response) 
 The suite follows a strict per-feature file split (`.actions` / `.assertions` / `.data` /
 `.flow` / `.spec`, with `-api` variants for the API layer) plus a set of numbered rules covering
 locators, soft assertions, exact-vs-dynamic matching, tagging, serial-mode state, deterministic
-waits, arrange/cleanup assertion scope, and naming.
+waits, flow assertion scope (status always, body when verifying), and naming.
 
 The full list is in **[docs/conventions.md](docs/conventions.md)** — the single source of truth,
 enforced on every PR by the [review workflow](#pr-review-against-conventions), which cites
