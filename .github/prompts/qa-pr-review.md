@@ -13,7 +13,7 @@ don't invent rules that aren't actually followed elsewhere in the repo).
 ## Conventions to check
 
 The conventions are maintained in [`docs/conventions.md`](../../docs/conventions.md) — **read
-that file first**, then check the changed test code against its 14 numbered rules. It is the
+that file first**, then check the changed test code against every numbered rule in it. It is the
 single source of truth; don't flag anything that isn't in it, and refer to each rule by its
 number.
 
