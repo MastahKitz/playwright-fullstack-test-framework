@@ -7,7 +7,12 @@ import {
   sendProductDeleteRequest,
   captureCreatedProductRefs,
 } from './product-api.actions';
-import { assertProductInList, assertProductDetailsSuccess } from './product-api.assertions';
+import {
+  assertProductInList,
+  assertProductNotInList,
+  assertProductDetailsSuccess,
+  assertProductNotFoundError,
+} from './product-api.assertions';
 import { ProductCreateRequestBody, CreatedProductRefs, ExpectedProduct } from './product-api.data';
 
 export async function createProduct(
@@ -35,4 +40,12 @@ export async function assertProductExists(request: APIRequestContext, expected: 
   await assertProductInList(listResponse, expected);
   const detailsResponse = await sendProductDetailsRequest(request, expected.slug);
   await assertProductDetailsSuccess(detailsResponse, expected);
+}
+
+export async function assertProductNotExists(request: APIRequestContext, slug: string) {
+  const listResponse = await sendProductListRequest(request);
+  assertResponseStatus(listResponse, 200);
+  await assertProductNotInList(listResponse, slug);
+  const detailsResponse = await sendProductDetailsRequest(request, slug);
+  await assertProductNotFoundError(detailsResponse);
 }

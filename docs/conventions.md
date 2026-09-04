@@ -158,3 +158,11 @@ elsewhere in the repo.
 
     Test data that lands in the real system carries a recognizable literal prefix (`Sample - …`)
     so a leaked row is obvious at a glance.
+
+17. **An authenticated API spec logs in once per file, in `beforeAll`.** The token lives in a
+    `describe`-scoped `let`, minted by `generateAccessTokenInHook(playwright, …)` — the `request`
+    fixture isn't available in `beforeAll`, so the helper spins up its own throwaway context. A
+    50-test spec then logs in once, not 50 times, which matters on a demo box that drops requests
+    under load. `afterEach` cleanup and the tests themselves read that same `let`. Reach for
+    `beforeEach` only if a test in the file deliberately invalidates the token (a logout case) —
+    and give that its own `describe`.

@@ -89,7 +89,8 @@ shared Playwright-touching primitives (sending a request, asserting a response) 
 The suite follows a strict per-feature file split (`.actions` / `.assertions` / `.data` /
 `.flow` / `.spec`, with `-api` variants for the API layer) plus a set of numbered rules covering
 locators, soft assertions, exact-vs-dynamic matching, tagging, serial-mode state, deterministic
-waits, flow assertion scope (status always, body when verifying), and naming.
+waits, flow assertion scope (status always, body when verifying), once-per-file API auth, and
+naming.
 
 The full list is in **[docs/conventions.md](docs/conventions.md)** — the single source of truth,
 enforced on every PR by the [review workflow](#pr-review-against-conventions), which cites

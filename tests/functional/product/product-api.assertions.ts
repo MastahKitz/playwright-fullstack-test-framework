@@ -59,6 +59,12 @@ export async function assertProductInList(response: APIResponse, expected: Expec
   assertStockCount(product?.stock, expected);
 }
 
+export async function assertProductNotInList(response: APIResponse, slug: string) {
+  const body: ProductListResponseBody = await response.json();
+  const product = body.data.find((item) => item.slug === slug);
+  expect.soft(product, `product "${slug}" should not be in the list`).toBeUndefined();
+}
+
 export async function assertProductDetailsSuccess(response: APIResponse, expected: ExpectedProduct) {
   assertResponseStatus(response, 200);
   const body: ProductDetailsResponseBody = await response.json();
@@ -78,14 +84,17 @@ export async function assertProductNotFoundError(response: APIResponse) {
   }, { exact: true });
 }
 
-export async function assertProductCreateSuccess(response: APIResponse, sent: ProductCreateRequestBody) {
+export async function assertProductCreateSuccess(
+  response: APIResponse,
+  productCreateRequestBody: ProductCreateRequestBody,
+) {
   assertResponseStatus(response, 201);
   const body: ProductCreateResponseBody = await response.json();
   assertResponseBody(body, {
     success: true,
     data: {
       id: expect.any(Number),
-      slug: expectedSlug(sent.name),
+      slug: expectedSlug(productCreateRequestBody.name),
     },
   }, { exact: true });
 }
