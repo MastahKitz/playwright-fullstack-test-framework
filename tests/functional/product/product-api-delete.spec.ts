@@ -7,7 +7,7 @@ import { assertProductDeleteSuccess } from './product-api.assertions';
 import { createProduct, assertProductNotExists } from './product-api.flow';
 import { sampleProductCreateBody } from './product-api.data';
 
-test.describe('product delete api', { tag: ['@product', '@api', '@mutating'] }, () => {
+test.describe('product delete api', { tag: ['@product', '@api'] }, () => {
   let accessToken: string;
 
   test.beforeAll(async ({ playwright }) => {
