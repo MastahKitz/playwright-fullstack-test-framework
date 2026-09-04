@@ -160,9 +160,15 @@ elsewhere in the repo.
     so a leaked row is obvious at a glance.
 
 17. **An authenticated API spec logs in once per file, in `beforeAll`.** The token lives in a
-    `describe`-scoped `let`, minted by `generateAccessTokenInHook(playwright, …)` — the `request`
-    fixture isn't available in `beforeAll`, so the helper spins up its own throwaway context. A
+    `describe`-scoped `let`, minted with `withHookRequestContext(playwright, (request) =>
+    generateAccessToken(request, …))` — the `request` fixture isn't available in `beforeAll`, so
+    `withHookRequestContext` spins up a throwaway context for the call and disposes it after. A
     50-test spec then logs in once, not 50 times, which matters on a demo box that drops requests
     under load. `afterEach` cleanup and the tests themselves read that same `let`. Reach for
     `beforeEach` only if a test in the file deliberately invalidates the token (a logout case) —
     and give that its own `describe`.
+
+    `withHookRequestContext` is generic, not auth-specific — any flow function (`createProduct`,
+    `deleteProduct`, …) can run in `beforeAll`/`afterAll` the same way, composed inline at the call
+    site. There's no `*InHook` twin to write or maintain per flow function; the flow function itself
+    stays the single source of truth, and hook-vs-per-test is just how it's called.

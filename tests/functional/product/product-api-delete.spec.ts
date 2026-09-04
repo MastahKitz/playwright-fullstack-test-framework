@@ -1,5 +1,6 @@
 import { test } from '@playwright/test';
-import { generateAccessTokenInHook } from '../auth/auth-api.flow';
+import { withHookRequestContext } from '../utils/api.utils';
+import { generateAccessToken } from '../auth/auth-api.flow';
 import { adminUserLoginBody } from '../auth/auth-api.data';
 import { sendProductDeleteRequest } from './product-api.actions';
 import { assertProductDeleteSuccess } from './product-api.assertions';
@@ -10,7 +11,9 @@ test.describe('product delete api', { tag: ['@product', '@api', '@mutating'] }, 
   let accessToken: string;
 
   test.beforeAll(async ({ playwright }) => {
-    accessToken = await generateAccessTokenInHook(playwright, adminUserLoginBody);
+    accessToken = await withHookRequestContext(playwright, (request) =>
+      generateAccessToken(request, adminUserLoginBody),
+    );
   });
 
   test('validate admin can delete a product', async ({ request }) => {

@@ -1,5 +1,6 @@
 import { test } from '@playwright/test';
-import { generateAccessTokenInHook } from '../auth/auth-api.flow';
+import { withHookRequestContext } from '../utils/api.utils';
+import { generateAccessToken } from '../auth/auth-api.flow';
 import { adminUserLoginBody } from '../auth/auth-api.data';
 import { sendProductCreateRequest, captureCreatedProductRefs } from './product-api.actions';
 import { assertProductCreateSuccess } from './product-api.assertions';
@@ -12,7 +13,9 @@ test.describe('product create api', { tag: ['@product', '@api', '@mutating'] }, 
   let createdProductRefs: CreatedProductRefs | undefined;
 
   test.beforeAll(async ({ playwright }) => {
-    accessToken = await generateAccessTokenInHook(playwright, adminUserLoginBody);
+    accessToken = await withHookRequestContext(playwright, (request) =>
+      generateAccessToken(request, adminUserLoginBody),
+    );
   });
 
   test.afterEach(async ({ request }) => {
