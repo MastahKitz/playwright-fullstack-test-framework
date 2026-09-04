@@ -125,3 +125,26 @@ elsewhere in the repo.
     `assertProductCreateSuccess`, `assertProductDeleteSuccess`) belongs only in the `.spec.ts`
     that owns that operation. Re-asserting the body at the arrange / cleanup site is the
     redundancy rule 3 guards against, one layer up.
+
+16. **Names state exactly what the thing is, holds, or returns.** A function, variable, type, or
+    data fixture whose name is broader or vaguer than its contents forces the reader to open it to
+    find out — pick the name that wouldn't surprise them. A helper that returns only `{ id, slug }`
+    is `captureCreatedProductRefs`, not `captureCreatedProduct`; the type it returns is
+    `CreatedProductRefs`, not `CreatedProduct`, so it never reads as the full `ProductData`.
+    Assertions name the exact condition — `assertProductCreateSuccess` (the create response) is
+    distinct from `assertProductExists` (a follow-up list + detail check). Rename the moment a name
+    stops fitting — the type-checker covers the call sites.
+
+    Request-body fixtures echo the request type they build and say what they're for:
+    `<qualifier><Domain><Action>Body`, matching `auth`'s `standardUserLoginBody` /
+    `adminUserLoginBody`. Two shapes:
+    - **Static `const`** when every test wants the same value — `standardUserLoginBody` is a plain
+      exported object. Negative cases spread and override at the call site (rule 4), they don't get
+      their own fixture.
+    - **Factory `function`** when each call needs a fresh value — `sampleProductCreateBody()`
+      returns a new `ProductCreateRequestBody` every call because product create rejects a
+      duplicate name and soft delete never frees one, so the name has to be unique per run and per
+      CI retry. The `()` at the call site is the signal that the value is generated, not shared.
+
+    Test data that lands in the real system carries a recognizable literal prefix (`Sample - …`)
+    so a leaked row is obvious at a glance.

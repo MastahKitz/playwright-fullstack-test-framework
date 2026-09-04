@@ -1,6 +1,15 @@
 import { APIResponse, expect } from '@playwright/test';
 import { assertResponseStatus, assertResponseBody } from '../utils/api.utils';
-import { ProductListResponseBody, ProductDetailsResponseBody, ProductErrorResponseBody, ExpectedProduct } from './product-api.data';
+import {
+  ProductListResponseBody,
+  ProductDetailsResponseBody,
+  ProductErrorResponseBody,
+  ProductCreateRequestBody,
+  ProductCreateResponseBody,
+  ProductDeleteResponseBody,
+  ExpectedProduct,
+  expectedSlug,
+} from './product-api.data';
 import { TOTAL_PRODUCTS_COUNT } from './product.data';
 
 // "YYYY-MM-DD HH:MM:SS" — the shape the API returns for createdAt/updatedAt.
@@ -66,5 +75,26 @@ export async function assertProductNotFoundError(response: APIResponse) {
   assertResponseBody(body, {
     success: false,
     error: { code: 'NOT_FOUND', message: 'Product not found' },
+  }, { exact: true });
+}
+
+export async function assertProductCreateSuccess(response: APIResponse, sent: ProductCreateRequestBody) {
+  assertResponseStatus(response, 201);
+  const body: ProductCreateResponseBody = await response.json();
+  assertResponseBody(body, {
+    success: true,
+    data: {
+      id: expect.any(Number),
+      slug: expectedSlug(sent.name),
+    },
+  }, { exact: true });
+}
+
+export async function assertProductDeleteSuccess(response: APIResponse, expectedId: number) {
+  assertResponseStatus(response, 200);
+  const body: ProductDeleteResponseBody = await response.json();
+  assertResponseBody(body, {
+    success: true,
+    data: { id: expectedId, deleted: true },
   }, { exact: true });
 }

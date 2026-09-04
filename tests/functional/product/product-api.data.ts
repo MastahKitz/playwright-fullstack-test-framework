@@ -26,6 +26,36 @@ export interface ProductErrorResponseBody {
   };
 }
 
+export interface ProductCreateRequestBody {
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  imageKey: string;
+}
+
+export interface ProductCreateResponseBody {
+  success: boolean;
+  data: {
+    id: number;
+    slug: string;
+  };
+}
+
+export interface ProductDeleteResponseBody {
+  success: boolean;
+  data: {
+    id: number;
+    deleted: boolean;
+  };
+}
+
+// parsed from product create response, chained into the get / delete calls
+export interface CreatedProductRefs {
+  id: number;
+  slug: string;
+}
+
 export interface ProductData {
   id: number;
   name: string;
@@ -80,3 +110,36 @@ export const snoopyOfficeMug: ExpectedProduct = {
   isActive: true,
   inStock: snoopyOfficeMugUi.inStock,
 };
+
+export function sampleProductCreateBody(): ProductCreateRequestBody {
+  return {
+    name: `Sample - ${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    description: 'Automation -  Sample Desc',
+    price: 19.99,
+    stock: 150,
+    imageKey: 'products/fitness_tracker.jpg',
+  };
+}
+
+// How the create endpoint derives a product slug from its name: lowercased, every
+// run of non-alphanumeric characters collapsed to one hyphen, ends trimmed.
+export function expectedSlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+export function expectedProduct(
+  sent: ProductCreateRequestBody,
+  refs: CreatedProductRefs,
+): ExpectedProduct {
+  return {
+    id: refs.id,
+    name: sent.name,
+    slug: refs.slug,
+    description: sent.description,
+    price: sent.price,
+    imageKey: sent.imageKey,
+    imageUrl: `/api/images/${sent.imageKey}`,
+    isActive: true,
+    inStock: sent.stock > 0,
+  };
+}
