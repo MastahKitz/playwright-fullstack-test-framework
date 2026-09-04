@@ -15,7 +15,8 @@ elsewhere in the repo.
 1. **File split per feature.** Each feature under `tests/functional/<domain>/[<feature>/]`
    separates concerns into `<name>.actions.ts` (raw Playwright interactions / locators),
    `<name>.assertions.ts` (checks), `<name>.data.ts` (typed data shapes), `<name>.flow.ts`
-   (multi-step flows composed from actions), and `<name>.spec.ts` (test cases). Domains like
+   (multi-step flows composed from actions, assertions, and other flows), and `<name>.spec.ts`
+   (test cases). Domains like
    `auth` and `product` keep these files flat in the domain folder; add a `<feature>/` subfolder
    only for independently-testable sub-features (`order/cart`, `order/checkout`). Dumping locators
    or assertions straight into a `.spec.ts` or `.flow.ts` breaks the split. A domain's API-layer
@@ -31,8 +32,12 @@ elsewhere in the repo.
    `clickViewCartButton`) — but a new interaction or check belongs in that feature's
    `.actions.ts` / `.assertions.ts`, never inline in the test.
 
-3. **`.flow.ts` functions compose two or more actions / flows.** A flow that just forwards to a
-   single action is pointless indirection — delete it and call the action directly.
+3. **`.flow.ts` functions compose two or more steps — actions, named assertions, or other
+   flows — and may mix those layers.** A flow that just forwards to a single action with nothing
+   else is pointless indirection — delete it and call the action directly. Mixing layers is
+   expected: `generateAccessToken` sends a login request, asserts its status, then returns the
+   token; `assertProductExists` runs the list and detail read actions and their assertions; the
+   rule-15 arrange / cleanup helpers are a `send…Request` plus a status check.
 
 4. **`.data.ts` holds every typed data-shape declaration** — interfaces / types for input
    fixtures and expected / response structures alike, regardless of whether the value is passed
@@ -116,12 +121,54 @@ elsewhere in the repo.
     module's own `<name>.data.ts` via `requireEnv(...)`** (e.g. `auth/auth.data.ts`) — never a
     hardcoded URL, username, or password in a test.
 
-15. **Arrange / cleanup asserts status only; the owning spec asserts the body.** When a test sets
-    up or tears down state by calling a write endpoint it isn't there to test — logging in to get
-    a token, creating a product to exercise delete, deleting the created product in `afterEach` —
-    that call is confirmed with `assertResponseStatus(...)` alone, wrapped in a thin `.flow.ts`
-    helper (`generateAccessToken`, and `createProduct` / `deleteProduct` = `send…Request` +
-    assert status). The full `{ exact: true }` response-body assertion (`assertLoginSuccess`,
-    `assertProductCreateSuccess`, `assertProductDeleteSuccess`) belongs only in the `.spec.ts`
-    that owns that operation. Re-asserting the body at the arrange / cleanup site is the
-    redundancy rule 3 guards against, one layer up.
+15. **A request-making flow always asserts the response status; whether it also asserts the body
+    depends on what the flow is for.**
+    - **Status — always.** Any `.flow.ts` function that sends a request confirms it with
+      `assertResponseStatus(...)` before anything reads the body, so a bad call fails on the status
+      line, not on a missing field three lines later. `generateAccessToken`, `createProduct`,
+      `deleteProduct` and the list leg of `assertProductExists` all do this (the detail leg gets it
+      from `assertProductDetailsSuccess`).
+    - **Body — only when verification is the flow's job.** A flow that exists to check something
+      (`assertProductExists`) asserts the body through the feature's named assertions. A flow that
+      only prepares or tears down test data (`generateAccessToken`, `createProduct`,
+      `deleteProduct`) stops at the status check — the full `{ exact: true }` body assertion
+      (`assertLoginSuccess`, `assertProductCreateSuccess`, `assertProductDeleteSuccess`) belongs
+      only in the `.spec.ts` that owns that operation. Re-asserting the body at an arrange /
+      cleanup site is the redundancy rule 3 guards against, one layer up.
+
+16. **Names state exactly what the thing is, holds, or returns.** A function, variable, type, or
+    data fixture whose name is broader or vaguer than its contents forces the reader to open it to
+    find out — pick the name that wouldn't surprise them. A helper that returns only `{ id, slug }`
+    is `captureCreatedProductRefs`, not `captureCreatedProduct`; the type it returns is
+    `CreatedProductRefs`, not `CreatedProduct`, so it never reads as the full `ProductData`.
+    Assertions name the exact condition — `assertProductCreateSuccess` (the create response) is
+    distinct from `assertProductExists` (a follow-up list + detail check). Rename the moment a name
+    stops fitting — the type-checker covers the call sites.
+
+    Request-body fixtures echo the request type they build and say what they're for:
+    `<qualifier><Domain><Action>Body`, matching `auth`'s `standardUserLoginBody` /
+    `adminUserLoginBody`. Two shapes:
+    - **Static `const`** when every test wants the same value — `standardUserLoginBody` is a plain
+      exported object. Negative cases spread and override at the call site (rule 4), they don't get
+      their own fixture.
+    - **Factory `function`** when each call needs a fresh value — `sampleProductCreateBody()`
+      returns a new `ProductCreateRequestBody` every call because product create rejects a
+      duplicate name and soft delete never frees one, so the name has to be unique per run and per
+      CI retry. The `()` at the call site is the signal that the value is generated, not shared.
+
+    Test data that lands in the real system carries a recognizable literal prefix (`Sample - …`)
+    so a leaked row is obvious at a glance.
+
+17. **An authenticated API spec logs in once per file, in `beforeAll`.** The token lives in a
+    `describe`-scoped `let`, minted with `withHookRequestContext(playwright, (request) =>
+    generateAccessToken(request, …))` — the `request` fixture isn't available in `beforeAll`, so
+    `withHookRequestContext` spins up a throwaway context for the call and disposes it after. A
+    50-test spec then logs in once, not 50 times, which matters on a demo box that drops requests
+    under load. `afterEach` cleanup and the tests themselves read that same `let`. Reach for
+    `beforeEach` only if a test in the file deliberately invalidates the token (a logout case) —
+    and give that its own `describe`.
+
+    `withHookRequestContext` is generic, not auth-specific — any flow function (`createProduct`,
+    `deleteProduct`, …) can run in `beforeAll`/`afterAll` the same way, composed inline at the call
+    site. There's no `*InHook` twin to write or maintain per flow function; the flow function itself
+    stays the single source of truth, and hook-vs-per-test is just how it's called.
