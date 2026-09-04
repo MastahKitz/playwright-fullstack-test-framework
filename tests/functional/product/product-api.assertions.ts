@@ -48,6 +48,7 @@ export async function assertProductListSuccess(response: APIResponse) {
     success: true,
     meta: { total: TOTAL_PRODUCTS_COUNT },
   }, { exact: false });
+  // KNOWN-FAILURE(#43): TOTAL_PRODUCTS_COUNT is stale — live catalog has 21 products, not 22 — retriage if this changes
   expect.soft(body.data).toHaveLength(TOTAL_PRODUCTS_COUNT);
 }
 
