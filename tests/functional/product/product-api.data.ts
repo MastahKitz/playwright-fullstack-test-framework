@@ -128,18 +128,18 @@ export function expectedSlug(name: string): string {
 }
 
 export function expectedProduct(
-  productCreateRequestBody: ProductCreateRequestBody,
-  createdProductRefs: CreatedProductRefs,
+  body: ProductCreateRequestBody,
+  refs: CreatedProductRefs,
 ): ExpectedProduct {
   return {
-    id: createdProductRefs.id,
-    name: productCreateRequestBody.name,
-    slug: createdProductRefs.slug,
-    description: productCreateRequestBody.description,
-    price: productCreateRequestBody.price,
-    imageKey: productCreateRequestBody.imageKey,
-    imageUrl: `/api/images/${productCreateRequestBody.imageKey}`,
+    id: refs.id,
+    name: body.name,
+    slug: refs.slug,
+    description: body.description,
+    price: body.price,
+    imageKey: body.imageKey,
+    imageUrl: `/api/images/${body.imageKey}`,
     isActive: true,
-    inStock: productCreateRequestBody.stock > 0,
+    inStock: body.stock > 0,
   };
 }
