@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playwright Test Dashboard — qademo</title>
+<style>
+  :root {
+    --bg: #fff; --fg: #1c2024; --muted: #6b7280; --border: #e5e7eb; --card: #f9fafb;
+    --pass: #15803d; --fail: #b91c1c; --fail-hatch: #7f1d1d; --flaky: #b45309; --accent: #2563eb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117; --fg: #e6edf3; --muted: #8b949e; --border: #30363d; --card: #161b22;
+      --pass: #3fb950; --fail: #f85149; --fail-hatch: #ff9d97; --flaky: #d29922; --accent: #58a6ff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 2rem 1.25rem 4rem; background: var(--bg); color: var(--fg);
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  main { max-width: 1000px; margin: 0 auto; }
+  h1 { font-size: 1.4rem; margin: 0 0 .25rem; }
+  .sub { color: var(--muted); margin: 0 0 1.75rem; font-size: .9rem; }
+  a { color: var(--accent); }
+  .summary { display: flex; flex-wrap: wrap; gap: .75rem; margin-bottom: 1.75rem; }
+  .stat { flex: 1 1 120px; background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: .85rem 1rem; }
+  .stat .label { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .stat .value { font-size: 1.5rem; font-weight: 650; margin-top: .15rem; }
+  .value.pass { color: var(--pass); } .value.fail { color: var(--fail); } .value.flaky { color: var(--flaky); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+  th, td { padding: .6rem .75rem; text-align: left; border-bottom: 1px solid var(--border); }
+  th { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); background: var(--card); }
+  tr:last-child td { border-bottom: 0; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .nowrap { white-space: nowrap; }
+  .muted { color: var(--muted); }
+  .pass { color: var(--pass); } .fail { color: var(--fail); } .flaky { color: var(--flaky); }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85em; }
+  .report-link { font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .report-link:hover { text-decoration: underline; }
+  .pill { display: inline-block; padding: .12rem .5rem; border-radius: 999px; font-size: .75rem;
+    font-weight: 600; text-transform: capitalize; border: 1px solid currentColor; white-space: nowrap; }
+  .pill.passed { color: var(--pass); } .pill.failed { color: var(--fail); }
+  .pill.flaky { color: var(--flaky); } .pill.unknown { color: var(--muted); }
+  .trends { margin-top: 2.25rem; }
+  .trends h2 { font-size: 1rem; margin: 0 0 .25rem; }
+  .cap { color: var(--muted); font-size: .82rem; margin: 0 0 .9rem; max-width: 68ch; }
+  .c-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.1rem 1.1rem; }
+  .c-legend { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: .5rem; font-size: .8rem; color: var(--muted); }
+  .c-legend span { display: inline-flex; align-items: center; gap: .4rem; }
+  .c-sw { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+  .c-sw.pass { background: var(--pass); }
+  .c-sw.fail { background: var(--fail);
+    background-image: repeating-linear-gradient(45deg, var(--fail-hatch) 0 1.5px, transparent 1.5px 4px); }
+  .c-sw.total { background: transparent; border: 2px solid var(--accent); }
+  .c-frame { position: relative; }
+  .c-chart { display: block; width: 100%; height: auto; overflow: visible; }
+  .c-chart text { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .c-grid { stroke: var(--border); stroke-width: 1; opacity: .7; }
+  .c-tick { fill: var(--muted); font-size: 10px; }
+  .c-green { fill: var(--pass); }
+  .c-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; }
+  .c-dot-total { fill: var(--accent); }
+  .c-total-label { fill: var(--accent); font-size: 11px; font-weight: 600; }
+  .c-pass-label { fill: var(--pass); font-size: 10px; font-weight: 500; }
+  .c-cross { stroke: var(--fg); stroke-width: 1; stroke-dasharray: 3 3; opacity: .45; }
+  .c-cross-dot { fill: var(--accent); stroke: var(--card); stroke-width: 1.5; }
+  .c-hide { display: none; }
+  .c-tip { position: absolute; top: 4px; left: 0; pointer-events: none; opacity: 0; transition: opacity .1s ease;
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: .55rem .65rem;
+    font-size: .78rem; min-width: 142px; box-shadow: 0 6px 22px rgba(0, 0, 0, .14); z-index: 3; }
+  .c-tip.on { opacity: 1; }
+  .c-tip h4 { margin: 0 0 .35rem; font-size: .8rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .c-tip dl { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: .15rem .8rem; }
+  .c-tip dt { color: var(--muted); display: flex; align-items: center; gap: .35rem; }
+  .c-tip dd { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-variant-numeric: tabular-nums; }
+  .c-mini { width: 8px; height: 8px; border-radius: 2px; flex: none; display: inline-block; }
+  .c-mini.pass { background: var(--pass); } .c-mini.fail { background: var(--fail); }
+  .c-mini.flaky { background: var(--flaky); } .c-mini.skip { background: var(--muted); }
+  .c-tip .rule { grid-column: 1 / -1; border-top: 1px solid var(--border); margin: .22rem 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Playwright Test Dashboard</h1>
+  <p class="sub">
+    <a href="https://github.com/MastahKitz/playwright-fullstack-test-framework">MastahKitz/playwright-fullstack-test-framework</a>
+    &nbsp;·&nbsp; last 5 runs on <code>main</code>
+    &nbsp;·&nbsp; updated 2026-09-05 07:16 UTC
+  </p>
+
+  <section class="summary">
+    <div class="stat"><div class="label">Latest run</div><div class="value">#15</div></div>
+    <div class="stat"><div class="label">Total</div><div class="value">37</div></div>
+    <div class="stat"><div class="label">Passed</div><div class="value pass">35</div></div>
+    <div class="stat"><div class="label">Failed</div><div class="value fail">2</div></div>
+    <div class="stat"><div class="label">Flaky</div><div class="value flaky">0</div></div>
+    <div class="stat"><div class="label">Skipped</div><div class="value">0</div></div>
+  </section>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Status</th><th>Run</th><th>Started</th><th>Commit</th>
+          <th class="num">Total</th><th class="num">Pass</th><th class="num">Fail</th>
+          <th class="num">Flaky</th><th class="num">Skip</th><th>Duration</th><th>Report</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="pill failed">✘ failed</span></td>
+          <td><a href="https://github.com/MastahKitz/playwright-fullstack-test-framework/actions/runs/33952027977">#15</a></td>
+          <td class="muted nowrap">2026-09-05 07:15 UTC</td>
+          <td><a href="https://github.com/MastahKitz/playwright-fullstack-test-framework/commit/70fe532c4721e35c1d0a98bf729ed89f71afeb99"><code>70fe532</code></a></td>
+          <td class="num">37</td>
+          <td class="num pass">35</td>
+          <td class="num fail">2</td>
+          <td class="num muted">0</td>
+          <td class="num muted">0</td>
+          <td class="muted nowrap">57s</td>
+          <td><a class="report-link" href="runs/15/">View report →</a></td>
+        </tr>
+        <tr>
+          <td><span class="pill failed">✘ failed</span></td>
+          <td><a href="https://github.com/MastahKitz/playwright-fullstack-test-framework/actions/runs/33942733354">#14</a></td>
+          <td class="muted nowrap">2026-09-05 03:45 UTC</td>
+          <td><a href="https://github.com/MastahKitz/playwright-fullstack-test-framework/commit/6d2243a74ff56e5c3c1ccb36f87aa1a938870af1"><code>6d2243a</code></a></td>
+          <td class="num">37</td>
+          <td class="num pass">35</td>
+          <td class="num fail">2</td>
+          <td class="num muted">0</td>
+          <td class="num muted">0</td>
+          <td class="muted nowrap">96s</td>
+          <td><a class="report-link" href="runs/14/">View report →</a></td>
+        </tr>
+        <tr>
+          <td><span class="pill failed">✘ failed</span></td>
+          <td><a href="https://github.com/MastahKitz/playwright-fullstack-test-framework/actions/runs/33888794722">#13</a></td>
+          <td class="muted nowrap">2026-09-04 15:20 UTC</td>
+          <td><a href="https://github.com/MastahKitz/playwright-fullstack-test-framework/commit/dedbf0c9f7655e62726a6ef052754147a8449058"><code>dedbf0c</code></a></td>
+          <td class="num">37</td>
+          <td class="num pass">35</td>
+          <td class="num fail">2</td>
+          <td class="num muted">0</td>
+          <td class="num muted">0</td>
+          <td class="muted nowrap">107s</td>
+          <td><a class="report-link" href="runs/13/">View report →</a></td>
+        </tr>
+        <tr>
+          <td><span class="pill failed">✘ failed</span></td>
+          <td><a href="https://github.com/MastahKitz/playwright-fullstack-test-framework/actions/runs/33829113364">#12</a></td>
+          <td class="muted nowrap">2026-09-04 02:24 UTC</td>
+          <td><a href="https://github.com/MastahKitz/playwright-fullstack-test-framework/commit/ec50d00ee6a6049e8fdc021199a60c4c83aa0158"><code>ec50d00</code></a></td>
+          <td class="num">35</td>
+          <td class="num pass">33</td>
+          <td class="num fail">2</td>
+          <td class="num muted">0</td>
+          <td class="num muted">0</td>
+          <td class="muted nowrap">92s</td>
+          <td><a class="report-link" href="runs/12/">View report →</a></td>
+        </tr>
+        <tr>
+          <td><span class="pill failed">✘ failed</span></td>
+          <td><a href="https://github.com/MastahKitz/playwright-fullstack-test-framework/actions/runs/33741436614">#11</a></td>
+          <td class="muted nowrap">2026-09-03 09:55 UTC</td>
+          <td><a href="https://github.com/MastahKitz/playwright-fullstack-test-framework/commit/c087d554314dce3e5091157333a197896f21ebf1"><code>c087d55</code></a></td>
+          <td class="num">35</td>
+          <td class="num pass">33</td>
+          <td class="num fail">2</td>
+          <td class="num muted">0</td>
+          <td class="num muted">0</td>
+          <td class="muted nowrap">110s</td>
+          <td><a class="report-link" href="runs/11/">View report →</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <section class="trends">
+    <h2>Trend · last 5 runs</h2>
+    <p class="cap">The line is the total test count. Green is passing; the hatched wedge up to the line is
+      everything not passing. Hover a run for the full split, flaky included.</p>
+    <div class="c-card">
+      <div class="c-legend">
+        <span><span class="c-sw total"></span>Total tests</span>
+        <span><span class="c-sw pass"></span>Passed</span>
+        <span><span class="c-sw fail"></span>Not passed</span>
+      </div>
+      <div class="c-frame">
+        <svg class="c-chart" viewBox="0 0 720 240" role="img" aria-labelledby="cDesc" id="trendChart">
+  <desc id="cDesc">Total tests rise to 37; 35 passing on the latest run.</desc>
+  <defs>
+    <pattern id="failHatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="5" height="5" fill="var(--fail)"/>
+      <rect width="1.6" height="5" fill="var(--fail-hatch)"/>
+    </pattern>
+  </defs>
+  <line class="c-grid" x1="34" y1="210.0" x2="668" y2="210.0"/><text class="c-tick" x="28" y="213.0" text-anchor="end">0</text><line class="c-grid" x1="34" y1="112.0" x2="668" y2="112.0"/><text class="c-tick" x="28" y="115.0" text-anchor="end">20</text><line class="c-grid" x1="34" y1="14.0" x2="668" y2="14.0"/><text class="c-tick" x="28" y="17.0" text-anchor="end">40</text>
+  <text class="c-tick" x="34.0" y="231" text-anchor="middle">#11</text><text class="c-tick" x="192.5" y="231" text-anchor="middle">#12</text><text class="c-tick" x="351.0" y="231" text-anchor="middle">#13</text><text class="c-tick" x="509.5" y="231" text-anchor="middle">#14</text><text class="c-tick" x="668.0" y="231" text-anchor="middle">#15</text>
+  <path class="c-green" d="M 34.0,48.3 L 192.5,48.3 L 351.0,38.5 L 509.5,38.5 L 668.0,38.5 L 668.0,210.0 L 34.0,210.0 Z"/>
+  <path d="M 34.0,38.5 L 192.5,38.5 L 351.0,28.7 L 509.5,28.7 L 668.0,28.7 L 668.0,38.5 L 509.5,38.5 L 351.0,38.5 L 192.5,48.3 L 34.0,48.3 Z" fill="url(#failHatch)"/>
+  <path class="c-line" d="M 34.0,38.5 L 192.5,38.5 L 351.0,28.7 L 509.5,28.7 L 668.0,28.7"/>
+  <circle class="c-dot-total" cx="668.0" cy="28.7" r="3.2"/>
+  <text class="c-total-label" x="674" y="21.7">37</text>
+  <text class="c-pass-label" x="674" y="127.3">Passed 35</text>
+  <line class="c-cross c-hide" id="trendCross" y1="14" y2="210"/>
+  <circle class="c-cross-dot c-hide" id="trendCrossDot" r="4"/>
+</svg>
+        <div class="c-tip" id="trendTip" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+(function () {
+  var R = [{"r":11,"t":35,"p":33,"f":2,"k":0,"s":0},{"r":12,"t":35,"p":33,"f":2,"k":0,"s":0},{"r":13,"t":37,"p":35,"f":2,"k":0,"s":0},{"r":14,"t":37,"p":35,"f":2,"k":0,"s":0},{"r":15,"t":37,"p":35,"f":2,"k":0,"s":0}];
+  var C = {"W":720,"H":240,"mL":34,"mR":52,"mT":14,"mB":30,"max":40};
+  var n = R.length;
+  var pw = C.W - C.mL - C.mR, ph = C.H - C.mT - C.mB;
+  var svg = document.getElementById('trendChart');
+  var tip = document.getElementById('trendTip');
+  var cross = document.getElementById('trendCross');
+  var cdot = document.getElementById('trendCrossDot');
+  if (!svg || !tip) return;
+  var frame = svg.parentNode;
+  function xAt(i) { return C.mL + (i / (n - 1)) * pw; }
+  function yAt(v) { return C.mT + ph - (v / C.max) * ph; }
+  function move(evt) {
+    var box = svg.getBoundingClientRect();
+    var mx = (evt.clientX - box.left) / box.width * C.W;
+    var i = Math.round((mx - C.mL) / (pw / (n - 1)));
+    i = Math.max(0, Math.min(n - 1, i));
+    var d = R[i];
+    var rate = d.t ? (d.p / d.t * 100).toFixed(1) : '0.0';
+    cross.setAttribute('x1', xAt(i)); cross.setAttribute('x2', xAt(i));
+    cdot.setAttribute('cx', xAt(i)); cdot.setAttribute('cy', yAt(d.t));
+    cross.classList.remove('c-hide'); cdot.classList.remove('c-hide');
+    tip.innerHTML = '<h4>Run #' + d.r + '</h4><dl>'
+      + '<dt>Total</dt><dd>' + d.t + '</dd>'
+      + '<div class="rule"></div>'
+      + '<dt><span class="c-mini pass"></span>Passed</dt><dd>' + d.p + '</dd>'
+      + '<dt><span class="c-mini fail"></span>Failed</dt><dd>' + d.f + '</dd>'
+      + '<dt><span class="c-mini flaky"></span>Flaky</dt><dd>' + d.k + '</dd>'
+      + '<dt><span class="c-mini skip"></span>Skipped</dt><dd>' + d.s + '</dd>'
+      + '<div class="rule"></div>'
+      + '<dt>Pass rate</dt><dd>' + rate + '%</dd></dl>';
+    tip.classList.add('on');
+    var fr = frame.getBoundingClientRect();
+    var lx = evt.clientX - fr.left;
+    var tw = tip.offsetWidth;
+    var left = i > (n - 1) / 2 ? lx - tw - 16 : lx + 16;
+    tip.style.left = Math.max(4, Math.min(left, fr.width - tw - 4)) + 'px';
+  }
+  function leave() { tip.classList.remove('on'); cross.classList.add('c-hide'); cdot.classList.add('c-hide'); }
+  svg.addEventListener('mousemove', move);
+  svg.addEventListener('mouseleave', leave);
+  svg.addEventListener('touchstart', function (e) { if (e.touches[0]) move(e.touches[0]); }, { passive: true });
+  svg.addEventListener('touchmove', function (e) { if (e.touches[0]) move(e.touches[0]); }, { passive: true });
+})();
+</script>
+</body>
+</html>

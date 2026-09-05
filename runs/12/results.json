@@ -1,0 +1,1919 @@
+{
+  "config": {
+    "argv": [
+      "/opt/hostedtoolcache/node/20.20.2/x64/bin/node",
+      "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/node_modules/.bin/playwright",
+      "test"
+    ],
+    "configFile": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/playwright.config.ts",
+    "rootDir": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/global.setup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "ci": {
+        "commitHref": "https://github.com/MastahKitz/playwright-fullstack-test-framework/commit/ec50d00ee6a6049e8fdc021199a60c4c83aa0158",
+        "commitHash": "ec50d00ee6a6049e8fdc021199a60c4c83aa0158",
+        "buildHref": "https://github.com/MastahKitz/playwright-fullstack-test-framework/actions/runs/33829113364"
+      },
+      "gitCommit": {
+        "shortHash": "ec50d00",
+        "hash": "ec50d00ee6a6049e8fdc021199a60c4c83aa0158",
+        "subject": "added rule 15 and applied to existing functions (#38)",
+        "body": "added rule 15 and applied to existing functions (#38)",
+        "author": {
+          "name": "keith.wang",
+          "email": "mastahkitz@gmail.com",
+          "time": 1788488389000
+        },
+        "committer": {
+          "name": "GitHub",
+          "email": "noreply@github.com",
+          "time": 1788488389000
+        },
+        "branch": "main"
+      },
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/MastahKitz/playwright-fullstack-test-framework/commit/ec50d00ee6a6049e8fdc021199a60c4c83aa0158",
+            "commitHash": "ec50d00ee6a6049e8fdc021199a60c4c83aa0158",
+            "buildHref": "https://github.com/MastahKitz/playwright-fullstack-test-framework/actions/runs/33829113364"
+          },
+          "gitCommit": {
+            "shortHash": "ec50d00",
+            "hash": "ec50d00ee6a6049e8fdc021199a60c4c83aa0158",
+            "subject": "added rule 15 and applied to existing functions (#38)",
+            "body": "added rule 15 and applied to existing functions (#38)",
+            "author": {
+              "name": "keith.wang",
+              "email": "mastahkitz@gmail.com",
+              "time": 1788488389000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1788488389000
+            },
+            "branch": "main"
+          },
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.spec.ts"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "test-report",
+          "open": "never"
+        }
+      ],
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-report/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "auth/auth-api-error.spec.ts",
+      "file": "auth/auth-api-error.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "auth api - errors",
+          "file": "auth/auth-api-error.spec.ts",
+          "line": 11,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user cannot login with invalid credentials",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 864,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:24:49.374Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "98a19df4c177413b4efc-66490c6dd86ed91fb4e7",
+              "file": "auth/auth-api-error.spec.ts",
+              "line": 13,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot login with blank username",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 27,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:24:50.283Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "98a19df4c177413b4efc-dd573a828ae006ffdfb5",
+              "file": "auth/auth-api-error.spec.ts",
+              "line": 18,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot login with blank password",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 33,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:24:50.325Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "98a19df4c177413b4efc-416a6e18416508f2c6a1",
+              "file": "auth/auth-api-error.spec.ts",
+              "line": 23,
+              "column": 7
+            },
+            {
+              "title": "validate locked user cannot login",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 276,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:24:50.367Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "98a19df4c177413b4efc-379eb3d1f3e239d4fb67",
+              "file": "auth/auth-api-error.spec.ts",
+              "line": 28,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "auth/auth-api.spec.ts",
+      "file": "auth/auth-api.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "auth api",
+          "file": "auth/auth-api.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate standard user can login",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 520,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:24:50.654Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "960ed654433cba842d5e-85febc5ceabce5b0720d",
+              "file": "auth/auth-api.spec.ts",
+              "line": 10,
+              "column": 7
+            },
+            {
+              "title": "validate admin user can login",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 475,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:24:51.185Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "960ed654433cba842d5e-7ad5e27eefbcbf021518",
+              "file": "auth/auth-api.spec.ts",
+              "line": 15,
+              "column": 7
+            },
+            {
+              "title": "validate standard user can logout",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 749,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:24:51.671Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "960ed654433cba842d5e-8f68d805e13066ae4ff3",
+              "file": "auth/auth-api.spec.ts",
+              "line": 20,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "auth/auth-error.spec.ts",
+      "file": "auth/auth-error.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "auth - errors",
+          "file": "auth/auth-error.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user cannot login with invalid credentials",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2530,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:24:52.436Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "812bc745f1822d6eb442-06f062ed4565a6dcf15d",
+              "file": "auth/auth-error.spec.ts",
+              "line": 9,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot login with blank username",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1731,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:24:55.054Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "812bc745f1822d6eb442-7ce82a7c6c5c6d2ea6b6",
+              "file": "auth/auth-error.spec.ts",
+              "line": 14,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot login with blank password",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1829,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:24:56.804Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "812bc745f1822d6eb442-cedc834b1eb0712ccace",
+              "file": "auth/auth-error.spec.ts",
+              "line": 19,
+              "column": 7
+            },
+            {
+              "title": "validate locked user cannot login",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2056,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:24:58.651Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "812bc745f1822d6eb442-507131583560e71b22e0",
+              "file": "auth/auth-error.spec.ts",
+              "line": 24,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "auth/auth.spec.ts",
+      "file": "auth/auth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "auth",
+          "file": "auth/auth.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate standard user can login",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2574,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:00.725Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "11ab049aabb515b3eeb7-6387e91433c783a9fd63",
+              "file": "auth/auth.spec.ts",
+              "line": 9,
+              "column": 7
+            },
+            {
+              "title": "validate admin user can login",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2590,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:03.312Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "11ab049aabb515b3eeb7-036f8c07bccd02d73e60",
+              "file": "auth/auth.spec.ts",
+              "line": 15,
+              "column": 7
+            },
+            {
+              "title": "validate standard user can logout",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3065,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:05.916Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "11ab049aabb515b3eeb7-4b6d94debb1e15cd87f9",
+              "file": "auth/auth.spec.ts",
+              "line": 21,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "order/cart/cart.spec.ts",
+      "file": "order/cart/cart.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "cart",
+          "file": "order/cart/cart.spec.ts",
+          "line": 15,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user can add a product to the cart",
+              "ok": true,
+              "tags": [
+                "cart"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4170,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:09.016Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0c8bf9231599cdbd5a9c-6bc89bab592267b2ea63",
+              "file": "order/cart/cart.spec.ts",
+              "line": 27,
+              "column": 7
+            },
+            {
+              "title": "validate user can add another product to the cart",
+              "ok": true,
+              "tags": [
+                "cart"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3090,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:13.329Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0c8bf9231599cdbd5a9c-4a3873291accca7dacab",
+              "file": "order/cart/cart.spec.ts",
+              "line": 34,
+              "column": 7
+            },
+            {
+              "title": "validate user can increase product quantity in the cart",
+              "ok": true,
+              "tags": [
+                "cart"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1892,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:16.434Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0c8bf9231599cdbd5a9c-3d971d527a884bec14c7",
+              "file": "order/cart/cart.spec.ts",
+              "line": 41,
+              "column": 7
+            },
+            {
+              "title": "validate user can decrease product quantity in the cart",
+              "ok": true,
+              "tags": [
+                "cart"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1822,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:18.339Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0c8bf9231599cdbd5a9c-b9f65c1671a076b76804",
+              "file": "order/cart/cart.spec.ts",
+              "line": 47,
+              "column": 7
+            },
+            {
+              "title": "validate user can remove a product from the cart",
+              "ok": true,
+              "tags": [
+                "cart"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1709,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:20.173Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0c8bf9231599cdbd5a9c-dafd7fd2c892a3a69775",
+              "file": "order/cart/cart.spec.ts",
+              "line": 53,
+              "column": 7
+            },
+            {
+              "title": "validate user can remove another product from the cart",
+              "ok": true,
+              "tags": [
+                "cart"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1556,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:21.893Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0c8bf9231599cdbd5a9c-1ee9522ac6527d2f9320",
+              "file": "order/cart/cart.spec.ts",
+              "line": 59,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "order/checkout/checkout-error.spec.ts",
+      "file": "order/checkout/checkout-error.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "checkout - errors",
+          "file": "order/checkout/checkout-error.spec.ts",
+          "line": 20,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user cannot checkout with a blank first name",
+              "ok": true,
+              "tags": [
+                "checkout"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 833,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:23.590Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d6b487077df482931c0e-cf1d22493718bf57370f",
+              "file": "order/checkout/checkout-error.spec.ts",
+              "line": 34,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot checkout with a blank last name",
+              "ok": true,
+              "tags": [
+                "checkout"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1998,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:28.073Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d6b487077df482931c0e-c696667857e00ea93afe",
+              "file": "order/checkout/checkout-error.spec.ts",
+              "line": 40,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot checkout with a blank shipping address",
+              "ok": true,
+              "tags": [
+                "checkout"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2016,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:30.084Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d6b487077df482931c0e-66394abbd7df95443ed2",
+              "file": "order/checkout/checkout-error.spec.ts",
+              "line": 46,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot checkout with a blank card number",
+              "ok": true,
+              "tags": [
+                "checkout"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1983,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:32.118Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d6b487077df482931c0e-4d071571a0ec42b45f8b",
+              "file": "order/checkout/checkout-error.spec.ts",
+              "line": 52,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot checkout with a blank card expiry",
+              "ok": true,
+              "tags": [
+                "checkout"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 498,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:34.116Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d6b487077df482931c0e-2cbb7c37a206af47dd8d",
+              "file": "order/checkout/checkout-error.spec.ts",
+              "line": 58,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot checkout with a blank card CVV",
+              "ok": true,
+              "tags": [
+                "checkout"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 482,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:34.629Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d6b487077df482931c0e-3fe185eac72028ffd5f4",
+              "file": "order/checkout/checkout-error.spec.ts",
+              "line": 64,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot checkout with a blank name on card",
+              "ok": true,
+              "tags": [
+                "checkout"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 489,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:35.127Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d6b487077df482931c0e-151bcef54996b3c66e42",
+              "file": "order/checkout/checkout-error.spec.ts",
+              "line": 70,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "order/checkout/checkout.spec.ts",
+      "file": "order/checkout/checkout.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "checkout",
+          "file": "order/checkout/checkout.spec.ts",
+          "line": 10,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user can checkout products from the cart",
+              "ok": true,
+              "tags": [
+                "checkout"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9243,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:35.748Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "559ea4ecfe34de0b5625-1718aae3fed858126fcc",
+              "file": "order/checkout/checkout.spec.ts",
+              "line": 12,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product/product-api-details-error.spec.ts",
+      "file": "product/product-api-details-error.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "product details api - errors",
+          "file": "product/product-api-details-error.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user cannot view a product that does not exist",
+              "ok": true,
+              "tags": [
+                "product",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 285,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:45.007Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0531a781c5b45e1e76aa-375616c587c830f62752",
+              "file": "product/product-api-details-error.spec.ts",
+              "line": 7,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product/product-api-details.spec.ts",
+      "file": "product/product-api-details.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "product details api",
+          "file": "product/product-api-details.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user can view in-stock product details",
+              "ok": true,
+              "tags": [
+                "product",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 50,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:45.305Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1d5f3893e8d8416027c7-67e94edd63e51b3559f5",
+              "file": "product/product-api-details.spec.ts",
+              "line": 8,
+              "column": 7
+            },
+            {
+              "title": "validate user can view out-of-stock product details",
+              "ok": true,
+              "tags": [
+                "product",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 244,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:45.363Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1d5f3893e8d8416027c7-1a460a025a73781d2072",
+              "file": "product/product-api-details.spec.ts",
+              "line": 13,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product/product-api-list.spec.ts",
+      "file": "product/product-api-list.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "product list api",
+          "file": "product/product-api-list.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user can view the product list",
+              "ok": false,
+              "tags": [
+                "product",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 59,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 20,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 20,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:25:25)\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:38:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                          "column": 25,
+                          "line": 25
+                        },
+                        "snippet": "   at utils/api.utils.ts:25\n\n\u001b[0m \u001b[90m 23 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoEqual(expected)\u001b[33m;\u001b[39m\n \u001b[90m 24 |\u001b[39m   } \u001b[36melse\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 25 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoMatchObject(expected)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 26 |\u001b[39m   }\n \u001b[90m 27 |\u001b[39m }\n \u001b[90m 28 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                            "column": 25,
+                            "line": 25
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 20,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m\n\n   at utils/api.utils.ts:25\n\n  23 |     expect.soft(actual).toEqual(expected);\n  24 |   } else {\n> 25 |     expect.soft(actual).toMatchObject(expected);\n     |                         ^\n  26 |   }\n  27 | }\n  28 |\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:25:25)\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:38:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts",
+                            "column": 26,
+                            "line": 42
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m22\u001b[39m\nReceived length: \u001b[31m20\u001b[39m\nReceived array:  \u001b[31m[{\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Portable Bluetooth speaker with 360-degree sound and 12-hour battery life.\", \"id\": 4, \"imageKey\": \"products/1783414430049-e232a0f7.jpeg\", \"imageUrl\": \"/api/images/products/1783414430049-e232a0f7.jpeg\", \"isActive\": true, \"name\": \"Bluetooth Speaker\", \"price\": 159.99, \"slug\": \"bluetooth-speaker\", \"stock\": 1715, \"updatedAt\": \"2026-09-04 00:07:31\"}, {\"createdAt\": \"2026-08-27 20:27:49\", \"description\": \"Adjustable LED desk lamp\", \"id\": 21, \"imageKey\": null, \"isActive\": true, \"name\": \"Desk Lamp\", \"price\": 34.99, \"slug\": \"desk-lamp\", \"stock\": 17, \"updatedAt\": \"2026-09-03 13:38:45\"}, {\"createdAt\": \"2026-08-27 19:26:06\", \"description\": \"Compact desktop storage tray - updated\", \"id\": 19, \"imageKey\": null, \"isActive\": true, \"name\": \"Desk Organizer\", \"price\": 18.5, \"slug\": \"desk-organizer\", \"stock\": 20, \"updatedAt\": \"2026-09-03 13:39:08\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Water-resistant fitness tracker with sleep monitoring and smartphone notifications.\", \"id\": 5, \"imageKey\": \"products/fitness_tracker.jpg\", \"imageUrl\": \"/api/images/products/fitness_tracker.jpg\", \"isActive\": true, \"name\": \"Fitness Tracker\", \"price\": 89.99, \"slug\": \"fitness-tracker\", \"stock\": 172, \"updatedAt\": \"2026-09-03 09:56:23\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Durable laptop backpack with multiple compartments and USB charging port.\", \"id\": 3, \"imageKey\": \"products/laptop_backpack.jpg\", \"imageUrl\": \"/api/images/products/laptop_backpack.jpg\", \"isActive\": true, \"name\": \"Laptop Backpack\", \"price\": 49.99, \"slug\": \"laptop-backpack\", \"stock\": 558, \"updatedAt\": \"2026-09-03 09:56:24\"}, {\"createdAt\": \"2026-08-25 12:54:07\", \"description\": null, \"id\": 15, \"imageKey\": \"products/1787662419559-f0518193.jpg\", \"imageUrl\": \"/api/images/products/1787662419559-f0518193.jpg\", \"isActive\": true, \"name\": \"Laptop Holder\", \"price\": 20, \"slug\": \"laptop-holder\", \"stock\": 78, \"updatedAt\": \"2026-09-03 13:46:39\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"RGB mechanical gaming keyboard with customizable keys and wrist rest.\", \"id\": 7, \"imageKey\": \"products/mechanical_keyboard.jpg\", \"imageUrl\": \"/api/images/products/mechanical_keyboard.jpg\", \"isActive\": true, \"name\": \"Mechanical Keyboard\", \"price\": 149.99, \"slug\": \"mechanical-keyboard\", \"stock\": 368, \"updatedAt\": \"2026-09-03 13:47:30\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"20000mAh power bank with fast charging and multiple USB ports.\", \"id\": 9, \"imageKey\": \"products/powerbank.jpg\", \"imageUrl\": \"/api/images/products/powerbank.jpg\", \"isActive\": true, \"name\": \"Power Bank\", \"price\": 59.99, \"slug\": \"power-bank\", \"stock\": 428, \"updatedAt\": \"2026-09-02 12:54:27\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Feature-rich smartwatch with heart rate monitoring, GPS, and water resistance.\", \"id\": 2, \"imageKey\": \"products/smartwatch.jpg\", \"imageUrl\": \"/api/images/products/smartwatch.jpg\", \"isActive\": true, \"name\": \"Smart Watch\", \"price\": 299.99, \"slug\": \"smart-watch\", \"stock\": 135, \"updatedAt\": \"2026-09-02 12:54:33\"}, {\"createdAt\": \"2026-08-28 07:24:40\", \"description\": \"Start your day with a smile with our charming Snoopy design office mug! Perfect for coffee, tea, or any beverage of your choice, this delightful mug features the beloved Peanuts character in playful poses that bring a touch of whimsy to your workspace. Made from high-quality ceramic, it’s both microwave and dishwasher safe, ensuring convenience for your busy schedule. Whether you're at home or in the office, let Snoopy inspire your creativity and brighten your day with every sip!\", \"id\": 22, \"imageKey\": \"products/1787901873172-56e70ccf.jpg\", \"imageUrl\": \"/api/images/products/1787901873172-56e70ccf.jpg\", \"isActive\": true, \"name\": \"Snoopy Office Mug\", \"price\": 10, \"slug\": \"snoopy-office-mug\", \"stock\": 0, \"updatedAt\": \"2026-09-02 12:54:39\"}, …]\u001b[39m\n\n   at product/product-api.assertions.ts:42\n\n  40 |     meta: { total: TOTAL_PRODUCTS_COUNT },\n  41 |   }, { exact: false });\n> 42 |   expect.soft(body.data).toHaveLength(TOTAL_PRODUCTS_COUNT);\n     |                          ^\n  43 | }\n  44 |\n  45 | export async function assertProductInList(response: APIResponse, expected: ExpectedProduct) {\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:42:26)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:45.617Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-api-list-p-f116e-r-can-view-the-product-list-chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-api-list-p-f116e-r-can-view-the-product-list-chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                        "column": 25,
+                        "line": 25
+                      }
+                    },
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 449,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 20,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 20,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:25:25)\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:38:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                          "column": 25,
+                          "line": 25
+                        },
+                        "snippet": "   at utils/api.utils.ts:25\n\n\u001b[0m \u001b[90m 23 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoEqual(expected)\u001b[33m;\u001b[39m\n \u001b[90m 24 |\u001b[39m   } \u001b[36melse\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 25 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoMatchObject(expected)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 26 |\u001b[39m   }\n \u001b[90m 27 |\u001b[39m }\n \u001b[90m 28 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                            "column": 25,
+                            "line": 25
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 20,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m\n\n   at utils/api.utils.ts:25\n\n  23 |     expect.soft(actual).toEqual(expected);\n  24 |   } else {\n> 25 |     expect.soft(actual).toMatchObject(expected);\n     |                         ^\n  26 |   }\n  27 | }\n  28 |\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:25:25)\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:38:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts",
+                            "column": 26,
+                            "line": 42
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m22\u001b[39m\nReceived length: \u001b[31m20\u001b[39m\nReceived array:  \u001b[31m[{\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Portable Bluetooth speaker with 360-degree sound and 12-hour battery life.\", \"id\": 4, \"imageKey\": \"products/1783414430049-e232a0f7.jpeg\", \"imageUrl\": \"/api/images/products/1783414430049-e232a0f7.jpeg\", \"isActive\": true, \"name\": \"Bluetooth Speaker\", \"price\": 159.99, \"slug\": \"bluetooth-speaker\", \"stock\": 1715, \"updatedAt\": \"2026-09-04 00:07:31\"}, {\"createdAt\": \"2026-08-27 20:27:49\", \"description\": \"Adjustable LED desk lamp\", \"id\": 21, \"imageKey\": null, \"isActive\": true, \"name\": \"Desk Lamp\", \"price\": 34.99, \"slug\": \"desk-lamp\", \"stock\": 17, \"updatedAt\": \"2026-09-03 13:38:45\"}, {\"createdAt\": \"2026-08-27 19:26:06\", \"description\": \"Compact desktop storage tray - updated\", \"id\": 19, \"imageKey\": null, \"isActive\": true, \"name\": \"Desk Organizer\", \"price\": 18.5, \"slug\": \"desk-organizer\", \"stock\": 20, \"updatedAt\": \"2026-09-03 13:39:08\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Water-resistant fitness tracker with sleep monitoring and smartphone notifications.\", \"id\": 5, \"imageKey\": \"products/fitness_tracker.jpg\", \"imageUrl\": \"/api/images/products/fitness_tracker.jpg\", \"isActive\": true, \"name\": \"Fitness Tracker\", \"price\": 89.99, \"slug\": \"fitness-tracker\", \"stock\": 172, \"updatedAt\": \"2026-09-03 09:56:23\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Durable laptop backpack with multiple compartments and USB charging port.\", \"id\": 3, \"imageKey\": \"products/laptop_backpack.jpg\", \"imageUrl\": \"/api/images/products/laptop_backpack.jpg\", \"isActive\": true, \"name\": \"Laptop Backpack\", \"price\": 49.99, \"slug\": \"laptop-backpack\", \"stock\": 558, \"updatedAt\": \"2026-09-03 09:56:24\"}, {\"createdAt\": \"2026-08-25 12:54:07\", \"description\": null, \"id\": 15, \"imageKey\": \"products/1787662419559-f0518193.jpg\", \"imageUrl\": \"/api/images/products/1787662419559-f0518193.jpg\", \"isActive\": true, \"name\": \"Laptop Holder\", \"price\": 20, \"slug\": \"laptop-holder\", \"stock\": 78, \"updatedAt\": \"2026-09-03 13:46:39\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"RGB mechanical gaming keyboard with customizable keys and wrist rest.\", \"id\": 7, \"imageKey\": \"products/mechanical_keyboard.jpg\", \"imageUrl\": \"/api/images/products/mechanical_keyboard.jpg\", \"isActive\": true, \"name\": \"Mechanical Keyboard\", \"price\": 149.99, \"slug\": \"mechanical-keyboard\", \"stock\": 368, \"updatedAt\": \"2026-09-03 13:47:30\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"20000mAh power bank with fast charging and multiple USB ports.\", \"id\": 9, \"imageKey\": \"products/powerbank.jpg\", \"imageUrl\": \"/api/images/products/powerbank.jpg\", \"isActive\": true, \"name\": \"Power Bank\", \"price\": 59.99, \"slug\": \"power-bank\", \"stock\": 428, \"updatedAt\": \"2026-09-02 12:54:27\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Feature-rich smartwatch with heart rate monitoring, GPS, and water resistance.\", \"id\": 2, \"imageKey\": \"products/smartwatch.jpg\", \"imageUrl\": \"/api/images/products/smartwatch.jpg\", \"isActive\": true, \"name\": \"Smart Watch\", \"price\": 299.99, \"slug\": \"smart-watch\", \"stock\": 135, \"updatedAt\": \"2026-09-02 12:54:33\"}, {\"createdAt\": \"2026-08-28 07:24:40\", \"description\": \"Start your day with a smile with our charming Snoopy design office mug! Perfect for coffee, tea, or any beverage of your choice, this delightful mug features the beloved Peanuts character in playful poses that bring a touch of whimsy to your workspace. Made from high-quality ceramic, it’s both microwave and dishwasher safe, ensuring convenience for your busy schedule. Whether you're at home or in the office, let Snoopy inspire your creativity and brighten your day with every sip!\", \"id\": 22, \"imageKey\": \"products/1787901873172-56e70ccf.jpg\", \"imageUrl\": \"/api/images/products/1787901873172-56e70ccf.jpg\", \"isActive\": true, \"name\": \"Snoopy Office Mug\", \"price\": 10, \"slug\": \"snoopy-office-mug\", \"stock\": 0, \"updatedAt\": \"2026-09-02 12:54:39\"}, …]\u001b[39m\n\n   at product/product-api.assertions.ts:42\n\n  40 |     meta: { total: TOTAL_PRODUCTS_COUNT },\n  41 |   }, { exact: false });\n> 42 |   expect.soft(body.data).toHaveLength(TOTAL_PRODUCTS_COUNT);\n     |                          ^\n  43 | }\n  44 |\n  45 | export async function assertProductInList(response: APIResponse, expected: ExpectedProduct) {\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:42:26)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-09-04T02:25:46.303Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-api-list-p-f116e-r-can-view-the-product-list-chromium-retry1/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-api-list-p-f116e-r-can-view-the-product-list-chromium-retry1/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                        "column": 25,
+                        "line": 25
+                      }
+                    },
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 458,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 20,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 20,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:25:25)\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:38:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                          "column": 25,
+                          "line": 25
+                        },
+                        "snippet": "   at utils/api.utils.ts:25\n\n\u001b[0m \u001b[90m 23 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoEqual(expected)\u001b[33m;\u001b[39m\n \u001b[90m 24 |\u001b[39m   } \u001b[36melse\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 25 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoMatchObject(expected)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 26 |\u001b[39m   }\n \u001b[90m 27 |\u001b[39m }\n \u001b[90m 28 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                            "column": 25,
+                            "line": 25
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 20,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m\n\n   at utils/api.utils.ts:25\n\n  23 |     expect.soft(actual).toEqual(expected);\n  24 |   } else {\n> 25 |     expect.soft(actual).toMatchObject(expected);\n     |                         ^\n  26 |   }\n  27 | }\n  28 |\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:25:25)\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:38:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts",
+                            "column": 26,
+                            "line": 42
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m22\u001b[39m\nReceived length: \u001b[31m20\u001b[39m\nReceived array:  \u001b[31m[{\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Portable Bluetooth speaker with 360-degree sound and 12-hour battery life.\", \"id\": 4, \"imageKey\": \"products/1783414430049-e232a0f7.jpeg\", \"imageUrl\": \"/api/images/products/1783414430049-e232a0f7.jpeg\", \"isActive\": true, \"name\": \"Bluetooth Speaker\", \"price\": 159.99, \"slug\": \"bluetooth-speaker\", \"stock\": 1715, \"updatedAt\": \"2026-09-04 00:07:31\"}, {\"createdAt\": \"2026-08-27 20:27:49\", \"description\": \"Adjustable LED desk lamp\", \"id\": 21, \"imageKey\": null, \"isActive\": true, \"name\": \"Desk Lamp\", \"price\": 34.99, \"slug\": \"desk-lamp\", \"stock\": 17, \"updatedAt\": \"2026-09-03 13:38:45\"}, {\"createdAt\": \"2026-08-27 19:26:06\", \"description\": \"Compact desktop storage tray - updated\", \"id\": 19, \"imageKey\": null, \"isActive\": true, \"name\": \"Desk Organizer\", \"price\": 18.5, \"slug\": \"desk-organizer\", \"stock\": 20, \"updatedAt\": \"2026-09-03 13:39:08\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Water-resistant fitness tracker with sleep monitoring and smartphone notifications.\", \"id\": 5, \"imageKey\": \"products/fitness_tracker.jpg\", \"imageUrl\": \"/api/images/products/fitness_tracker.jpg\", \"isActive\": true, \"name\": \"Fitness Tracker\", \"price\": 89.99, \"slug\": \"fitness-tracker\", \"stock\": 172, \"updatedAt\": \"2026-09-03 09:56:23\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Durable laptop backpack with multiple compartments and USB charging port.\", \"id\": 3, \"imageKey\": \"products/laptop_backpack.jpg\", \"imageUrl\": \"/api/images/products/laptop_backpack.jpg\", \"isActive\": true, \"name\": \"Laptop Backpack\", \"price\": 49.99, \"slug\": \"laptop-backpack\", \"stock\": 558, \"updatedAt\": \"2026-09-03 09:56:24\"}, {\"createdAt\": \"2026-08-25 12:54:07\", \"description\": null, \"id\": 15, \"imageKey\": \"products/1787662419559-f0518193.jpg\", \"imageUrl\": \"/api/images/products/1787662419559-f0518193.jpg\", \"isActive\": true, \"name\": \"Laptop Holder\", \"price\": 20, \"slug\": \"laptop-holder\", \"stock\": 78, \"updatedAt\": \"2026-09-03 13:46:39\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"RGB mechanical gaming keyboard with customizable keys and wrist rest.\", \"id\": 7, \"imageKey\": \"products/mechanical_keyboard.jpg\", \"imageUrl\": \"/api/images/products/mechanical_keyboard.jpg\", \"isActive\": true, \"name\": \"Mechanical Keyboard\", \"price\": 149.99, \"slug\": \"mechanical-keyboard\", \"stock\": 368, \"updatedAt\": \"2026-09-03 13:47:30\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"20000mAh power bank with fast charging and multiple USB ports.\", \"id\": 9, \"imageKey\": \"products/powerbank.jpg\", \"imageUrl\": \"/api/images/products/powerbank.jpg\", \"isActive\": true, \"name\": \"Power Bank\", \"price\": 59.99, \"slug\": \"power-bank\", \"stock\": 428, \"updatedAt\": \"2026-09-02 12:54:27\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Feature-rich smartwatch with heart rate monitoring, GPS, and water resistance.\", \"id\": 2, \"imageKey\": \"products/smartwatch.jpg\", \"imageUrl\": \"/api/images/products/smartwatch.jpg\", \"isActive\": true, \"name\": \"Smart Watch\", \"price\": 299.99, \"slug\": \"smart-watch\", \"stock\": 135, \"updatedAt\": \"2026-09-02 12:54:33\"}, {\"createdAt\": \"2026-08-28 07:24:40\", \"description\": \"Start your day with a smile with our charming Snoopy design office mug! Perfect for coffee, tea, or any beverage of your choice, this delightful mug features the beloved Peanuts character in playful poses that bring a touch of whimsy to your workspace. Made from high-quality ceramic, it’s both microwave and dishwasher safe, ensuring convenience for your busy schedule. Whether you're at home or in the office, let Snoopy inspire your creativity and brighten your day with every sip!\", \"id\": 22, \"imageKey\": \"products/1787901873172-56e70ccf.jpg\", \"imageUrl\": \"/api/images/products/1787901873172-56e70ccf.jpg\", \"isActive\": true, \"name\": \"Snoopy Office Mug\", \"price\": 10, \"slug\": \"snoopy-office-mug\", \"stock\": 0, \"updatedAt\": \"2026-09-02 12:54:39\"}, …]\u001b[39m\n\n   at product/product-api.assertions.ts:42\n\n  40 |     meta: { total: TOTAL_PRODUCTS_COUNT },\n  41 |   }, { exact: false });\n> 42 |   expect.soft(body.data).toHaveLength(TOTAL_PRODUCTS_COUNT);\n     |                          ^\n  43 | }\n  44 |\n  45 | export async function assertProductInList(response: APIResponse, expected: ExpectedProduct) {\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:42:26)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-09-04T02:25:47.302Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-api-list-p-f116e-r-can-view-the-product-list-chromium-retry2/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-api-list-p-f116e-r-can-view-the-product-list-chromium-retry2/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                        "column": 25,
+                        "line": 25
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "c58856cfdeb52e4c75a7-1e0a4217fbf19d061041",
+              "file": "product/product-api-list.spec.ts",
+              "line": 8,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product/product-details.spec.ts",
+      "file": "product/product-details.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "product details",
+          "file": "product/product-details.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user can view in-stock product details",
+              "ok": true,
+              "tags": [
+                "product"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1930,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:48.313Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6ff5e364342853be8443-4f8668c261973695356b",
+              "file": "product/product-details.spec.ts",
+              "line": 8,
+              "column": 7
+            },
+            {
+              "title": "validate user can view out-of-stock product details",
+              "ok": true,
+              "tags": [
+                "product"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1819,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:50.373Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6ff5e364342853be8443-e321ce582d46b0fa8e51",
+              "file": "product/product-details.spec.ts",
+              "line": 13,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product/product-list.spec.ts",
+      "file": "product/product-list.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "product list",
+          "file": "product/product-list.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user can view the product list page",
+              "ok": false,
+              "tags": [
+                "product"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 6932,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of 2\u001b[7m2\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of 2\u001b[7m0\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    14 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 20 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 20 products\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of 2\u001b[7m2\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of 2\u001b[7m0\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    14 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 20 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 20 products\"\u001b[22m\n\n    at assertProductListPage (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts:8:64)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-list.spec.ts:10:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                          "column": 64,
+                          "line": 8
+                        },
+                        "snippet": "   at product/product.assertions.ts:8\n\n\u001b[0m \u001b[90m  6 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'catalog-heading'\u001b[39m))\u001b[33m.\u001b[39mtoHaveText(\u001b[32m'Product Catalog'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m  7 |\u001b[39m   \u001b[90m// sub-header\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  8 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'catalog-product-count'\u001b[39m))\u001b[33m.\u001b[39mtoHaveText(\u001b[32m`Browse our complete selection of ${totalCount} products`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  9 |\u001b[39m }\n \u001b[90m 10 |\u001b[39m\n \u001b[90m 11 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertProductInList(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m\u001b[33m,\u001b[39m product\u001b[33m:\u001b[39m \u001b[33mProductData\u001b[39m) {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                            "column": 64,
+                            "line": 8
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of 2\u001b[7m2\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of 2\u001b[7m0\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    14 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 20 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 20 products\"\u001b[22m\n\n\n   at product/product.assertions.ts:8\n\n   6 |   await expect.soft(page.getByTestId('catalog-heading')).toHaveText('Product Catalog');\n   7 |   // sub-header\n>  8 |   await expect.soft(page.getByTestId('catalog-product-count')).toHaveText(`Browse our complete selection of ${totalCount} products`);\n     |                                                                ^\n   9 | }\n  10 |\n  11 | export async function assertProductInList(page: Page, product: ProductData) {\n    at assertProductListPage (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts:8:64)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-list.spec.ts:10:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-04T02:25:52.210Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-list-produ-6fec5--view-the-product-list-page-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-list-produ-6fec5--view-the-product-list-page-chromium/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-list-produ-6fec5--view-the-product-list-page-chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-list-produ-6fec5--view-the-product-list-page-chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                        "column": 64,
+                        "line": 8
+                      }
+                    },
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7045,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of 2\u001b[7m2\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of 2\u001b[7m0\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    14 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 20 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 20 products\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of 2\u001b[7m2\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of 2\u001b[7m0\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    14 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 20 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 20 products\"\u001b[22m\n\n    at assertProductListPage (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts:8:64)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-list.spec.ts:10:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                          "column": 64,
+                          "line": 8
+                        },
+                        "snippet": "   at product/product.assertions.ts:8\n\n\u001b[0m \u001b[90m  6 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'catalog-heading'\u001b[39m))\u001b[33m.\u001b[39mtoHaveText(\u001b[32m'Product Catalog'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m  7 |\u001b[39m   \u001b[90m// sub-header\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  8 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'catalog-product-count'\u001b[39m))\u001b[33m.\u001b[39mtoHaveText(\u001b[32m`Browse our complete selection of ${totalCount} products`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  9 |\u001b[39m }\n \u001b[90m 10 |\u001b[39m\n \u001b[90m 11 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertProductInList(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m\u001b[33m,\u001b[39m product\u001b[33m:\u001b[39m \u001b[33mProductData\u001b[39m) {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                            "column": 64,
+                            "line": 8
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of 2\u001b[7m2\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of 2\u001b[7m0\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    14 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 20 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 20 products\"\u001b[22m\n\n\n   at product/product.assertions.ts:8\n\n   6 |   await expect.soft(page.getByTestId('catalog-heading')).toHaveText('Product Catalog');\n   7 |   // sub-header\n>  8 |   await expect.soft(page.getByTestId('catalog-product-count')).toHaveText(`Browse our complete selection of ${totalCount} products`);\n     |                                                                ^\n   9 | }\n  10 |\n  11 | export async function assertProductInList(page: Page, product: ProductData) {\n    at assertProductListPage (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts:8:64)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-list.spec.ts:10:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-09-04T02:25:59.986Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-list-produ-6fec5--view-the-product-list-page-chromium-retry1/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-list-produ-6fec5--view-the-product-list-page-chromium-retry1/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-list-produ-6fec5--view-the-product-list-page-chromium-retry1/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-list-produ-6fec5--view-the-product-list-page-chromium-retry1/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                        "column": 64,
+                        "line": 8
+                      }
+                    },
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7265,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of 2\u001b[7m2\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of 2\u001b[7m0\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    14 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 20 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 20 products\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of 2\u001b[7m2\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of 2\u001b[7m0\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    14 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 20 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 20 products\"\u001b[22m\n\n    at assertProductListPage (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts:8:64)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-list.spec.ts:10:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                          "column": 64,
+                          "line": 8
+                        },
+                        "snippet": "   at product/product.assertions.ts:8\n\n\u001b[0m \u001b[90m  6 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'catalog-heading'\u001b[39m))\u001b[33m.\u001b[39mtoHaveText(\u001b[32m'Product Catalog'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m  7 |\u001b[39m   \u001b[90m// sub-header\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  8 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'catalog-product-count'\u001b[39m))\u001b[33m.\u001b[39mtoHaveText(\u001b[32m`Browse our complete selection of ${totalCount} products`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  9 |\u001b[39m }\n \u001b[90m 10 |\u001b[39m\n \u001b[90m 11 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertProductInList(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m\u001b[33m,\u001b[39m product\u001b[33m:\u001b[39m \u001b[33mProductData\u001b[39m) {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                            "column": 64,
+                            "line": 8
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of 2\u001b[7m2\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of 2\u001b[7m0\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    14 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 20 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 20 products\"\u001b[22m\n\n\n   at product/product.assertions.ts:8\n\n   6 |   await expect.soft(page.getByTestId('catalog-heading')).toHaveText('Product Catalog');\n   7 |   // sub-header\n>  8 |   await expect.soft(page.getByTestId('catalog-product-count')).toHaveText(`Browse our complete selection of ${totalCount} products`);\n     |                                                                ^\n   9 | }\n  10 |\n  11 | export async function assertProductInList(page: Page, product: ProductData) {\n    at assertProductListPage (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts:8:64)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-list.spec.ts:10:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-09-04T02:26:07.979Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-list-produ-6fec5--view-the-product-list-page-chromium-retry2/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-list-produ-6fec5--view-the-product-list-page-chromium-retry2/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-list-produ-6fec5--view-the-product-list-page-chromium-retry2/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results/product-product-list-produ-6fec5--view-the-product-list-page-chromium-retry2/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                        "column": 64,
+                        "line": 8
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "55c53689e1a467cb70f7-5378e26fbec2dc61c75a",
+              "file": "product/product-list.spec.ts",
+              "line": 8,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-04T02:24:43.388Z",
+    "duration": 92365.285,
+    "expected": 33,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}
