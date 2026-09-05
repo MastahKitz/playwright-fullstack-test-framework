@@ -1,6 +1,8 @@
 node_modules/
 test-results/
 test-report/
+blob-report/
+merged-blobs/
 public/
 gh-pages/
 .env

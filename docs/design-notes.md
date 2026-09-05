@@ -16,17 +16,19 @@ intercept the `request` fixture the API tests use, so stubs would never be
 shared between the UI and API layers. Tests run against the real API instead.
 
 ### Load & performance — JMeter, k6
-Same ownership problem, and qademo is a small shared demo box that already drops
-requests under a 4-worker functional run. Deliberately loading it would be
-antisocial and any numbers would be noise.
+Same ownership problem, and qademo is still a small shared demo box (5 workers
+of ordinary functional traffic is one thing; deliberately load-testing it is
+another). Deliberately loading it would be antisocial and any numbers would be
+noise.
 
 ### Cross-layer "seed via API, assert in UI"
 Needs one entity with both a write API and a read-back screen. The storefront is
 read-only for anonymous and standard users, orders disappear from view once
 submitted, and bridging through the cart's `x-session-id` header (stitching a
-value out of a browser context into an API context) is contrived. The admin API
-(`updateProductStock`, `createProduct`) could technically enable this, but the
-admin domain itself was scoped out — see below.
+value out of a browser context into an API context) is contrived. The admin
+`createProduct`/`deleteProduct` calls that `product-api-create` /
+`product-api-delete` already exercise could technically enable this, but the
+cross-layer bridge itself stays out of scope.
 
 ### Runtime response-schema validation — zod / ajv on every response
 Normally the API owner's job, and there's no published contract to validate
@@ -41,12 +43,14 @@ out of one response, put it into the next request), just with more fields. The
 UI suite covers checkout end-to-end. No new pattern, so it would be volume, not
 coverage.
 
-### `cart-api` and `admin` domains
+### `cart-api` domain, and a standalone `admin` domain
 `cart-api` — the cart is anonymous (`x-session-id`), so it would add stateful
 CRUD and more verbs but nothing the suite doesn't already demonstrate.
-`admin` — `PATCH`/`PUT`/`DELETE` plus create-then-cleanup teardown don't show
-anything `GET`/`POST` and the existing `beforeAll`/`afterAll` fixtures don't.
-Both were built up as candidates and declined.
+A standalone `admin` domain — beyond the admin-authenticated `POST`/`DELETE`
+`product-api-create` / `product-api-delete` already cover — would add
+`PATCH`/`PUT` (e.g. `updateProductStock`), but no new pattern: the
+create-then-cleanup teardown and admin-token `beforeAll` login it would need are
+already demonstrated there. Both were built up as candidates and declined.
 
 ### Custom ESLint convention rules
 The AI PR-review workflow enforces the [conventions](conventions.md) in context
@@ -58,9 +62,9 @@ A separate discipline. Adding a few `axe` scans would dilute the framework's
 focus rather than complete it.
 
 ### Cross-browser — Firefox / WebKit
-CI runs a single Chromium project because qademo drops requests under parallel
-load and stability matters more than browser matrix here. Firefox/WebKit would
-belong in an opt-in workflow, not the per-push run.
+CI runs a single Chromium project — qademo is still a small shared demo box, and
+a 3-browser matrix would add real runtime for coverage nobody's reviewing here.
+Firefox/WebKit would belong in an opt-in workflow, not the per-push run.
 
 ### Dashboard history beyond 5 runs
 The trend chart keeps the last 5 runs. More would need real storage (the current
@@ -68,6 +72,21 @@ approach carries prior reports forward in the `gh-pages` checkout) for a longer
 window nobody reviews.
 
 ## Calls worth explaining
+
+### Mutating product tests run as a separate CI invocation, not a Playwright project dependency
+`product-api-create`/`product-api-delete` (tagged `@mutating`) mutate real catalog data, which
+would make the product list/count assertions flaky on timing if the two ran concurrently under
+the default 5 workers. The obvious fix — a second Playwright project with
+`dependencies: ['chromium']` — was tried and reverted: `dependencies` skips the dependent
+project entirely the moment the dependency has *any* failing test, and this suite always has
+2 (see "Two tests fail on purpose" above), so every run would silently skip the mutating tests
+forever. Removing `dependencies` and relying on project declaration order instead was also
+tried and measured to fail under real CI timing — with `retries: 2`, the two always-failing
+tests took long enough that the mutating project's first test started **11.75s before** the
+non-mutating project's last test finished. The only mechanism that actually guarantees the two
+never overlap is two separate `npx playwright test` invocations (`playwright.yml`) — a real
+process boundary — merged back into one report afterward via `playwright merge-reports` (blob
+reporter per phase, since a reporter's output dir is wiped at the start of every invocation).
 
 ### `global.setup.ts` does a real browser login, not an API token call
 A `POST /api/auth/login` would shave ~3–5s off startup. The browser login stays

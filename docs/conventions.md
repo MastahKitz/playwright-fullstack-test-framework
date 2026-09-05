@@ -93,7 +93,15 @@ elsewhere in the repo.
 9. **Every `test.describe(...)` has a `{ tag: '@xxx' }`** matching its domain (`@auth`,
    `@product`, `@cart`, `@checkout`). API-layer specs carry a second `@api` tag alongside the
    domain tag — `{ tag: ['@auth', '@api'] }` in `auth-api.spec.ts` — so the API suite can be run
-   or filtered independently of the UI suite.
+   or filtered independently of the UI suite. A spec whose tests are transactional — create,
+   edit, delete, import, or anything else that mutates real server-side data rather than only
+   reading it — also carries `@mutating`: `{ tag: ['@product', '@api', '@mutating'] }` in
+   `product-api-create.spec.ts` / `product-api-delete.spec.ts`. CI runs `@mutating` specs as
+   their own phase, isolated from the rest of the suite (`playwright.yml`,
+   `playwright.config.ts`'s `chromium-mutating` project), so a create/delete never races a
+   list/count assertion elsewhere — see design-notes.md's "Calls worth explaining" for why that
+   isolation is two separate `playwright test` invocations rather than a project `dependencies`
+   gate.
 
 10. **`test.describe.configure({ mode: 'serial' })`** whenever tests depend on state left by
     earlier tests in the same file. When that state lives in one browser context (the cart, an
