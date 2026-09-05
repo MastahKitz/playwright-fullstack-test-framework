@@ -5,9 +5,6 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# qademo is a small shared demo server — the suite already runs single-worker
-# for that reason (playwright.config.ts). Queue runs so two never hammer its API
-# at once, rather than cancelling in-progress runs.
 concurrency:
   group: qademo-qa-e2e
   cancel-in-progress: false
@@ -44,8 +41,30 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       # Run the end-to-end suite against the live demo site.
-      - name: Run Playwright tests
-        run: npx playwright test
+      - name: Run Playwright tests - mutating
+        env:
+          PW_PHASE: mutating
+        run: npx playwright test --project=chromium-mutating
+
+      - name: Collect mutating-phase report
+        if: always()
+        run: |
+          mkdir -p merged-blobs
+          cp blob-report/mutating.zip merged-blobs/
+
+      - name: Run Playwright tests - non-mutating
+        if: always()
+        env:
+          PW_PHASE: non-mutating
+        run: npx playwright test --project=chromium
+
+      - name: Collect non-mutating-phase report
+        if: always()
+        run: cp blob-report/non-mutating.zip merged-blobs/
+
+      - name: Merge phase reports
+        if: always()
+        run: npx playwright merge-reports --config=playwright.config.ts merged-blobs
 
       # Post-process the run's results and fail the build if any test only passed on retry.
       - name: Fail build if any test was flaky

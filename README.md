@@ -28,10 +28,11 @@ npm run test:ui       # Playwright UI mode
 npm run report        # open the last HTML report
 ```
 
-The suite runs **single-worker** (`workers: 1` in `playwright.config.ts`). qademo is a small
-shared demo server; parallel workers overwhelm its cart/order API and it starts dropping
-requests. Override per run with `npx playwright test --workers=4` if you know the server is
-quiet.
+The suite runs **5 workers** by default (`workers: 5` in `playwright.config.ts`) — qademo
+handles that fine. Product create/delete are still kept off to the side: they carry an
+`@mutating` tag and run as their own CI phase (`playwright.yml`), separately from everything
+else, so they never race with the product list/count assertions elsewhere in the suite.
+Override the worker count per run with `npx playwright test --workers=N`.
 
 ### How auth works
 

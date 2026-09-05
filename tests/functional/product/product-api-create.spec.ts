@@ -8,7 +8,7 @@ import { assertProductExists, deleteProduct } from './product-api.flow';
 import { sampleProductCreateBody, expectedProduct } from './product-api.data';
 import type { CreatedProductRefs } from './product-api.data';
 
-test.describe('product create api', { tag: ['@product', '@api'] }, () => {
+test.describe('product create api', { tag: ['@product', '@api', '@mutating'] }, () => {
   let accessToken: string;
   let createdProductRefs: CreatedProductRefs | undefined;
 
