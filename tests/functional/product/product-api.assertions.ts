@@ -4,7 +4,6 @@ import {
   ProductListResponseBody,
   ProductDetailsResponseBody,
   ProductErrorResponseBody,
-  ProductCreateRequestBody,
   ProductCreateResponseBody,
   ProductDeleteResponseBody,
   ExpectedProduct,
@@ -86,7 +85,7 @@ export async function assertProductNotFoundError(response: APIResponse) {
 
 export async function assertProductCreateSuccess(
   response: APIResponse,
-  productCreateRequestBody: ProductCreateRequestBody,
+  expectedName: string,
 ) {
   assertResponseStatus(response, 201);
   const body: ProductCreateResponseBody = await response.json();
@@ -94,7 +93,7 @@ export async function assertProductCreateSuccess(
     success: true,
     data: {
       id: expect.any(Number),
-      slug: expectedSlug(productCreateRequestBody.name),
+      slug: expectedSlug(expectedName),
     },
   }, { exact: true });
 }

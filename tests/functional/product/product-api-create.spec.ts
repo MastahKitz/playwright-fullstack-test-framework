@@ -28,7 +28,7 @@ test.describe('product create api', { tag: ['@product', '@api'] }, () => {
     const productCreateRequestBody = sampleProductCreateBody();
 
     const response = await sendProductCreateRequest(request, accessToken, productCreateRequestBody);
-    await assertProductCreateSuccess(response, productCreateRequestBody);
+    await assertProductCreateSuccess(response, productCreateRequestBody.name);
 
     createdProductRefs = await captureCreatedProductRefs(response);
     await assertProductExists(request, expectedProduct(productCreateRequestBody, createdProductRefs));
