@@ -128,8 +128,8 @@ export function expectedSlug(name: string): string {
 }
 
 export function expectedProduct(
-  body: ProductCreateRequestBody,
-  refs: CreatedProductRefs,
+  body: ProductCreateRequestBody, // the request body sent to the create endpoint
+  refs: CreatedProductRefs, // the parsed response body from the create endpoint
 ): ExpectedProduct {
   return {
     id: refs.id,
