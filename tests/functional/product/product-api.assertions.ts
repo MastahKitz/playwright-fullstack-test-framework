@@ -43,6 +43,7 @@ function assertStockCount(stock: number | undefined, expected: ExpectedProduct) 
 export async function assertProductListSuccess(response: APIResponse) {
   assertResponseStatus(response, 200);
   const body: ProductListResponseBody = await response.json();
+  // KNOWN-FAILURE(#47): TOTAL_PRODUCTS_COUNT is a stale hardcoded catalog size (expects 22, live site has 21) — retriage if this changes
   assertResponseBody(body, {
     success: true,
     meta: { total: TOTAL_PRODUCTS_COUNT },
