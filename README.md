@@ -72,9 +72,9 @@ calls `sendApiRequest(...)` (`utils/api.utils.ts`) instead of `page.*`, and `.as
 `assertResponseStatus`/`assertResponseBody` instead of locator-based `expect.soft(...)` checks.
 
 Current modules: `auth` (+ `auth-error`, `auth-api`, `auth-api-error`), `product` (list +
-details, + `product-api-list`, `product-api-details`, `product-api-details-error`), `order/cart`,
-`order/checkout` (+ `checkout-error`). Config and base URLs come from
-`tests/functional/config/`.
+details, + `product-api-list`, `product-api-details`, `product-api-details-error`,
+`product-api-create`, `product-api-delete`), `order/cart`, `order/checkout` (+
+`checkout-error`). Config and base URLs come from `tests/functional/config/`.
 
 Helpers shared across two or more features — pure functions (parsing, formatting, date math) or
 shared Playwright-touching primitives (sending a request, asserting a response) alike — live in

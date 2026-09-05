@@ -24,9 +24,10 @@ antisocial and any numbers would be noise.
 Needs one entity with both a write API and a read-back screen. The storefront is
 read-only for anonymous and standard users, orders disappear from view once
 submitted, and bridging through the cart's `x-session-id` header (stitching a
-value out of a browser context into an API context) is contrived. The admin API
-(`updateProductStock`, `createProduct`) could technically enable this, but the
-admin domain itself was scoped out — see below.
+value out of a browser context into an API context) is contrived. The admin
+`createProduct`/`deleteProduct` calls that `product-api-create` /
+`product-api-delete` already exercise could technically enable this, but the
+cross-layer bridge itself stays out of scope.
 
 ### Runtime response-schema validation — zod / ajv on every response
 Normally the API owner's job, and there's no published contract to validate
@@ -41,12 +42,14 @@ out of one response, put it into the next request), just with more fields. The
 UI suite covers checkout end-to-end. No new pattern, so it would be volume, not
 coverage.
 
-### `cart-api` and `admin` domains
+### `cart-api` domain, and a standalone `admin` domain
 `cart-api` — the cart is anonymous (`x-session-id`), so it would add stateful
 CRUD and more verbs but nothing the suite doesn't already demonstrate.
-`admin` — `PATCH`/`PUT`/`DELETE` plus create-then-cleanup teardown don't show
-anything `GET`/`POST` and the existing `beforeAll`/`afterAll` fixtures don't.
-Both were built up as candidates and declined.
+A standalone `admin` domain — beyond the admin-authenticated `POST`/`DELETE`
+`product-api-create` / `product-api-delete` already cover — would add
+`PATCH`/`PUT` (e.g. `updateProductStock`), but no new pattern: the
+create-then-cleanup teardown and admin-token `beforeAll` login it would need are
+already demonstrated there. Both were built up as candidates and declined.
 
 ### Custom ESLint convention rules
 The AI PR-review workflow enforces the [conventions](conventions.md) in context
