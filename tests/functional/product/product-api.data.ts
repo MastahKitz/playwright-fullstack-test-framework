@@ -26,6 +26,22 @@ export interface ProductErrorResponseBody {
   };
 }
 
+export interface ProductValidationErrorResponseBody {
+  success: boolean;
+  error: {
+    issues: Array<{
+      code: string;
+      minimum: number;
+      type: string;
+      inclusive: boolean;
+      exact: boolean;
+      message: string;
+      path: string[];
+    }>;
+    name: string;
+  };
+}
+
 export interface ProductCreateRequestBody {
   name: string;
   description: string;

@@ -4,6 +4,7 @@ import {
   ProductListResponseBody,
   ProductDetailsResponseBody,
   ProductErrorResponseBody,
+  ProductValidationErrorResponseBody,
   ProductCreateResponseBody,
   ProductDeleteResponseBody,
   ExpectedProduct,
@@ -105,4 +106,52 @@ export async function assertProductDeleteSuccess(response: APIResponse, expected
     success: true,
     data: { id: expectedId, deleted: true },
   }, { exact: true });
+}
+
+export async function assertInvalidTokenError(response: APIResponse) {
+  assertResponseStatus(response, 401);
+  const body: ProductErrorResponseBody = await response.json();
+  assertResponseBody(body, {
+    success: false,
+    error: { code: 'UNAUTHORIZED', message: 'Invalid token' },
+  }, { exact: true });
+}
+
+export async function assertInvalidAuthFormatError(response: APIResponse) {
+  assertResponseStatus(response, 401);
+  const body: ProductErrorResponseBody = await response.json();
+  assertResponseBody(body, {
+    success: false,
+    error: { code: 'UNAUTHORIZED', message: 'Invalid authentication format' },
+  }, { exact: true });
+}
+
+export async function assertProductNameRequiredError(response: APIResponse) {
+  assertResponseStatus(response, 400);
+  const body: ProductValidationErrorResponseBody = await response.json();
+  assertResponseBody(body, {
+    success: false,
+    error: {
+      issues: [{ code: 'too_small', minimum: 1, type: 'string', inclusive: true, exact: false, message: 'Name is required', path: ['name'] }],
+      name: 'ZodError',
+    },
+  }, { exact: true });
+}
+
+export async function assertProductPriceMustBePositiveError(response: APIResponse) {
+  assertResponseStatus(response, 400);
+  const body: ProductValidationErrorResponseBody = await response.json();
+  assertResponseBody(body, {
+    success: false,
+    error: {
+      issues: [{ code: 'too_small', minimum: 0, type: 'number', inclusive: false, exact: false, message: 'Price must be positive', path: ['price'] }],
+      name: 'ZodError',
+    },
+  }, { exact: true });
+}
+
+export async function assertProductIdRequiredError(response: APIResponse) {
+  assertResponseStatus(response, 404);
+  const body = await response.text();
+  expect.soft(body).toBe('404 Not Found');
 }
