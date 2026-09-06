@@ -22,7 +22,7 @@ there. `QA_ENV` is optional and defaults to `demo` (see `environments.ts`).
 Run tests:
 
 ```bash
-npm test              # headless
+npm test              # headless, chromium
 npm run test:headed   # headed browser
 npm run test:ui       # Playwright UI mode
 npm run report        # open the last HTML report
@@ -33,6 +33,23 @@ handles that fine. Product create/delete are still kept off to the side: they ca
 `@mutating` tag and run as their own CI phase (`playwright.yml`), separately from everything
 else, so they never race with the product list/count assertions elsewhere in the suite.
 Override the worker count per run with `npx playwright test --workers=N`.
+
+### Cross-browser
+
+Browser is picked by `QA_BROWSER` (`tests/functional/config/browsers.ts`), defaulting to
+`chromium`:
+
+```bash
+npm run test:firefox
+npm run test:webkit
+npm run test:edge
+```
+
+or set it yourself: `QA_BROWSER=firefox npx playwright test` (bash) /
+`$env:QA_BROWSER='firefox'; npx playwright test` (PowerShell). `webkit` is Playwright's own
+WebKit build (the standard proxy for Safari on non-Mac machines); `edge` drives the real,
+system-installed Microsoft Edge via the `msedge` channel. First time using firefox/webkit,
+install their binaries: `npx playwright install --with-deps firefox webkit`.
 
 ### How auth works
 

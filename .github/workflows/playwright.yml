@@ -4,6 +4,16 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      browser:
+        description: Browser to run against
+        type: choice
+        options: [chromium, firefox, webkit, edge]
+        default: chromium
+      tag:
+        description: 'Optional extra @tag filter, e.g. @smoke (ANDed with the mutating/non-mutating split; leave blank to run everything in each phase)'
+        type: string
+        default: ''
 
 concurrency:
   group: qademo-qa-e2e
@@ -23,6 +33,9 @@ jobs:
       QA_LOCKED_USER_PASSWORD: ${{ secrets.QA_LOCKED_USER_PASSWORD }}
       QA_ADMIN_USER_USERNAME: ${{ secrets.QA_ADMIN_USER_USERNAME }}
       QA_ADMIN_USER_PASSWORD_PREFIX: ${{ secrets.QA_ADMIN_USER_PASSWORD_PREFIX }}
+      # push events have no `inputs` context, so both fall back to their defaults.
+      QA_BROWSER: ${{ github.event.inputs.browser || 'chromium' }}
+      QA_TAG: ${{ github.event.inputs.tag }}
     steps:
       # Check out the repo at the pushed commit so the workflow can run its code.
       - uses: actions/checkout@v4
@@ -36,15 +49,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Download the Chromium build Playwright needs, plus its OS-level libraries.
+      # Download the browser build Playwright needs, plus its OS-level libraries.
+      # QA_BROWSER's "edge" maps to the "msedge" channel (see browsers.ts) but
+      # Playwright's own install package is also named "msedge", so translate here.
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: |
+          if [ "$QA_BROWSER" = "edge" ]; then
+            npx playwright install --with-deps msedge
+          else
+            npx playwright install --with-deps "$QA_BROWSER"
+          fi
 
-      # Run the end-to-end suite against the live demo site.
+      # Run the end-to-end suite against the live demo site. Project names are
+      # built from QA_BROWSER (see playwright.config.ts), and an optional extra
+      # @tag from the manual-trigger input is ANDed on top via --grep.
       - name: Run Playwright tests - mutating
         env:
           PW_PHASE: mutating
-        run: npx playwright test --project=chromium-mutating
+        run: npx playwright test --project="${QA_BROWSER}-mutating" ${QA_TAG:+--grep "$QA_TAG"}
 
       - name: Collect mutating-phase report
         if: always()
@@ -56,7 +78,7 @@ jobs:
         if: always()
         env:
           PW_PHASE: non-mutating
-        run: npx playwright test --project=chromium
+        run: npx playwright test --project="$QA_BROWSER" ${QA_TAG:+--grep "$QA_TAG"}
 
       - name: Collect non-mutating-phase report
         if: always()

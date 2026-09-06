@@ -1,9 +1,10 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig } from '@playwright/test';
 import dotenv from 'dotenv';
 
 dotenv.config({ path: './tests/functional/config/.env' });
 
 import { environment } from './tests/functional/config/environments';
+import { browser } from './tests/functional/config/browsers';
 
 export default defineConfig({
   testDir: './tests/functional',
@@ -35,14 +36,14 @@ export default defineConfig({
   outputDir: 'test-results',
   projects: [
     {
-      name: 'chromium-mutating',
+      name: `${browser.name}-mutating`,
       grep: /@mutating/,
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...browser.use },
     },
     {
-      name: 'chromium',
+      name: browser.name,
       grepInvert: /@mutating/,
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...browser.use },
     },
   ],
 });
