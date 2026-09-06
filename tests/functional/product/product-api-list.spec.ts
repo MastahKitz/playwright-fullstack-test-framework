@@ -7,6 +7,7 @@ test.describe('product list api', { tag: ['@product', '@api'] }, () => {
 
   test('validate user can view the product list', async ({ request }) => {
     const response = await sendProductListRequest(request);
+    // KNOWN-FAILURE(#62): hardcoded TOTAL_PRODUCTS_COUNT (22) drifted from live qademo catalog size (24) — retriage if this changes
     await assertProductListSuccess(response);
     await assertProductInList(response, fitnessTracker);
     await assertProductInList(response, laptopBackpack);
