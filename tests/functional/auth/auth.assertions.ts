@@ -22,6 +22,7 @@ export async function assertUsernameRequiredError(page: Page) {
 }
 
 export async function assertPasswordRequiredError(page: Page) {
+  // KNOWN-FAILURE(#66): blank-password submit intermittently unmounts the whole sign-in form instead of showing this message — retriage if this changes
   await expect.soft(page.getByText('Password is required', { exact: true })).toBeVisible();
 }
 
