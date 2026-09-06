@@ -22,7 +22,7 @@ there. `QA_ENV` is optional and defaults to `demo` (see `environments.ts`).
 Run tests:
 
 ```bash
-npm test              # headless
+npm test              # headless, chromium
 npm run test:headed   # headed browser
 npm run test:ui       # Playwright UI mode
 npm run report        # open the last HTML report
@@ -33,6 +33,27 @@ handles that fine. Product create/delete are still kept off to the side: they ca
 `@mutating` tag and run as their own CI phase (`playwright.yml`), separately from everything
 else, so they never race with the product list/count assertions elsewhere in the suite.
 Override the worker count per run with `npx playwright test --workers=N`.
+
+### Cross-browser
+
+Browser is picked by `QA_BROWSER` (`tests/functional/config/browsers.ts`), defaulting to
+`chromium`:
+
+```bash
+npm run test:firefox
+npm run test:webkit
+npm run test:edge
+```
+
+or set it yourself: `QA_BROWSER=firefox npx playwright test` (bash) /
+`$env:QA_BROWSER='firefox'; npx playwright test` (PowerShell). `webkit` is Playwright's own
+WebKit build (the standard proxy for Safari on non-Mac machines); `edge` drives the real,
+system-installed Microsoft Edge via the `msedge` channel. First time using firefox/webkit,
+install their binaries: `npx playwright install --with-deps firefox webkit`.
+
+The same choice is available when triggering CI by hand — see
+[Continuous execution](#continuous-execution) below. A plain push to `main` always runs
+chromium.
 
 ### How auth works
 
@@ -138,10 +159,19 @@ below) are skipped.
 
 ### Continuous execution
 
-`.github/workflows/playwright.yml` — on every push to `main` (and via manual dispatch), the full
-suite runs against the live storefront. Runs are queued (`concurrency`, no cancel-in-progress)
-rather than overlapping, since concurrent runs would double the load on qademo's API. A test
-that only passes on retry is still treated as a build failure
+`.github/workflows/playwright.yml` — on every push to `main`, the full suite runs against the
+live storefront on chromium. It can also be triggered by hand (**Actions → Playwright Tests →
+Run workflow**) with two optional inputs: `browser` (chromium/firefox/webkit/edge — the same
+`QA_BROWSER` mechanism as local runs, see [Cross-browser](#cross-browser) above) and `tag`, a
+free-text `@tag` (e.g. `@smoke`) that's ANDed onto whichever mutating/non-mutating phase is
+running, on top of the existing `@mutating` split — Playwright combines a project's `grep` with
+a command-line `--grep` rather than one replacing the other. A plain push ignores both and always
+runs the full suite on chromium.
+
+Runs are queued (`concurrency`, no cancel-in-progress) rather than overlapping, regardless of
+which browser they're running — they all hit the same live qademo backend and data, so a
+manually-dispatched Edge run still waits for a Chromium push run to finish rather than racing it.
+A test that only passes on retry is still treated as a build failure
 ([`scripts/check-flaky.js`](scripts/check-flaky.js), which walks the JSON report and fails the
 build on any `flaky` outcome). The HTML report is uploaded as an artifact, plus
 screenshots/videos/traces on failure.
@@ -158,9 +188,11 @@ separate API billing).
 
 The same workflow publishes a dashboard to **GitHub Pages**
 ([mastahkitz.github.io/playwright-fullstack-test-framework](https://mastahkitz.github.io/playwright-fullstack-test-framework/))
-after every run, pass or fail. It keeps the **last 5 runs** — status, test/pass/fail/flaky/skipped
-counts, commit, duration, and a link to that run's full Playwright HTML report served inline (no
-artifact download) — plus an inline trend chart across those runs (total test count as a line, a
+after every run, pass or fail. It keeps the **last 5 runs** — status, run/commit links, browser
+(shown by the name people actually recognize — `webkit` reports as **Safari**), how it was
+triggered (`CI` for a push, `Manual` for `workflow_dispatch`),
+test/pass/fail/flaky/skipped counts, duration, and a link to that run's full Playwright HTML
+report served inline (no artifact download) — plus an inline trend chart across those runs (total test count as a line, a
 green "passed" area and a hatched "not passed" wedge beneath it, with a per-run hover breakdown). [`scripts/build-report-dashboard.js`](scripts/build-report-dashboard.js) reads
 `test-report/results.json`, copies this run's report in, carries the four most recent prior reports
 forward from the existing `gh-pages` checkout, regenerates `index.html`, and the workflow

@@ -28,10 +28,18 @@ const {
   GITHUB_REPOSITORY,
   GITHUB_SERVER_URL = 'https://github.com',
   GITHUB_SHA = '',
+  GITHUB_EVENT_NAME = 'push',
+  QA_BROWSER = 'chromium',
 } = process.env;
 
 const runNumber = Number(GITHUB_RUN_NUMBER) || 0;
 const repoUrl = GITHUB_REPOSITORY ? `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}` : '';
+
+// Dashboard viewers care what browser ran, not which engine/binary implements it —
+// "webkit" is Playwright's build name for the engine, but reads as "Safari" to everyone else.
+const BROWSER_LABELS = { chromium: 'Chromium', firefox: 'Firefox', webkit: 'Safari', edge: 'Edge' };
+const browserLabel = BROWSER_LABELS[QA_BROWSER] || QA_BROWSER;
+const triggeredBy = GITHUB_EVENT_NAME === 'workflow_dispatch' ? 'Manual' : 'CI';
 
 function fmtTime(iso) {
   const d = new Date(iso);
@@ -86,6 +94,8 @@ const entry = {
   shaShort: GITHUB_SHA.slice(0, 7),
   commitUrl: GITHUB_SHA && repoUrl ? `${repoUrl}/commit/${GITHUB_SHA}` : '',
   status,
+  browser: browserLabel,
+  triggeredBy,
   reportHref: `runs/${runNumber}/`,
   reportAvailable: fs.existsSync(reportDir),
   ...stats,
@@ -152,6 +162,8 @@ function renderHtml(runList) {
           <td>${runCell}</td>
           <td class="muted nowrap">${fmtTime(r.startTime)}</td>
           <td>${commitCell}</td>
+          <td class="nowrap">${r.browser || 'Chromium'}</td>
+          <td class="nowrap">${r.triggeredBy || 'CI'}</td>
           <td class="num">${r.total}</td>
           <td class="num pass">${r.passed}</td>
           <td class="num ${r.failed ? 'fail' : 'muted'}">${r.failed || 0}</td>
@@ -269,7 +281,7 @@ function renderHtml(runList) {
     <table>
       <thead>
         <tr>
-          <th>Status</th><th>Run</th><th>Started</th><th>Commit</th>
+          <th>Status</th><th>Run</th><th>Started</th><th>Commit</th><th>Browser</th><th>Triggered by</th>
           <th class="num">Total</th><th class="num">Pass</th><th class="num">Fail</th>
           <th class="num">Flaky</th><th class="num">Skip</th><th>Duration</th><th>Report</th>
         </tr>
