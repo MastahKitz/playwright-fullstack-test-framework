@@ -190,7 +190,9 @@ The same workflow publishes a dashboard to **GitHub Pages**
 ([mastahkitz.github.io/playwright-fullstack-test-framework](https://mastahkitz.github.io/playwright-fullstack-test-framework/))
 after every run, pass or fail. It keeps the **last 5 runs** — status, run/commit links, browser
 (shown by the name people actually recognize — `webkit` reports as **Safari**), how it was
-triggered (`CI` for a push, `Manual` for `workflow_dispatch`),
+triggered (`CI` for a push, `Manual` for `workflow_dispatch`), any extra `@tag` filter the
+manual run was launched with (the built-in mutating/non-mutating phase split isn't shown — it
+applies to every run — so a blank `Tags` cell means the whole suite ran),
 test/pass/fail/flaky/skipped counts, duration, and a link to that run's full Playwright HTML
 report served inline (no artifact download) — plus an inline trend chart across those runs (total test count as a line, a
 green "passed" area and a hatched "not passed" wedge beneath it, with a per-run hover breakdown). [`scripts/build-report-dashboard.js`](scripts/build-report-dashboard.js) reads

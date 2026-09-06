@@ -30,6 +30,7 @@ const {
   GITHUB_SHA = '',
   GITHUB_EVENT_NAME = 'push',
   QA_BROWSER = 'chromium',
+  QA_TAG = '',
 } = process.env;
 
 const runNumber = Number(GITHUB_RUN_NUMBER) || 0;
@@ -40,6 +41,14 @@ const repoUrl = GITHUB_REPOSITORY ? `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}` 
 const BROWSER_LABELS = { chromium: 'Chromium', firefox: 'Firefox', webkit: 'Safari', edge: 'Edge' };
 const browserLabel = BROWSER_LABELS[QA_BROWSER] || QA_BROWSER;
 const triggeredBy = GITHUB_EVENT_NAME === 'workflow_dispatch' ? 'Manual' : 'CI';
+
+// The mutating / non-mutating split is a built-in phase every run applies, not a
+// choice — so only surface the extra @tag filter typed into a manual run (blank
+// on push events, where the whole suite runs in each phase).
+const extraTags = QA_TAG.split(/[\s,]+/)
+  .map((t) => t.trim())
+  .filter((t) => t && !/^@?(non-)?mutating$/i.test(t))
+  .map((t) => (t.startsWith('@') ? t : `@${t}`));
 
 function fmtTime(iso) {
   const d = new Date(iso);
@@ -96,6 +105,7 @@ const entry = {
   status,
   browser: browserLabel,
   triggeredBy,
+  tags: extraTags,
   reportHref: `runs/${runNumber}/`,
   reportAvailable: fs.existsSync(reportDir),
   ...stats,
@@ -157,6 +167,10 @@ function renderHtml(runList) {
       const reportCell = r.reportAvailable
         ? `<a class="report-link" href="${r.reportHref}">View report →</a>`
         : '<span class="muted">unavailable</span>';
+      const tagsCell =
+        r.tags && r.tags.length
+          ? r.tags.map((t) => `<span class="tag">${t}</span>`).join(' ')
+          : '<span class="muted">—</span>';
       return `        <tr>
           <td><span class="pill ${r.status}">${icon[r.status] || '?'} ${r.status}</span></td>
           <td>${runCell}</td>
@@ -164,6 +178,7 @@ function renderHtml(runList) {
           <td>${commitCell}</td>
           <td class="nowrap">${r.browser || 'Chromium'}</td>
           <td class="nowrap">${r.triggeredBy || 'CI'}</td>
+          <td>${tagsCell}</td>
           <td class="num">${r.total}</td>
           <td class="num pass">${r.passed}</td>
           <td class="num ${r.failed ? 'fail' : 'muted'}">${r.failed || 0}</td>
@@ -221,6 +236,9 @@ function renderHtml(runList) {
     font-weight: 600; text-transform: capitalize; border: 1px solid currentColor; white-space: nowrap; }
   .pill.passed { color: var(--pass); } .pill.failed { color: var(--fail); }
   .pill.flaky { color: var(--flaky); } .pill.unknown { color: var(--muted); }
+  .tag { display: inline-block; padding: .08rem .45rem; border-radius: 6px; font-size: .78rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--card);
+    border: 1px solid var(--border); color: var(--fg); white-space: nowrap; }
   .trends { margin-top: 2.25rem; }
   .trends h2 { font-size: 1rem; margin: 0 0 .25rem; }
   .cap { color: var(--muted); font-size: .82rem; margin: 0 0 .9rem; max-width: 68ch; }
@@ -281,7 +299,7 @@ function renderHtml(runList) {
     <table>
       <thead>
         <tr>
-          <th>Status</th><th>Run</th><th>Started</th><th>Commit</th><th>Browser</th><th>Triggered by</th>
+          <th>Status</th><th>Run</th><th>Started</th><th>Commit</th><th>Browser</th><th>Triggered by</th><th>Tags</th>
           <th class="num">Total</th><th class="num">Pass</th><th class="num">Fail</th>
           <th class="num">Flaky</th><th class="num">Skip</th><th>Duration</th><th>Report</th>
         </tr>
