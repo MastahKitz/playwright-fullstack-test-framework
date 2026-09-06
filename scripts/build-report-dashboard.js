@@ -44,8 +44,10 @@ const triggeredBy = GITHUB_EVENT_NAME === 'workflow_dispatch' ? 'Manual' : 'CI';
 
 // The mutating / non-mutating split is a built-in phase every run applies, not a
 // choice — so only surface the extra @tag filter typed into a manual run (blank
-// on push events, where the whole suite runs in each phase).
-const extraTags = QA_TAG.split(/[\s,]+/)
+// on push events, where the whole suite runs in each phase). QA_TAG is a --grep
+// regex, so a multi-tag run comes in as an alternation like "@smoke|@api" —
+// split on "|" too so each tag gets its own chip.
+const extraTags = QA_TAG.split(/[\s,|]+/)
   .map((t) => t.trim())
   .filter((t) => t && !/^@?(non-)?mutating$/i.test(t))
   .map((t) => (t.startsWith('@') ? t : `@${t}`));
