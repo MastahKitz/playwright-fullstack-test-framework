@@ -113,6 +113,11 @@ because it captures a real `storageState` snapshot (cookies + localStorage) that
 self-heals if the app changes how it persists a session. An API call would bake
 in assumptions about token storage that the app could later break silently.
 
+It logs in on the engine `QA_BROWSER` selects (via `browsers.ts`), not a
+hard-coded `chromium` — CI installs only the one browser the run targets, so a
+`chromium.launch()` in setup would throw "Executable doesn't exist" on any
+firefox/webkit/edge dispatch and abort the whole run before a test executes.
+
 ### UI `*.data.ts` owns shared values; `-api` files import them
 The UI fixtures hold the shared catalog facts — product name, description, price.
 The `-api` data files import those and add API-shape fields (numeric `price`,

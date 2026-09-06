@@ -63,10 +63,13 @@ jobs:
       # Run the end-to-end suite against the live demo site. Project names are
       # built from QA_BROWSER (see playwright.config.ts), and an optional extra
       # @tag from the manual-trigger input is ANDed on top via --grep.
+      # --pass-with-no-tests: an extra @tag that only exists in one phase (e.g.
+      # @auth, which no @mutating test carries) leaves the other phase with an
+      # empty selection, and Playwright treats "no tests" as exit 1 by default.
       - name: Run Playwright tests - mutating
         env:
           PW_PHASE: mutating
-        run: npx playwright test --project="${QA_BROWSER}-mutating" ${QA_TAG:+--grep "$QA_TAG"}
+        run: npx playwright test --project="${QA_BROWSER}-mutating" --pass-with-no-tests ${QA_TAG:+--grep "$QA_TAG"}
 
       - name: Collect mutating-phase report
         if: always()
@@ -78,7 +81,7 @@ jobs:
         if: always()
         env:
           PW_PHASE: non-mutating
-        run: npx playwright test --project="$QA_BROWSER" ${QA_TAG:+--grep "$QA_TAG"}
+        run: npx playwright test --project="$QA_BROWSER" --pass-with-no-tests ${QA_TAG:+--grep "$QA_TAG"}
 
       - name: Collect non-mutating-phase report
         if: always()
