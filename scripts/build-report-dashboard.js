@@ -35,7 +35,9 @@ const {
 const runNumber = Number(GITHUB_RUN_NUMBER) || 0;
 const repoUrl = GITHUB_REPOSITORY ? `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}` : '';
 
-const BROWSER_LABELS = { chromium: 'Chromium', firefox: 'Firefox', webkit: 'WebKit', edge: 'Edge' };
+// Dashboard viewers care what browser ran, not which engine/binary implements it —
+// "webkit" is Playwright's build name for the engine, but reads as "Safari" to everyone else.
+const BROWSER_LABELS = { chromium: 'Chromium', firefox: 'Firefox', webkit: 'Safari', edge: 'Edge' };
 const browserLabel = BROWSER_LABELS[QA_BROWSER] || QA_BROWSER;
 const triggeredBy = GITHUB_EVENT_NAME === 'workflow_dispatch' ? 'Manual' : 'CI';
 
