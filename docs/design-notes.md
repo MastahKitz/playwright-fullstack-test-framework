@@ -61,10 +61,12 @@ syntax. A parallel ESLint ruleset would be upkeep for partial overlap.
 A separate discipline. Adding a few `axe` scans would dilute the framework's
 focus rather than complete it.
 
-### Cross-browser — Firefox / WebKit
-CI runs a single Chromium project — qademo is still a small shared demo box, and
-a 3-browser matrix would add real runtime for coverage nobody's reviewing here.
-Firefox/WebKit would belong in an opt-in workflow, not the per-push run.
+### Cross-browser on every push
+Every push to `main` still runs Chromium only — qademo is still a small shared
+demo box, and tripling runtime on every commit for coverage nobody's reviewing
+right after isn't worth it. Firefox/WebKit/Edge are opt-in instead, via a
+`workflow_dispatch` input rather than the per-push run — see "Manual dispatch:
+browser + tag" below.
 
 ### Dashboard history beyond 5 runs
 The trend chart keeps the last 5 runs. More would need real storage (the current
@@ -87,6 +89,23 @@ non-mutating project's last test finished. The only mechanism that actually guar
 never overlap is two separate `npx playwright test` invocations (`playwright.yml`) — a real
 process boundary — merged back into one report afterward via `playwright merge-reports` (blob
 reporter per phase, since a reporter's output dir is wiped at the start of every invocation).
+
+### Manual dispatch: browser + tag, but the concurrency group isn't scoped by either
+`workflow_dispatch` takes a `browser` choice (chromium/firefox/webkit/edge, wired to
+`QA_BROWSER` — the same mechanism `browsers.ts` already exposed for local runs) and
+a free-text `tag`, ANDed onto the existing `@mutating` project-level `grep` via a
+CLI `--grep` (Playwright combines the two rather than one replacing the other). A
+plain push has no `inputs` context, so both fall through to their defaults
+(chromium, no tag) — identical to before these inputs existed.
+
+`concurrency.group` deliberately stays the single unscoped string `qademo-qa-e2e`
+rather than including the browser. Scoping it per-browser would let, say, a
+Chromium push and a manually-dispatched Edge run execute as two simultaneous jobs —
+each internally sequential, but nothing would stop one run's mutating phase
+(creating/deleting products) from overlapping with the other's, since both still
+hit the same live demo site and data. That's the exact race a single global lock
+exists to prevent (see "Mutating product tests run as a separate CI invocation"
+above) — a different browser choice doesn't isolate the backend at all.
 
 ### `global.setup.ts` does a real browser login, not an API token call
 A `POST /api/auth/login` would shave ~3–5s off startup. The browser login stays
