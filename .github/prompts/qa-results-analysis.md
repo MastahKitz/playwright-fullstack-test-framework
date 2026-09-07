@@ -2,12 +2,20 @@
 
 This is a post-merge run against the live demo site (https://qademo.com — a React storefront
 backed by a JSON API at `/api/*`). Some test(s) failed (or were flaky — passed only after
-retry, which we also treat as a build failure). Your job is **triage, not fixing**: figure out,
-per failure, whether it looks like a real product bug or a problem with the test script itself,
-avoid re-reporting failures that are already tracked, and propose a concrete next step. A human
-approves or declines your suggestions afterward — never edit test logic, only ever add/update
-the known-failure marker comments described below, and only ever land those via a PR, never by
-pushing to main directly.
+retry, which we also treat as a build failure). Your job is **triage, and — only where the
+evidence is clear-cut — the fix**: figure out, per failure, whether it looks like a real product
+bug or a problem with the test script itself, avoid re-reporting failures that are already
+tracked, and land a concrete next step. A human reviews every PR you open before it merges, and
+you never push to main directly. What you put in the PR depends on how sure you are:
+
+- **Confident it's a product bug** → the PR adds a `KNOWN-FAILURE(#N)` marker comment (Step 3),
+  and you file an issue.
+- **Confident it's the test script's fault** → the PR contains the actual fix to the test
+  (Step 3). No issue — it's not a bug.
+- **Can't tell** (product bug vs. broken test, or an infra/server flake) → you commit nothing.
+  You open a **draft "decision PR"** (Step 3b) whose body spells out both a mark-as-bug option
+  and a fix-the-test option, and file an issue so the decision is tracked. A human picks which
+  option to apply.
 
 Your tool access here is deliberately narrow (only `Read`/`Grep`/`Glob`/`Edit` and a short list
 of specific `git`/`gh` subcommands — no general `Bash`, no `jq`, no `python3`, no piped/chained
@@ -55,25 +63,52 @@ Context that helps distinguish a product bug from a flake: cart/order state is s
 under load — a lone `waitForResponse` timeout on one mutation, with an otherwise-healthy
 screenshot, is more likely server flakiness than a script or product bug.
 
-## Step 1 — check for an existing marker before treating a failure as new
+## Step 1 — rule out that the failure is already tracked
 
-Known failures are tracked with a marker comment placed on the line immediately above the
-assertion/action that failed, in this exact format:
+A failure can already be tracked in **three** places. Check all three for every failing/flaky
+test before it goes to Step 2. If any of them covers it, the failure is **not new** — do not
+file an issue, do not open a PR or add to one, just record it in your final summary with the
+tracking reference. Never create a second issue or PR for something already tracked.
+
+**1 — a committed `KNOWN-FAILURE` marker.** Tracked failures carry a marker on the line
+immediately above the assertion/action that failed, in this exact format:
 
 ```
 // KNOWN-FAILURE(#123): <short reason> — retriage if this changes
 ```
 
-For each failing/flaky test from `results.json`, open the file:line from its stack trace and
-check the line directly above it:
+For each failing/flaky test, open the `file:line` from its stack trace and check the line
+directly above it:
 
-- **No marker present** → this is a new failure. Go to Step 2.
 - **Marker present, and `gh issue view <N> --json state` shows it's still open** → already
-  tracked, do not file another issue and do not touch the marker. Just note it in your final
-  summary as "already tracked as #N".
-- **Marker present, but the linked issue is closed** → this is a regression (supposedly fixed,
-  failing again). Treat it as new: go to Step 2, and in Step 3 replace the stale marker with one
-  pointing at the new issue instead of leaving the old (wrong) one in place.
+  tracked. Note "already tracked as #N". Done with this failure.
+- **Marker present, but the linked issue is closed** → regression (supposedly fixed, failing
+  again). Treat as new — go to Step 2, and in Step 3 replace the stale marker with one pointing
+  at the new issue.
+- **No marker** → not tracked by a marker; check 2 and 3 before calling it new.
+
+**2 — an open GitHub issue.** Run `gh issue list --state open` and match this failure by test
+title **and** by a distinctive keyword / the `file:line` — a consolidated issue is titled
+`<root cause> (<N> tests)`, not by test name, so read issue bodies rather than trusting the
+title. An open issue that covers this failure → already tracked; note "already tracked as #N"
+(add "decision pending" if it's a Step 3b issue). Done with this failure.
+
+**3 — an open PR from an earlier run that hasn't been merged yet.** Triage PRs (branch
+`qa/triage-run-*`, title `QA triage — run #…`) and decision PRs (branch
+`qa/triage-decision-run-*`, title `QA triage decision — run #…`) can sit unreviewed for days,
+and the failure will recur every run until they merge. Run `gh pr list --state open` to see them
+all, then for each triage/decision PR run `gh pr view <n> --json number,title,body` and
+`gh pr diff <n>` and look for this failure's `file:line` or test title in the marker(s) it adds,
+the fix it makes, or its decision sections. If an open PR already handles this failure → already
+pending; note "already pending review in PR #<n>". Do **not** open another PR and do **not**
+re-file its issue.
+
+A failure a previous run **fixed as a script issue** leaves no marker and no issue — but if an
+open PR from point 3 is still carrying that fix unmerged, it's pending, not new. Only if there's
+no such PR and the test is failing the same way again is it new (the earlier fix was wrong).
+
+Only a failure with **no marker, no open issue, and no open PR** covering it is new — send it to
+Step 2.
 
 ## Step 2 — classify each new/regressed failure
 
@@ -93,25 +128,123 @@ check the line directly above it:
    bug: adding a second item does not update the order subtotal". Not "investigate further"
    unless truly inconclusive.
 
-For each new/regressed failure, create a GitHub issue (`gh issue create`) titled
-`<test title> — <file>` containing the four points above and a link to the run (the RUN URL
-given to you in the prompt). Note the issue number it returns — you'll need it for Step 3.
+### Group failures by root cause
 
-## Step 3 — open one PR with the marker comments
+Before routing anything, cluster the **new** failures (the ones Step 1 did not rule out as
+already tracked) by **underlying cause**, not by test. Two or more failing/flaky tests belong to
+the same group when one fix (or one product bug) explains all of them — the same stale testid,
+the same broken shared helper, the same missing subtotal update, the same dropped request. Tests
+that fail for genuinely different reasons stay in separate groups. Everything downstream — one
+issue, one marker set, one decision-PR section — is **per group**, not per test. A group's
+classification is the classification of its shared cause; if tests in a tentative group would
+classify differently, they aren't really one group — split them.
 
-If you filed one or more issues in Step 2:
+If a new failure shares its root cause with one that Step 1 found **already tracked** (an open
+issue or an open PR), it belongs to that existing item — don't open a parallel issue/PR. Add a
+comment to the existing issue noting the same cause now also hits `<file:line>`, and in your
+summary say "folded into #N / PR #n". Only open something new when the cause itself is new.
 
-1. `git checkout -b qa/known-failures-run-<RUN ID>` (RUN ID given to you in the prompt).
+**Where each group goes next** depends on its classification and how confident you are:
+
+| Classification | Route | Issue filed? |
+|---|---|---|
+| **Likely product bug** | Step 3 — commit a `KNOWN-FAILURE(#N)` marker on every line in the group | Yes — one per group |
+| **Likely script issue** | Step 3 — commit the actual fix to the test | No |
+| **Likely infra/server flake** | Step 3b — draft decision PR (mark vs. harden the wait) | Yes — one per group |
+| **Inconclusive** | Step 3b — draft decision PR (mark vs. fix the script) | Yes — one per group |
+
+Only call a failure **likely script issue** — and so fix it directly — when the evidence is
+unambiguous: a testid you can see has changed, a hardcoded value the app clearly no longer
+returns, an assertion that contradicts what every screenshot and video frame shows. If a product
+bug is still a live explanation, it's **inconclusive**, not a script issue — send it to Step 3b
+and let a human decide.
+
+For every group **except a likely script issue**, create **one** GitHub issue (`gh issue create`):
+
+- **Single-test group** → title `<test title> — <file>`.
+- **Multi-test group** → title `<one-line root cause> (<N> tests)`, and in the body list every
+  affected `file:line` and test title, then give the four Step 2 points once for the shared
+  cause (note per-test differences inline only where they matter).
+
+Every issue body includes a link to the run (the RUN URL given to you in the prompt). For an
+inconclusive/flake group, also put both Step 3b options into the issue body verbatim — the exact
+marker line **for each affected line** in the group, and the exact `diff` or hardening change —
+so the issue stands on its own. Note each issue number — the marker comments and PR bodies
+reference it.
+
+## Step 3 — one combined PR for the confident failures
+
+If you have one or more groups classified **likely product bug** or **likely script issue**,
+put them all in a single PR:
+
+1. If this run also has Step 3b failures, create that branch first (Step 3b step 1) so it stays a
+   clean base. Then `git checkout <COMMIT>` (COMMIT is in the prompt) and
+   `git checkout -b qa/triage-run-<RUN ID>`.
 2. `git config user.name` / `user.email` to a bot identity, e.g. `qa-triage-bot` /
    `qa-triage-bot@users.noreply.github.com`.
-3. For each new/regressed failure, add (or replace the stale) `KNOWN-FAILURE(#N)` marker comment
-   on the line above the failing assertion/action, using the issue number you just created.
-4. Commit only these marker-comment lines (no other changes), push the branch, and
-   `gh pr create` titled `Mark known QA failures (run #<RUN ID>)` with a body listing each
-   failure, its classification, and the issue it links to.
+3. For each **likely product bug** group: add (or replace the stale) `KNOWN-FAILURE(#N)` marker
+   comment on the line above the failing assertion/action, using the group's issue number — one
+   marker per failing line, every marker in the group pointing at the same `#N`.
+4. For each **likely script issue** group: make the minimal fix that addresses the shared root
+   cause — the stale testid, the wrong assumption, the bad wait. One group is usually one fix
+   even when several tests failed on it. Touch only the failing tests' own files (`.spec.ts` /
+   `.flow.ts` / `.actions.ts` / `.assertions.ts` and the shared helpers they call); don't
+   refactor around it.
+5. Commit, push, and `gh pr create` titled `QA triage — run #<RUN ID>`. The body has one entry
+   per group: its classification, the tests it covers, and either the issue it links to (product
+   bug) or a plain-English description of what was wrong and what you changed (script issue).
 
-If every failure in this run was already tracked (all markers pointed at open issues), skip
-issue/PR creation entirely and just report that in your final response — don't manufacture work.
+## Step 3b — one draft decision PR for the failures you can't call
+
+For failures classified **likely infra/server flake** or **inconclusive**, you don't get to
+decide between "the test is wrong" and "this is a real bug" — a human does. Make that choice a
+single action either way, parked in a **draft PR with no code changes**.
+
+1. `git checkout <COMMIT>` (COMMIT is in the prompt), then
+   `git checkout -b qa/triage-decision-run-<RUN ID>` — cut this before the Step 3 branch so it
+   never inherits Step 3's commits; it must stay empty of file changes.
+2. Same bot identity as Step 3.
+3. `git commit --allow-empty -m "QA triage decision — run #<RUN ID>"`. The PR deliberately has
+   zero file changes; it is a container for the writeup and the place a human applies whichever
+   option they pick.
+4. `git push` the branch and `gh pr create --draft` titled `QA triage decision — run #<RUN ID>`.
+
+The PR body has one section per group (i.e. per issue `#N`). Each section contains:
+
+- **What failed and why it's ambiguous** — the four Step 2 points, condensed, plus the linked
+  issue `#N`. If the group covers more than one test, list every affected `file:line`.
+- **Option 1 — mark it as a known failure.** The exact line(s) to add and where — **one marker
+  per affected line** in the group:
+  ```
+  <file>:<line above the failing assertion>
+  // KNOWN-FAILURE(#N): <one-line reason> — needs human investigation, see <RUN URL>
+  ```
+  Plus one line naming the specific manual check that would confirm or kill the bug theory (for
+  an inconclusive group) or confirm it's just server load (for a flake).
+- **Option 2 — fix the test.** The exact change as a fenced ` ```diff ` block against the real
+  file(s), matching surrounding indentation, ready to `git apply` — a script fix for an
+  inconclusive group, or wait/retry hardening for a flake. One diff usually covers the whole
+  group. If you genuinely can't name a plausible change, write "Option 2 — none identified" and
+  say what evidence would settle it.
+- **Recommendation** — which way you lean and why, stated as a lean, not a verdict.
+- **Resolving #N.** State explicitly: the reviewer chooses per affected line, and they can mix
+  options within the group. `#N` is closed **only if Option 2 is taken for every line in the
+  group** — in that case they add `Closes #N` to this PR's description before marking it ready,
+  and the issue auto-closes on merge. If Option 1 is taken for even one line, `#N` stays open and
+  the `KNOWN-FAILURE(#N)` marker(s) track it — do **not** add `Closes #N`.
+
+End the body with: "Per affected line, apply Option 1 (marker) or Option 2 (diff), then mark this
+PR ready. For each issue #N, add `Closes #N` to this description only if you took Option 2 for
+every line under it; otherwise leave it open. The empty commit can be dropped either way."
+
+If there are no inconclusive/flake failures this run, skip Step 3b.
+
+## When there's nothing to do
+
+If every failure in this run was already tracked per Step 1 — a marker on an open issue, an open
+issue matching it, or an open triage/decision PR from an earlier run already handling it — skip
+all issue/PR creation and just report that, one line per failure with its tracking reference.
+Don't manufacture work, and never re-file an issue or re-open a PR that already exists.
 
 If, after investigating, you find no actual failing/flaky tests (e.g. the build failed for an
 unrelated infra reason), say so instead of filing anything.

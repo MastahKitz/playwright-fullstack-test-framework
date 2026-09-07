@@ -134,8 +134,9 @@ flowchart TD
     Run["playwright.yml<br/>full suite vs. live storefront"]
     Dash["Dashboard on GitHub Pages<br/>last 5 runs + trend chart"]
     Triage["qa-results-analysis.yml<br/>Claude triages screenshots + video"]
-    Issue["GitHub issue per new failure<br/>bug / script / infra / inconclusive"]
+    Issue["GitHub issue per root cause<br/>bug / script / infra / inconclusive"]
     Marker["KNOWN-FAILURE marker PR<br/>review bot skips it"]
+    Cleanup["qa-issue-marker-cleanup.yml<br/>Claude removes markers that went green"]
 
     PR --> Review
     Review -->|inline comments| PR
@@ -146,6 +147,8 @@ flowchart TD
     Triage --> Issue
     Triage --> Marker
     Marker -->|merge| Main
+    Run -->|pass or fail| Cleanup
+    Cleanup -->|merge closes issue| Main
 ```
 
 ### PR review against conventions
@@ -213,19 +216,35 @@ Claude (prompt: [`qa-results-analysis.md`](.github/prompts/qa-results-analysis.m
 the JSON report, failure screenshots, and 2fps video frames for each failing/flaky test, and for
 each one:
 
-- Reads the file:line from the stack trace and checks for an existing
-  `// KNOWN-FAILURE(#123): <reason> — retriage if this changes` marker on the line above.
-  - **Marker present, issue still open** → already tracked; skipped, just noted in the summary.
-  - **Marker present, issue closed** → regression; treated as new, stale marker replaced.
-  - **No marker** → new failure.
-- Classifies each new/regressed failure as a **likely product bug**, **likely script issue**
-  (stale testid, bad assumption, test-side flake), **likely infra/server flake** (a
-  `waitForResponse` timeout with a healthy screenshot — qademo dropping a request under load),
-  or **inconclusive** — grounded in what the screenshot/video actually shows.
-- Files a GitHub issue per new/regressed failure with the classification, evidence, and a
-  suggested next step.
-- Opens one PR adding the `KNOWN-FAILURE(#N)` marker comments (never pushed straight to `main`),
-  so the next run recognizes the same failure and doesn't re-file it.
+- Rules out that the failure is already tracked, in three places: a
+  `// KNOWN-FAILURE(#123): <reason> — retriage if this changes` marker on the line above the
+  failing assertion (issue open → skip; issue closed → regression, treated as new); an open
+  GitHub issue matching the failure; or an open triage/decision PR from an earlier run that
+  hasn't been merged yet. Anything already covered is noted in the summary, not re-filed.
+- Groups failures that share one root cause, then classifies each group as a **likely product
+  bug**, **likely script issue** (stale testid, bad assumption, test-side flake), **likely
+  infra/server flake** (a `waitForResponse` timeout with a healthy screenshot — qademo dropping a
+  request under load), or **inconclusive** — grounded in what the screenshot/video actually shows.
+- Files one GitHub issue per group (except pure script fixes) with the classification, evidence,
+  and a suggested next step.
+- Opens **one PR for the confident groups** — `KNOWN-FAILURE(#N)` markers for product bugs, the
+  actual test fix for script issues — and, for groups it can't call, a separate **draft decision
+  PR** with no code changes whose body lays out a mark-as-bug option and a fix-the-test option
+  per failure for a human to pick.
 
-Analysis is strictly triage: it never edits test logic, and every marker/issue lands via a PR
-for a human to approve.
+Analysis is strictly triage: every marker/issue/fix lands via a PR for a human to approve, and it
+never pushes to `main`.
+
+### Issue and marker cleanup
+
+`.github/workflows/qa-issue-marker-cleanup.yml` — triggered by `workflow_run` after **every**
+run, pass or fail (prompt:
+[`qa-issue-marker-cleanup.md`](.github/prompts/qa-issue-marker-cleanup.md)). The
+mirror image of failure analysis: it scans the suite for `KNOWN-FAILURE(#N)` markers whose
+guarded test passed cleanly (first try, no retry) in that run and opens one PR removing them.
+For each linked issue, if **every** marker pointing at it cleared this run the PR gets a
+`Closes #N` so merging closes the issue; if only some did — the rest still failing, or their
+test simply wasn't exercised in a partial `workflow_dispatch` run — it comments on the issue
+instead (which cleared, which didn't) and leaves it open.
+Each removal is an isolated one-line change so a reviewer can drop any they don't yet trust —
+one green run isn't proof a bug is fixed.
