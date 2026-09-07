@@ -77,4 +77,4 @@ jobs:
             ${{ env.FAILURE_ANALYSIS_PROMPT }}
 
           claude_args: |
-            --allowedTools "Read,Grep,Glob,Edit,Bash(git checkout:*),Bash(git config:*),Bash(git add:*),Bash(git commit:*),Bash(git push:*),Bash(gh issue create:*),Bash(gh issue view:*),Bash(gh pr create:*)"
+            --allowedTools "Read,Grep,Glob,Edit,Bash(git checkout:*),Bash(git config:*),Bash(git add:*),Bash(git commit:*),Bash(git push:*),Bash(gh issue create:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh pr create:*)"
