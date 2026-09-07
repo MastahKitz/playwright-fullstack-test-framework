@@ -63,37 +63,52 @@ Context that helps distinguish a product bug from a flake: cart/order state is s
 under load — a lone `waitForResponse` timeout on one mutation, with an otherwise-healthy
 screenshot, is more likely server flakiness than a script or product bug.
 
-## Step 1 — check for an existing marker before treating a failure as new
+## Step 1 — rule out that the failure is already tracked
 
-Known failures are tracked with a marker comment placed on the line immediately above the
-assertion/action that failed, in this exact format:
+A failure can already be tracked in **three** places. Check all three for every failing/flaky
+test before it goes to Step 2. If any of them covers it, the failure is **not new** — do not
+file an issue, do not open a PR or add to one, just record it in your final summary with the
+tracking reference. Never create a second issue or PR for something already tracked.
+
+**1 — a committed `KNOWN-FAILURE` marker.** Tracked failures carry a marker on the line
+immediately above the assertion/action that failed, in this exact format:
 
 ```
 // KNOWN-FAILURE(#123): <short reason> — retriage if this changes
 ```
 
-For each failing/flaky test from `results.json`, open the file:line from its stack trace and
-check the line directly above it:
+For each failing/flaky test, open the `file:line` from its stack trace and check the line
+directly above it:
 
-- **No marker present** → this is a new failure. Go to Step 2.
 - **Marker present, and `gh issue view <N> --json state` shows it's still open** → already
-  tracked, do not file another issue and do not touch the marker. Just note it in your final
-  summary as "already tracked as #N".
-- **Marker present, but the linked issue is closed** → this is a regression (supposedly fixed,
-  failing again). Treat it as new: go to Step 2, and in Step 3 replace the stale marker with one
-  pointing at the new issue instead of leaving the old (wrong) one in place.
+  tracked. Note "already tracked as #N". Done with this failure.
+- **Marker present, but the linked issue is closed** → regression (supposedly fixed, failing
+  again). Treat as new — go to Step 2, and in Step 3 replace the stale marker with one pointing
+  at the new issue.
+- **No marker** → not tracked by a marker; check 2 and 3 before calling it new.
 
-Two cases leave no marker to find. A failure that a previous run sent down the **decision-PR**
-path (Step 3b) is tracked by an open issue and an open `qa/triage-decision-run-*` PR but has no
-committed marker. A failure a previous run **fixed as a script issue** also has no marker (and no
-issue) — if the same test is failing again in the same way, the earlier fix was wrong or
-incomplete, so treat it as new. Before treating any marker-less failure as new, run
-`gh issue list --state open --search "<test title>"` and also search by a distinctive keyword
-from the failure (a consolidated issue is titled `<root cause> (<N> tests)`, not by test name,
-so a title match alone can miss it — read the bodies of open `<root cause>` issues and any open
-`qa/triage-decision-run-*` PR for the `file:line` that just failed). If an open issue already
-covers this failure it's already tracked (likely awaiting a human decision) — don't re-file or
-open a second decision PR; note it in your summary as "already tracked as #N, decision pending".
+**2 — an open GitHub issue.** Run `gh issue list --state open` and match this failure by test
+title **and** by a distinctive keyword / the `file:line` — a consolidated issue is titled
+`<root cause> (<N> tests)`, not by test name, so read issue bodies rather than trusting the
+title. An open issue that covers this failure → already tracked; note "already tracked as #N"
+(add "decision pending" if it's a Step 3b issue). Done with this failure.
+
+**3 — an open PR from an earlier run that hasn't been merged yet.** Triage PRs (branch
+`qa/triage-run-*`, title `QA triage — run #…`) and decision PRs (branch
+`qa/triage-decision-run-*`, title `QA triage decision — run #…`) can sit unreviewed for days,
+and the failure will recur every run until they merge. Run `gh pr list --state open` to see them
+all, then for each triage/decision PR run `gh pr view <n> --json number,title,body` and
+`gh pr diff <n>` and look for this failure's `file:line` or test title in the marker(s) it adds,
+the fix it makes, or its decision sections. If an open PR already handles this failure → already
+pending; note "already pending review in PR #<n>". Do **not** open another PR and do **not**
+re-file its issue.
+
+A failure a previous run **fixed as a script issue** leaves no marker and no issue — but if an
+open PR from point 3 is still carrying that fix unmerged, it's pending, not new. Only if there's
+no such PR and the test is failing the same way again is it new (the earlier fix was wrong).
+
+Only a failure with **no marker, no open issue, and no open PR** covering it is new — send it to
+Step 2.
 
 ## Step 2 — classify each new/regressed failure
 
@@ -115,13 +130,19 @@ open a second decision PR; note it in your summary as "already tracked as #N, de
 
 ### Group failures by root cause
 
-Before routing anything, cluster the failures by **underlying cause**, not by test. Two or more
-failing/flaky tests belong to the same group when one fix (or one product bug) explains all of
-them — the same stale testid, the same broken shared helper, the same missing subtotal update,
-the same dropped request. Tests that fail for genuinely different reasons stay in separate
-groups. Everything downstream — one issue, one marker set, one decision-PR section — is **per
-group**, not per test. A group's classification is the classification of its shared cause; if
-tests in a tentative group would classify differently, they aren't really one group — split them.
+Before routing anything, cluster the **new** failures (the ones Step 1 did not rule out as
+already tracked) by **underlying cause**, not by test. Two or more failing/flaky tests belong to
+the same group when one fix (or one product bug) explains all of them — the same stale testid,
+the same broken shared helper, the same missing subtotal update, the same dropped request. Tests
+that fail for genuinely different reasons stay in separate groups. Everything downstream — one
+issue, one marker set, one decision-PR section — is **per group**, not per test. A group's
+classification is the classification of its shared cause; if tests in a tentative group would
+classify differently, they aren't really one group — split them.
+
+If a new failure shares its root cause with one that Step 1 found **already tracked** (an open
+issue or an open PR), it belongs to that existing item — don't open a parallel issue/PR. Add a
+comment to the existing issue noting the same cause now also hits `<file:line>`, and in your
+summary say "folded into #N / PR #n". Only open something new when the cause itself is new.
 
 **Where each group goes next** depends on its classification and how confident you are:
 
@@ -220,9 +241,10 @@ If there are no inconclusive/flake failures this run, skip Step 3b.
 
 ## When there's nothing to do
 
-If every failure in this run was already tracked (markers pointed at open issues, or an open
-issue / decision PR already covers it), skip all issue/PR creation and just report that — don't
-manufacture work.
+If every failure in this run was already tracked per Step 1 — a marker on an open issue, an open
+issue matching it, or an open triage/decision PR from an earlier run already handling it — skip
+all issue/PR creation and just report that, one line per failure with its tracking reference.
+Don't manufacture work, and never re-file an issue or re-open a PR that already exists.
 
 If, after investigating, you find no actual failing/flaky tests (e.g. the build failed for an
 unrelated infra reason), say so instead of filing anything.

@@ -216,11 +216,11 @@ Claude (prompt: [`qa-results-analysis.md`](.github/prompts/qa-results-analysis.m
 the JSON report, failure screenshots, and 2fps video frames for each failing/flaky test, and for
 each one:
 
-- Reads the file:line from the stack trace and checks for an existing
-  `// KNOWN-FAILURE(#123): <reason> — retriage if this changes` marker on the line above.
-  - **Marker present, issue still open** → already tracked; skipped, just noted in the summary.
-  - **Marker present, issue closed** → regression; treated as new, stale marker replaced.
-  - **No marker** → new failure.
+- Rules out that the failure is already tracked, in three places: a
+  `// KNOWN-FAILURE(#123): <reason> — retriage if this changes` marker on the line above the
+  failing assertion (issue open → skip; issue closed → regression, treated as new); an open
+  GitHub issue matching the failure; or an open triage/decision PR from an earlier run that
+  hasn't been merged yet. Anything already covered is noted in the summary, not re-filed.
 - Groups failures that share one root cause, then classifies each group as a **likely product
   bug**, **likely script issue** (stale testid, bad assumption, test-side flake), **likely
   infra/server flake** (a `waitForResponse` timeout with a healthy screenshot — qademo dropping a
