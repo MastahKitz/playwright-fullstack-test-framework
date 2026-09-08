@@ -82,8 +82,10 @@ actually shipped before merging, and drop any removal they're unsure about.
 
 ## Step 4 — reconcile the linked issues
 
-For each distinct issue `#N` referenced by any **removed** marker, `Grep` the whole repo for
-`KNOWN-FAILURE(#N)` to get the complete set of markers pointing at it, and check
+For each distinct issue `#N` referenced by any **removed** marker, `Grep` the whole repo with the
+regex `KNOWN-FAILURE\(#N\)` — substitute the actual number, keep the backslashes (`Grep` is
+ripgrep, so the parens must be escaped), and keep the closing `\)` so that e.g. `#12` does not
+also match `#123`. That gives the complete set of `file:line`s still pointing at `#N`. Then check
 `gh issue view <N> --json state,title`.
 
 Closing `#N` requires that **every** marker pointing at it was *evaluated and cleared in this
