@@ -55,6 +55,16 @@ jobs:
             ffmpeg -loglevel error -i "$video" -vf fps=2 "$dir/video-frames/frame-%03d.png"
           done
 
+      # Pick one deterministic code line per failure — the deepest stack frame in
+      # a functional-test file — so the marker, the issue, and later runs all key
+      # off the same anchor instead of whatever the stack trace happened to top out at.
+      - name: Extract failure anchors
+        run: |
+          node scripts/extract-failure-anchors.js test-report/results.json > failure-anchors.json
+          echo "::group::failure-anchors.json"
+          cat failure-anchors.json
+          echo "::endgroup::"
+
       - name: Ensure triage label exists
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -77,7 +87,7 @@ jobs:
           gh pr list --state open --label qa-triage --limit 200 \
             --json number,title,headRefName,body > prs.json
           grep -rn --include='*.ts' 'KNOWN-FAILURE(#' tests/functional/ > markers.txt || true
-          node .github/scripts/build-tracking-inventory.mjs \
+          node scripts/build-tracking-inventory.js \
             issues.json prs.json markers.txt > tracking-inventory.json
           rm -f issues.json prs.json markers.txt
           echo "::group::tracking-inventory.json"

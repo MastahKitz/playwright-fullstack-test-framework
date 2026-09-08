@@ -1,42 +1,61 @@
-// Compact the raw triage lists into the inventory the model reads in Step 1.
-//
-// The results-analysis workflow fetches three things before invoking the model:
-// open `qa-triage` issues, open `qa-triage` PRs, and every committed
-// `KNOWN-FAILURE(#N)` marker in the suite. This script reshapes them into one
+#!/usr/bin/env node
+// Compact the raw triage lists into the inventory the model reads in Step 1 of
+// the results-analysis workflow. That workflow fetches three things before
+// invoking the model: open `qa-triage` issues, open `qa-triage` PRs, and every
+// committed `KNOWN-FAILURE(#N)` marker in the suite. This reshapes them into one
 // small file so the model can match a failure against them locally, and only
 // re-fetch a full issue or PR body (`gh issue view` / `gh pr diff`) for a
 // candidate that actually matches.
 //
 // Usage:
-//   node build-tracking-inventory.mjs <issues.json> <prs.json> <markers.txt> > tracking-inventory.json
+//   node scripts/build-tracking-inventory.js <issues.json> <prs.json> <markers.txt> > tracking-inventory.json
 //
 // <issues.json> / <prs.json> are `gh ... list --json` output; <markers.txt> is
 // `grep -rn` output.
 
-import { readFileSync } from 'node:fs';
+const fs = require('fs');
 
 // e.g. tests/functional/checkout/checkout.spec.ts:42 — a file:line reference in prose
 const REF_RE = /[A-Za-z0-9_./-]+\.ts:\d+/g;
 const MARKER_RE = /KNOWN-FAILURE\(#(\d+)\):\s*(.*)/;
 const EXCERPT_LEN = 400;
 
-const excerpt = (body) => (body ?? '').trim().slice(0, EXCERPT_LEN);
+function excerpt(body) {
+  return (body || '').trim().slice(0, EXCERPT_LEN);
+}
 
-const refLines = (...texts) => {
+function refLines(...texts) {
   const found = [];
   for (const text of texts) {
-    for (const ref of (text ?? '').match(REF_RE) ?? []) {
+    for (const ref of (text || '').match(REF_RE) || []) {
       if (!found.includes(ref)) found.push(ref);
     }
   }
   return found;
-};
+}
 
-const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
+// Pull the `## Failure anchors` block (added to every issue/PR body by the
+// results-analysis prompt) out in full — it's the primary match key in Step 1,
+// so it must not be at the mercy of the excerpt truncation.
+function anchorBlock(body) {
+  const lines = (body || '').split('\n');
+  const start = lines.findIndex((l) => /^#+\s*Failure anchors\s*$/i.test(l));
+  if (start === -1) return [];
+  const out = [];
+  for (const line of lines.slice(start + 1)) {
+    if (/^#+\s/.test(line)) break; // next heading ends the block
+    if (line.trim()) out.push(line.trim());
+  }
+  return out;
+}
 
-const parseMarkers = (path) => {
+function readJson(path) {
+  return JSON.parse(fs.readFileSync(path, 'utf8'));
+}
+
+function parseMarkers(path) {
   const markers = [];
-  for (const raw of readFileSync(path, 'utf8').split('\n')) {
+  for (const raw of fs.readFileSync(path, 'utf8').split('\n')) {
     if (!raw.trim()) continue;
     // grep -rn output: <file>:<line>:<content>
     const first = raw.indexOf(':');
@@ -50,13 +69,14 @@ const parseMarkers = (path) => {
     markers.push({ file, line, issue: Number(m[1]), reason: m[2].trim() });
   }
   return markers;
-};
+}
 
 const [issuesPath, prsPath, markersPath] = process.argv.slice(2);
 
 const issues = readJson(issuesPath).map((it) => ({
   number: it.number,
   title: it.title,
+  anchors: anchorBlock(it.body),
   ref_lines: refLines(it.title, it.body),
   body_excerpt: excerpt(it.body),
 }));
@@ -65,6 +85,7 @@ const prs = readJson(prsPath).map((pr) => ({
   number: pr.number,
   title: pr.title,
   head_ref: pr.headRefName,
+  anchors: anchorBlock(pr.body),
   ref_lines: refLines(pr.title, pr.body),
   body_excerpt: excerpt(pr.body),
 }));
