@@ -212,15 +212,22 @@ One-time setup: **Settings → Pages → Build and deployment → Source: Deploy
 
 `.github/workflows/qa-results-analysis.yml` — triggered by `workflow_run` when the run above
 fails (a separate workflow because Claude Code Action can't be triggered by `push` directly).
-Claude (prompt: [`qa-results-analysis.md`](.github/prompts/qa-results-analysis.md)) inspects
-the JSON report, failure screenshots, and 2fps video frames for each failing/flaky test, and for
-each one:
+Workflow steps first prepare what Claude shouldn't derive itself — 2fps video frames, and, for
+each failing/flaky test, a deterministic **anchor**: the deepest stack frame in a
+`.spec/.flow/.actions/.assertions.ts` file. In a layered suite the top of a stack trace lands in
+a different file depending on how the test broke, so the anchor is the one stable line the marker
+goes on and every run computes it the same way. Another step fetches the open `qa-triage` issues
+and PRs and every in-code marker and compacts them into a lookup file. Then Claude (prompt:
+[`qa-results-analysis.md`](.github/prompts/qa-results-analysis.md)) inspects the JSON report,
+screenshots, and video frames for each failing/flaky test, and for each one:
 
 - Rules out that the failure is already tracked, in three places: a
-  `// KNOWN-FAILURE(#123): <reason> — retriage if this changes` marker on the line above the
-  failing assertion (issue open → skip; issue closed → regression, treated as new); an open
-  GitHub issue matching the failure; or an open triage/decision PR from an earlier run that
-  hasn't been merged yet. Anything already covered is noted in the summary, not re-filed.
+  `// KNOWN-FAILURE(#123) [<spec>::<test>]: <reason> — retriage if this changes` marker on the
+  anchor line (issue open → skip; issue closed → regression, treated as new); an open GitHub
+  issue; or an open triage/decision PR from an earlier run not yet merged. Matching is by test
+  identity — the `spec :: test title` recorded in the marker and in a `## Failure anchors` block
+  at the top of every issue/PR body — so a rename or a moved line doesn't cause a duplicate.
+  Anything already covered is noted in the summary, not re-filed.
 - Groups failures that share one root cause, then classifies each group as a **likely product
   bug**, **likely script issue** (stale testid, bad assumption, test-side flake), **likely
   infra/server flake** (a `waitForResponse` timeout with a healthy screenshot — qademo dropping a
@@ -240,8 +247,10 @@ never pushes to `main`.
 `.github/workflows/qa-issue-marker-cleanup.yml` — triggered by `workflow_run` after **every**
 run, pass or fail (prompt:
 [`qa-issue-marker-cleanup.md`](.github/prompts/qa-issue-marker-cleanup.md)). The
-mirror image of failure analysis: it scans the suite for `KNOWN-FAILURE(#N)` markers whose
-guarded test passed cleanly (first try, no retry) in that run and opens one PR removing them.
+mirror image of failure analysis. A workflow step greps every `KNOWN-FAILURE(#N)` marker and
+pulls every `qa-triage` issue's state into a lookup file; Claude then takes each marker whose
+guarded test — named in the marker itself, or resolved from the call graph for older markers —
+passed cleanly (first try, no retry) in that run, and opens one PR removing them.
 For each linked issue, if **every** marker pointing at it cleared this run the PR gets a
 `Closes #N` so merging closes the issue; if only some did — the rest still failing, or their
 test simply wasn't exercised in a partial `workflow_dispatch` run — it comments on the issue
