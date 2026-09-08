@@ -56,6 +56,9 @@ below, so there's no need to look up run metadata via `gh run view` either.
   override what the screenshot actually shows — a plausible-looking code-path explanation (e.g.
   "a preceding step was skipped") is not a substitute for confirming, from the screenshot, what
   state the page was actually in when the failure occurred.
+- `tracking-inventory.json` (repo root) — the open `qa-triage` issues, open `qa-triage` PRs, and
+  committed `KNOWN-FAILURE` markers, already fetched and compacted by the workflow. Step 1 uses
+  this to rule out already-tracked failures; its shape is described there.
 
 Context that helps distinguish a product bug from a flake: cart/order state is server-side
 (keyed by an anonymous `session_id`) and the mutating actions wait on `/api/cart/items` /
@@ -65,65 +68,55 @@ screenshot, is more likely server flakiness than a script or product bug.
 
 ## Step 1 — rule out that the failure is already tracked
 
-A failure can already be tracked in **three** places. If any of them covers it, the failure is
-**not new** — do not file an issue, do not open a PR or add to one, just record it in your final
-summary with the tracking reference. Never create a second issue or PR for something already
-tracked.
+A failure can already be tracked in **three** places: a committed `KNOWN-FAILURE` marker, an open
+`qa-triage` issue, or an open `qa-triage` triage/decision PR from an earlier run. If any of them
+covers a failure, it is **not new** — do not file an issue, do not open a PR or add to one, just
+record it in your final summary with the tracking reference. Never create a second issue or PR
+for something already tracked.
 
-Do this at **suite scale**: a busy app can have dozens of markers, tracking issues, and open
-triage PRs, so don't walk each one per failure. Build the tracking inventory **once**, with the
-three bulk calls below, then match every failing/flaky test against it locally — and only make a
-targeted deep call (`gh issue view`, `gh pr diff`) for a candidate that actually matched.
+The workflow has already fetched all three lists and compacted them into
+**`tracking-inventory.json`** in the repo root — `Read` it once. Match every failing/flaky test
+against it locally; do **not** re-list issues/PRs or re-grep markers yourself. Only make a
+targeted call to confirm a candidate that actually matched (see below). Its shape:
 
-### Build the inventory (three calls, once)
+- `markers[]` — `{ file, line, issue, reason }` for every `// KNOWN-FAILURE(#N)` comment in the
+  suite. Markers sit on the line immediately above the failing assertion/action, in the format
+  `// KNOWN-FAILURE(#123): <short reason> — retriage if this changes`.
+- `issues[]` — `{ number, title, ref_lines, body_excerpt }` per open `qa-triage` issue.
+  `ref_lines` is every `file:line` string found in the title/body; `body_excerpt` is the first
+  400 characters of the body.
+- `prs[]` — `{ number, title, head_ref, ref_lines, body_excerpt }` per open `qa-triage` PR.
+  Triage PRs have `head_ref` `qa/triage-run-*` (title `QA triage — run #…`), decision PRs
+  `qa/triage-decision-run-*` (title `QA triage decision — run #…`).
 
-1. **Committed markers.** `Grep` for `KNOWN-FAILURE\(#` across `tests/functional/**`. Every hit
-   gives you `<file>:<line>`, the issue number `#N`, and the reason text — the complete set of
-   markers. (No need to open each failure's stack-trace location blind.) Markers are on the line
-   immediately above the failing assertion/action, in this exact format:
+### Match each failing/flaky test against the inventory
 
-   ```
-   // KNOWN-FAILURE(#123): <short reason> — retriage if this changes
-   ```
+- **Marker?** Is there a `markers[]` entry whose `file`/`line` is the line directly above this
+  failure's failing assertion/action (from its stack trace)?
+  - **Match** → one call to confirm the linked issue's state: `gh issue view <issue> --json state`.
+    - **open** → already tracked. Note "already tracked as #N". Done.
+    - **closed** → regression (supposedly fixed, failing again). Treat as new — go to Step 2, and
+      in Step 3 replace the stale marker with one pointing at the new issue.
+  - **No match** → check `issues[]` and `prs[]`.
+- **Issue?** Does any `issues[]` entry cover this failure — its `file:line` in `ref_lines`, or the
+  test title / a distinctive keyword in `title` or `body_excerpt`? Consolidated issues are titled
+  `<root cause> (<N> tests)`, so don't judge on the title alone.
+  - **Clear match** → already tracked; note "already tracked as #N" ("decision pending" if the
+    excerpt shows it's a Step 3b decision issue). Done.
+  - **Excerpt too thin to be sure** → `gh issue view <number> --json body` for that one issue and
+    decide from the full body.
+- **PR?** Does any `prs[]` entry cover this failure — its `file:line` in `ref_lines`, or the test
+  title / a keyword in `title` or `body_excerpt`?
+  - **Clear match** → already pending; note "already pending review in PR #<n>". Do **not** open
+    another PR and do **not** re-file its issue.
+  - **Excerpt too thin** → `gh pr diff <n>` for that one PR and confirm from the marker lines,
+    fix, or decision sections it contains.
 
-2. **Open tracking issues.** `gh issue list --state open --label qa-triage --limit 200 --json number,title,body`.
-   One call returns every triage-filed issue with its body. (Step 2 labels every issue it files
-   `qa-triage`.) If the call errors because the label doesn't exist yet, drop `--label qa-triage`
-   and match over all open issues.
+A failure a previous run **fixed as a script issue** leaves no marker and no issue — but if a
+`prs[]` entry is still carrying that fix unmerged, it's pending, not new. Only if there's no such
+PR and the test is failing the same way again is it new (the earlier fix was wrong).
 
-3. **Open triage PRs.** `gh pr list --state open --label qa-triage --limit 200 --json number,title,headRefName,body`.
-   One call. These are triage PRs (branch `qa/triage-run-*`, title `QA triage — run #…`) and
-   decision PRs (branch `qa/triage-decision-run-*`, title `QA triage decision — run #…`) from
-   earlier runs that haven't merged yet — the failure recurs every run until they do. Same label
-   fallback as above; you can also confirm a PR is a triage PR from its `headRefName`.
-
-### Match each failing/flaky test against the inventory (local — no extra calls)
-
-- **Marker?** Is there a marker whose `<file>:<line>` is the line directly above this failure's
-  failing assertion/action (from its stack trace)?
-  - **Marker present** → one call: `gh issue view <N> --json state`.
-    - Issue **open** → already tracked. Note "already tracked as #N". Done.
-    - Issue **closed** → regression (supposedly fixed, failing again). Treat as new — go to
-      Step 2, and in Step 3 replace the stale marker with one pointing at the new issue.
-  - **No marker** → check the issue and PR inventories.
-- **Issue?** Does any open `qa-triage` issue's body name this failure's test title **and** a
-  distinctive keyword / its `file:line`? Consolidated issues are titled `<root cause> (<N> tests)`,
-  so match on the **body**, not the title. A match → already tracked; note "already tracked as #N"
-  (add "decision pending" if it's a Step 3b issue). Done.
-- **PR?** Does any open triage/decision PR's body name this failure's `file:line` or test title
-  (in the markers it adds, the fix it makes, or its decision sections)? Triage PR bodies carry
-  one entry per group listing the affected `file:line`s, so the **body is normally enough**.
-  - Body clearly covers it → already pending; note "already pending review in PR #<n>". Do
-    **not** open another PR and do **not** re-file its issue.
-  - Body is terse or ambiguous (an older PR) → **only then** run `gh pr diff <n>` for that one
-    PR to confirm from the actual marker lines / diff. Not for every PR — just the doubtful one.
-
-A failure a previous run **fixed as a script issue** leaves no marker and no issue — but if an
-open PR in the inventory is still carrying that fix unmerged, it's pending, not new. Only if
-there's no such PR and the test is failing the same way again is it new (the earlier fix was
-wrong).
-
-Only a failure with **no marker, no open issue, and no open PR** covering it is new — send it to
+Only a failure with **no marker, no matching issue, and no matching PR** is new — send it to
 Step 2.
 
 ## Step 2 — classify each new/regressed failure

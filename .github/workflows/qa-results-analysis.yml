@@ -63,6 +63,27 @@ jobs:
           --color BFD4F2
           --description "Filed by the QA results-analysis workflow"
 
+      # Fetch the three "is this failure already tracked?" lists here rather than
+      # from inside the model: one controlled set of API calls, compacted into a
+      # small index the model reads in Step 1 instead of listing issues/PRs and
+      # grepping markers itself.
+      - name: Build tracking inventory
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh issue list --state open --label qa-triage --limit 200 \
+            --json number,title,body > issues.json
+          gh pr list --state open --label qa-triage --limit 200 \
+            --json number,title,headRefName,body > prs.json
+          grep -rn --include='*.ts' 'KNOWN-FAILURE(#' tests/functional/ > markers.txt || true
+          node .github/scripts/build-tracking-inventory.mjs \
+            issues.json prs.json markers.txt > tracking-inventory.json
+          rm -f issues.json prs.json markers.txt
+          echo "::group::tracking-inventory.json"
+          cat tracking-inventory.json
+          echo "::endgroup::"
+
       - name: Load failure analysis prompt
         run: |
           {

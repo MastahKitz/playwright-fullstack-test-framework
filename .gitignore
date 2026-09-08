@@ -1,6 +1,7 @@
 node_modules/
 test-results/
 test-report/
+tracking-inventory.json
 blob-report/
 merged-blobs/
 public/
