@@ -1,11 +1,11 @@
 import { Page, expect } from '@playwright/test';
 import { ProductData, PRODUCT_DETAIL_FEATURES } from './product.data';
 
-export async function assertProductListPage(page: Page, totalCount: number) {
+export async function assertProductListPage(page: Page) {
   // header
   await expect.soft(page.getByTestId('catalog-heading')).toHaveText('Product Catalog');
-  // sub-header
-  await expect.soft(page.getByTestId('catalog-product-count')).toHaveText(`Browse our complete selection of ${totalCount} products`);
+  // sub-header — catalog size drifts on the shared demo server, so only assert the format.
+  await expect.soft(page.getByTestId('catalog-product-count')).toHaveText(/^Browse our complete selection of \d+ products$/);
 }
 
 export async function assertProductInList(page: Page, product: ProductData) {
