@@ -55,6 +55,16 @@ jobs:
             ffmpeg -loglevel error -i "$video" -vf fps=2 "$dir/video-frames/frame-%03d.png"
           done
 
+      # Pick one deterministic code line per failure — the deepest stack frame in
+      # a functional-test file — so the marker, the issue, and later runs all key
+      # off the same anchor instead of whatever the stack trace happened to top out at.
+      - name: Extract failure anchors
+        run: |
+          node .github/scripts/extract-failure-anchors.mjs test-report/results.json > failure-anchors.json
+          echo "::group::failure-anchors.json"
+          cat failure-anchors.json
+          echo "::endgroup::"
+
       - name: Ensure triage label exists
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

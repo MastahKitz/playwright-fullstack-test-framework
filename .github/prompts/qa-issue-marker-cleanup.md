@@ -32,8 +32,10 @@ this run" (see below), not "passing".
 `Grep` for `KNOWN-FAILURE\(#` across `tests/functional/**`. For each hit you have `<file>:<line>`
 and the issue number `#N` from the `KNOWN-FAILURE(#N)` text.
 
-Work out which test(s) the marker guards — the marker sits on the line directly above an
-assertion or action:
+Work out which test(s) the marker guards. The marker sits on the line directly above a failure's
+*anchor* — the deepest frame of the failing stack that is in a
+`*.{spec,flow,actions,assertions}.ts` file under `tests/functional/` — so it is usually in a
+helper, not the spec:
 
 - Marker in a `*.spec.ts` → the enclosing `test('<title>', …)` block.
 - Marker in a `*.flow.ts` / `*.actions.ts` / `*.assertions.ts` helper → `Grep` for the enclosing

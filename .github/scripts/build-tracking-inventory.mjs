@@ -32,6 +32,21 @@ const refLines = (...texts) => {
   return found;
 };
 
+// Pull the `## Failure anchors` block (added to every issue/PR body by the
+// results-analysis prompt) out in full — it's the primary match key in Step 1,
+// so it must not be at the mercy of the excerpt truncation.
+const anchorBlock = (body) => {
+  const lines = (body ?? '').split('\n');
+  const start = lines.findIndex((l) => /^#+\s*Failure anchors\s*$/i.test(l));
+  if (start === -1) return [];
+  const out = [];
+  for (const line of lines.slice(start + 1)) {
+    if (/^#+\s/.test(line)) break; // next heading ends the block
+    if (line.trim()) out.push(line.trim());
+  }
+  return out;
+};
+
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 
 const parseMarkers = (path) => {
@@ -57,6 +72,7 @@ const [issuesPath, prsPath, markersPath] = process.argv.slice(2);
 const issues = readJson(issuesPath).map((it) => ({
   number: it.number,
   title: it.title,
+  anchors: anchorBlock(it.body),
   ref_lines: refLines(it.title, it.body),
   body_excerpt: excerpt(it.body),
 }));
@@ -65,6 +81,7 @@ const prs = readJson(prsPath).map((pr) => ({
   number: pr.number,
   title: pr.title,
   head_ref: pr.headRefName,
+  anchors: anchorBlock(pr.body),
   ref_lines: refLines(pr.title, pr.body),
   body_excerpt: excerpt(pr.body),
 }));

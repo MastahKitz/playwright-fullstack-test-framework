@@ -34,6 +34,15 @@ below, so there's no need to look up run metadata via `gh run view` either.
   `specs` → `tests` to find every test with `status` `unexpected` (failed) or `flaky`. Each
   entry has the error message, stack trace (including the failing file:line), and
   expected/actual snippets where relevant.
+- `failure-anchors.json` (repo root) — one entry per failing/flaky test, computed by the
+  workflow: `{ test, spec, status, anchor, frames, error_excerpt }`. `anchor` is the **deepest**
+  stack frame that lives in a `*.{spec,flow,actions,assertions}.ts` file under
+  `tests/functional/` — the single, deterministic `file:line` for that failure. **Use `anchor`
+  wherever you need "the line that failed"** — placing a marker (Step 3), matching against a
+  tracked failure (Step 1), listing a failure in an issue or decision PR. Don't hand-pick a line
+  off the stack trace yourself; a later run recomputes the same `anchor` and the two must agree.
+  `frames` is every functional-test frame in stack order (deepest first) for when `anchor` has
+  drifted since an issue was filed.
 - `test-results/**/test-failed-*.png` — a screenshot of the page at the moment of failure, one
   per failed attempt. **You must open and read this screenshot for every failing/flaky test
   before forming a theory of the root cause.** Look specifically for anything overlaid on the
@@ -80,33 +89,38 @@ against it locally; do **not** re-list issues/PRs or re-grep markers yourself. O
 targeted call to confirm a candidate that actually matched (see below). Its shape:
 
 - `markers[]` — `{ file, line, issue, reason }` for every `// KNOWN-FAILURE(#N)` comment in the
-  suite. Markers sit on the line immediately above the failing assertion/action, in the format
+  suite. Markers sit on the line immediately above a failure's `anchor`, in the format
   `// KNOWN-FAILURE(#123): <short reason> — retriage if this changes`.
-- `issues[]` — `{ number, title, ref_lines, body_excerpt }` per open `qa-triage` issue.
-  `ref_lines` is every `file:line` string found in the title/body; `body_excerpt` is the first
-  400 characters of the body.
-- `prs[]` — `{ number, title, head_ref, ref_lines, body_excerpt }` per open `qa-triage` PR.
-  Triage PRs have `head_ref` `qa/triage-run-*` (title `QA triage — run #…`), decision PRs
+- `issues[]` — `{ number, title, anchors, ref_lines, body_excerpt }` per open `qa-triage` issue.
+  `anchors` is the `<spec> :: <test title> — <anchor>` lines from the issue's `## Failure anchors`
+  block (see Step 2); `ref_lines` is every `file:line` string found anywhere in the title/body;
+  `body_excerpt` is the first 400 characters of the body.
+- `prs[]` — `{ number, title, head_ref, anchors, ref_lines, body_excerpt }` per open `qa-triage`
+  PR. Triage PRs have `head_ref` `qa/triage-run-*` (title `QA triage — run #…`), decision PRs
   `qa/triage-decision-run-*` (title `QA triage decision — run #…`).
 
 ### Match each failing/flaky test against the inventory
 
-- **Marker?** Is there a `markers[]` entry whose `file`/`line` is the line directly above this
-  failure's failing assertion/action (from its stack trace)?
+Match on the failure's `anchor` from `failure-anchors.json` first, then its `spec :: test`, then
+keywords — in that order of confidence.
+
+- **Marker?** Is there a `markers[]` entry whose `file:line` equals this failure's `anchor` (or,
+  if the file was edited since, appears in its `frames`)?
   - **Match** → one call to confirm the linked issue's state: `gh issue view <issue> --json state`.
     - **open** → already tracked. Note "already tracked as #N". Done.
     - **closed** → regression (supposedly fixed, failing again). Treat as new — go to Step 2, and
       in Step 3 replace the stale marker with one pointing at the new issue.
   - **No match** → check `issues[]` and `prs[]`.
-- **Issue?** Does any `issues[]` entry cover this failure — its `file:line` in `ref_lines`, or the
-  test title / a distinctive keyword in `title` or `body_excerpt`? Consolidated issues are titled
-  `<root cause> (<N> tests)`, so don't judge on the title alone.
+- **Issue?** Does any `issues[]` entry cover this failure — its `anchor` or `spec :: test` in
+  `anchors`, its `anchor`/`frames` in `ref_lines`, or the test title / a distinctive keyword in
+  `title` or `body_excerpt`? Consolidated issues are titled `<root cause> (<N> tests)`, so don't
+  judge on the title alone.
   - **Clear match** → already tracked; note "already tracked as #N" ("decision pending" if the
     excerpt shows it's a Step 3b decision issue). Done.
   - **Excerpt too thin to be sure** → `gh issue view <number> --json body` for that one issue and
     decide from the full body.
-- **PR?** Does any `prs[]` entry cover this failure — its `file:line` in `ref_lines`, or the test
-  title / a keyword in `title` or `body_excerpt`?
+- **PR?** Does any `prs[]` entry cover this failure — same checks against its `anchors`,
+  `ref_lines`, `title`, `body_excerpt`?
   - **Clear match** → already pending; note "already pending review in PR #<n>". Do **not** open
     another PR and do **not** re-file its issue.
   - **Excerpt too thin** → `gh pr diff <n>` for that one PR and confirm from the marker lines,
@@ -173,15 +187,24 @@ For every group **except a likely script issue**, create **one** GitHub issue
 in one call):
 
 - **Single-test group** → title `<test title> — <file>`.
-- **Multi-test group** → title `<one-line root cause> (<N> tests)`, and in the body list every
-  affected `file:line` and test title, then give the four Step 2 points once for the shared
-  cause (note per-test differences inline only where they matter).
+- **Multi-test group** → title `<one-line root cause> (<N> tests)`, then give the four Step 2
+  points once for the shared cause (note per-test differences inline only where they matter).
 
-Every issue body includes a link to the run (the RUN URL given to you in the prompt). For an
-inconclusive/flake group, also put both Step 3b options into the issue body verbatim — the exact
-marker line **for each affected line** in the group, and the exact `diff` or hardening change —
-so the issue stands on its own. Note each issue number — the marker comments and PR bodies
-reference it.
+Every issue body **starts** with a `## Failure anchors` block — one line per affected test, taken
+straight from `failure-anchors.json`:
+
+```
+## Failure anchors
+- <spec> :: <test title> — <anchor>
+  frames: <frame>, <frame>, …
+```
+
+This block is what later runs match against, so it must be first (it survives body truncation)
+and must use the `anchor`/`frames` values verbatim. After it, a link to the run (the RUN URL in
+the prompt) and the analysis. For an inconclusive/flake group, also put both Step 3b options into
+the body verbatim — the exact marker line **for each anchor** in the group, and the exact `diff`
+or hardening change — so the issue stands on its own. Note each issue number — the marker
+comments and PR bodies reference it.
 
 ## Step 3 — one combined PR for the confident failures
 
@@ -194,17 +217,21 @@ put them all in a single PR:
 2. `git config user.name` / `user.email` to a bot identity, e.g. `qa-triage-bot` /
    `qa-triage-bot@users.noreply.github.com`.
 3. For each **likely product bug** group: add (or replace the stale) `KNOWN-FAILURE(#N)` marker
-   comment on the line above the failing assertion/action, using the group's issue number — one
-   marker per failing line, every marker in the group pointing at the same `#N`.
+   comment on the line directly above each affected test's `anchor` (from `failure-anchors.json`),
+   using the group's issue number — one marker per anchor, every marker in the group pointing at
+   the same `#N`. If two tests in the group share an `anchor` (same helper line), one marker
+   covers both.
 4. For each **likely script issue** group: make the minimal fix that addresses the shared root
    cause — the stale testid, the wrong assumption, the bad wait. One group is usually one fix
    even when several tests failed on it. Touch only the failing tests' own files (`.spec.ts` /
    `.flow.ts` / `.actions.ts` / `.assertions.ts` and the shared helpers they call); don't
    refactor around it.
 5. Commit, push, and `gh pr create --label qa-triage` titled `QA triage — run #<RUN ID>` (the
-   label lets Step 1 of later runs list open triage PRs in one call). The body has one entry per
-   group: its classification, the tests it covers, and either the issue it links to (product
-   bug) or a plain-English description of what was wrong and what you changed (script issue).
+   label lets Step 1 of later runs list open triage PRs in one call). The body **starts** with a
+   `## Failure anchors` block covering every test in the PR (same format as the issue body in
+   Step 2), so a later run can match against it. After it, one entry per group: its
+   classification, the tests it covers, and either the issue it links to (product bug) or a
+   plain-English description of what was wrong and what you changed (script issue).
 
 ## Step 3b — one draft decision PR for the failures you can't call
 
@@ -222,14 +249,16 @@ single action either way, parked in a **draft PR with no code changes**.
 4. `git push` the branch and `gh pr create --draft --label qa-triage` titled
    `QA triage decision — run #<RUN ID>`.
 
-The PR body has one section per group (i.e. per issue `#N`). Each section contains:
+The PR body **starts** with a `## Failure anchors` block covering every test across all groups
+(same format as the issue body in Step 2), so a later run can match against it. Then one section
+per group (i.e. per issue `#N`), each containing:
 
 - **What failed and why it's ambiguous** — the four Step 2 points, condensed, plus the linked
-  issue `#N`. If the group covers more than one test, list every affected `file:line`.
+  issue `#N`. Restate this group's affected tests as `<spec> :: <test title> — <anchor>`.
 - **Option 1 — mark it as a known failure.** The exact line(s) to add and where — **one marker
-  per affected line** in the group:
+  per `anchor`** in the group:
   ```
-  <file>:<line above the failing assertion>
+  <anchor> (marker goes on the line directly above)
   // KNOWN-FAILURE(#N): <one-line reason> — needs human investigation, see <RUN URL>
   ```
   Plus one line naming the specific manual check that would confirm or kill the bug theory (for
@@ -240,15 +269,15 @@ The PR body has one section per group (i.e. per issue `#N`). Each section contai
   group. If you genuinely can't name a plausible change, write "Option 2 — none identified" and
   say what evidence would settle it.
 - **Recommendation** — which way you lean and why, stated as a lean, not a verdict.
-- **Resolving #N.** State explicitly: the reviewer chooses per affected line, and they can mix
-  options within the group. `#N` is closed **only if Option 2 is taken for every line in the
-  group** — in that case they add `Closes #N` to this PR's description before marking it ready,
-  and the issue auto-closes on merge. If Option 1 is taken for even one line, `#N` stays open and
-  the `KNOWN-FAILURE(#N)` marker(s) track it — do **not** add `Closes #N`.
+- **Resolving #N.** State explicitly: the reviewer chooses per `anchor`, and they can mix options
+  within the group. `#N` is closed **only if Option 2 is taken for every anchor in the group** —
+  in that case they add `Closes #N` to this PR's description before marking it ready, and the
+  issue auto-closes on merge. If Option 1 is taken for even one anchor, `#N` stays open and the
+  `KNOWN-FAILURE(#N)` marker(s) track it — do **not** add `Closes #N`.
 
-End the body with: "Per affected line, apply Option 1 (marker) or Option 2 (diff), then mark this
-PR ready. For each issue #N, add `Closes #N` to this description only if you took Option 2 for
-every line under it; otherwise leave it open. The empty commit can be dropped either way."
+End the body with: "Per anchor, apply Option 1 (marker) or Option 2 (diff), then mark this PR
+ready. For each issue #N, add `Closes #N` to this description only if you took Option 2 for every
+anchor under it; otherwise leave it open. The empty commit can be dropped either way."
 
 If there are no inconclusive/flake failures this run, skip Step 3b.
 
