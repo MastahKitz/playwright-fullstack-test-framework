@@ -65,47 +65,63 @@ screenshot, is more likely server flakiness than a script or product bug.
 
 ## Step 1 — rule out that the failure is already tracked
 
-A failure can already be tracked in **three** places. Check all three for every failing/flaky
-test before it goes to Step 2. If any of them covers it, the failure is **not new** — do not
-file an issue, do not open a PR or add to one, just record it in your final summary with the
-tracking reference. Never create a second issue or PR for something already tracked.
+A failure can already be tracked in **three** places. If any of them covers it, the failure is
+**not new** — do not file an issue, do not open a PR or add to one, just record it in your final
+summary with the tracking reference. Never create a second issue or PR for something already
+tracked.
 
-**1 — a committed `KNOWN-FAILURE` marker.** Tracked failures carry a marker on the line
-immediately above the assertion/action that failed, in this exact format:
+Do this at **suite scale**: a busy app can have dozens of markers, tracking issues, and open
+triage PRs, so don't walk each one per failure. Build the tracking inventory **once**, with the
+three bulk calls below, then match every failing/flaky test against it locally — and only make a
+targeted deep call (`gh issue view`, `gh pr diff`) for a candidate that actually matched.
 
-```
-// KNOWN-FAILURE(#123): <short reason> — retriage if this changes
-```
+### Build the inventory (three calls, once)
 
-For each failing/flaky test, open the `file:line` from its stack trace and check the line
-directly above it:
+1. **Committed markers.** `Grep` for `KNOWN-FAILURE\(#` across `tests/functional/**`. Every hit
+   gives you `<file>:<line>`, the issue number `#N`, and the reason text — the complete set of
+   markers. (No need to open each failure's stack-trace location blind.) Markers are on the line
+   immediately above the failing assertion/action, in this exact format:
 
-- **Marker present, and `gh issue view <N> --json state` shows it's still open** → already
-  tracked. Note "already tracked as #N". Done with this failure.
-- **Marker present, but the linked issue is closed** → regression (supposedly fixed, failing
-  again). Treat as new — go to Step 2, and in Step 3 replace the stale marker with one pointing
-  at the new issue.
-- **No marker** → not tracked by a marker; check 2 and 3 before calling it new.
+   ```
+   // KNOWN-FAILURE(#123): <short reason> — retriage if this changes
+   ```
 
-**2 — an open GitHub issue.** Run `gh issue list --state open` and match this failure by test
-title **and** by a distinctive keyword / the `file:line` — a consolidated issue is titled
-`<root cause> (<N> tests)`, not by test name, so read issue bodies rather than trusting the
-title. An open issue that covers this failure → already tracked; note "already tracked as #N"
-(add "decision pending" if it's a Step 3b issue). Done with this failure.
+2. **Open tracking issues.** `gh issue list --state open --label qa-triage --limit 200 --json number,title,body`.
+   One call returns every triage-filed issue with its body. (Step 2 labels every issue it files
+   `qa-triage`.) If the call errors because the label doesn't exist yet, drop `--label qa-triage`
+   and match over all open issues.
 
-**3 — an open PR from an earlier run that hasn't been merged yet.** Triage PRs (branch
-`qa/triage-run-*`, title `QA triage — run #…`) and decision PRs (branch
-`qa/triage-decision-run-*`, title `QA triage decision — run #…`) can sit unreviewed for days,
-and the failure will recur every run until they merge. Run `gh pr list --state open` to see them
-all, then for each triage/decision PR run `gh pr view <n> --json number,title,body` and
-`gh pr diff <n>` and look for this failure's `file:line` or test title in the marker(s) it adds,
-the fix it makes, or its decision sections. If an open PR already handles this failure → already
-pending; note "already pending review in PR #<n>". Do **not** open another PR and do **not**
-re-file its issue.
+3. **Open triage PRs.** `gh pr list --state open --label qa-triage --limit 200 --json number,title,headRefName,body`.
+   One call. These are triage PRs (branch `qa/triage-run-*`, title `QA triage — run #…`) and
+   decision PRs (branch `qa/triage-decision-run-*`, title `QA triage decision — run #…`) from
+   earlier runs that haven't merged yet — the failure recurs every run until they do. Same label
+   fallback as above; you can also confirm a PR is a triage PR from its `headRefName`.
+
+### Match each failing/flaky test against the inventory (local — no extra calls)
+
+- **Marker?** Is there a marker whose `<file>:<line>` is the line directly above this failure's
+  failing assertion/action (from its stack trace)?
+  - **Marker present** → one call: `gh issue view <N> --json state`.
+    - Issue **open** → already tracked. Note "already tracked as #N". Done.
+    - Issue **closed** → regression (supposedly fixed, failing again). Treat as new — go to
+      Step 2, and in Step 3 replace the stale marker with one pointing at the new issue.
+  - **No marker** → check the issue and PR inventories.
+- **Issue?** Does any open `qa-triage` issue's body name this failure's test title **and** a
+  distinctive keyword / its `file:line`? Consolidated issues are titled `<root cause> (<N> tests)`,
+  so match on the **body**, not the title. A match → already tracked; note "already tracked as #N"
+  (add "decision pending" if it's a Step 3b issue). Done.
+- **PR?** Does any open triage/decision PR's body name this failure's `file:line` or test title
+  (in the markers it adds, the fix it makes, or its decision sections)? Triage PR bodies carry
+  one entry per group listing the affected `file:line`s, so the **body is normally enough**.
+  - Body clearly covers it → already pending; note "already pending review in PR #<n>". Do
+    **not** open another PR and do **not** re-file its issue.
+  - Body is terse or ambiguous (an older PR) → **only then** run `gh pr diff <n>` for that one
+    PR to confirm from the actual marker lines / diff. Not for every PR — just the doubtful one.
 
 A failure a previous run **fixed as a script issue** leaves no marker and no issue — but if an
-open PR from point 3 is still carrying that fix unmerged, it's pending, not new. Only if there's
-no such PR and the test is failing the same way again is it new (the earlier fix was wrong).
+open PR in the inventory is still carrying that fix unmerged, it's pending, not new. Only if
+there's no such PR and the test is failing the same way again is it new (the earlier fix was
+wrong).
 
 Only a failure with **no marker, no open issue, and no open PR** covering it is new — send it to
 Step 2.
@@ -159,7 +175,9 @@ returns, an assertion that contradicts what every screenshot and video frame sho
 bug is still a live explanation, it's **inconclusive**, not a script issue — send it to Step 3b
 and let a human decide.
 
-For every group **except a likely script issue**, create **one** GitHub issue (`gh issue create`):
+For every group **except a likely script issue**, create **one** GitHub issue
+(`gh issue create --label qa-triage` — always add that label so Step 1 of later runs can find it
+in one call):
 
 - **Single-test group** → title `<test title> — <file>`.
 - **Multi-test group** → title `<one-line root cause> (<N> tests)`, and in the body list every
@@ -190,8 +208,9 @@ put them all in a single PR:
    even when several tests failed on it. Touch only the failing tests' own files (`.spec.ts` /
    `.flow.ts` / `.actions.ts` / `.assertions.ts` and the shared helpers they call); don't
    refactor around it.
-5. Commit, push, and `gh pr create` titled `QA triage — run #<RUN ID>`. The body has one entry
-   per group: its classification, the tests it covers, and either the issue it links to (product
+5. Commit, push, and `gh pr create --label qa-triage` titled `QA triage — run #<RUN ID>` (the
+   label lets Step 1 of later runs list open triage PRs in one call). The body has one entry per
+   group: its classification, the tests it covers, and either the issue it links to (product
    bug) or a plain-English description of what was wrong and what you changed (script issue).
 
 ## Step 3b — one draft decision PR for the failures you can't call
@@ -207,7 +226,8 @@ single action either way, parked in a **draft PR with no code changes**.
 3. `git commit --allow-empty -m "QA triage decision — run #<RUN ID>"`. The PR deliberately has
    zero file changes; it is a container for the writeup and the place a human applies whichever
    option they pick.
-4. `git push` the branch and `gh pr create --draft` titled `QA triage decision — run #<RUN ID>`.
+4. `git push` the branch and `gh pr create --draft --label qa-triage` titled
+   `QA triage decision — run #<RUN ID>`.
 
 The PR body has one section per group (i.e. per issue `#N`). Each section contains:
 

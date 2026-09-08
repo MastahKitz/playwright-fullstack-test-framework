@@ -55,6 +55,14 @@ jobs:
             ffmpeg -loglevel error -i "$video" -vf fps=2 "$dir/video-frames/frame-%03d.png"
           done
 
+      - name: Ensure triage label exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          gh label create qa-triage --force
+          --color BFD4F2
+          --description "Filed by the QA results-analysis workflow"
+
       - name: Load failure analysis prompt
         run: |
           {
