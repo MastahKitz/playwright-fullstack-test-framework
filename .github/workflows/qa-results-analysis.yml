@@ -60,7 +60,7 @@ jobs:
       # off the same anchor instead of whatever the stack trace happened to top out at.
       - name: Extract failure anchors
         run: |
-          node .github/scripts/extract-failure-anchors.mjs test-report/results.json > failure-anchors.json
+          node scripts/extract-failure-anchors.js test-report/results.json > failure-anchors.json
           echo "::group::failure-anchors.json"
           cat failure-anchors.json
           echo "::endgroup::"
@@ -87,7 +87,7 @@ jobs:
           gh pr list --state open --label qa-triage --limit 200 \
             --json number,title,headRefName,body > prs.json
           grep -rn --include='*.ts' 'KNOWN-FAILURE(#' tests/functional/ > markers.txt || true
-          node .github/scripts/build-tracking-inventory.mjs \
+          node scripts/build-tracking-inventory.js \
             issues.json prs.json markers.txt > tracking-inventory.json
           rm -f issues.json prs.json markers.txt
           echo "::group::tracking-inventory.json"
