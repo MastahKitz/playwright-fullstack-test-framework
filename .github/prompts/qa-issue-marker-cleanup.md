@@ -11,17 +11,27 @@ green.
 
 Your tool access is deliberately narrow — `Read`/`Grep`/`Glob`/`Edit` and a short list of
 `git`/`gh` subcommands, no general `Bash`, no `jq`/`python3`, no shell pipes. Read
-`test-report/results.json` directly with `Read` (it parses JSON); use `Grep`/`Glob` instead of
-`find`/`grep`/`cat`. RUN ID / RUN URL / COMMIT are in the prompt — don't look them up.
+`marker-inventory.json` and `test-report/results.json` directly with `Read` (it parses JSON);
+use `Grep`/`Glob` instead of `find`/`grep`/`cat`. RUN ID / RUN URL / COMMIT are in the prompt —
+don't look them up.
 
 ## Evidence available
 
+- `marker-inventory.json` (repo root) — built by the workflow, so you don't grep markers or call
+  `gh issue view` yourself:
+  - `markers[]` — `{ file, line, issue, reason, tests, resolved }` for every `// KNOWN-FAILURE(#N)`
+    comment in the suite. `tests` is `[{ spec, title }]` naming the test(s) that failed at that
+    line, parsed straight from the marker. `resolved` is `true` when `tests` is populated (the
+    normal case) and `false` for an older marker that predates the embedded names — only those
+    need the call-graph resolution in Step 1.
+  - `issues[]` — `{ number, state, title }` for every `qa-triage` issue (`state` is `open` or
+    `closed`).
 - `test-report/results.json` — the Playwright JSON reporter output for this run. Walk `suites` →
   `specs` → `tests`. Each test has a `status` (`expected` = passed first try, `flaky` = passed
   only on retry, `unexpected` = failed, `skipped`) and a `title`, and its spec entry has the
   `file`. A test absent from the JSON did not run in this invocation.
 - The test source under `tests/functional/**` — `.spec.ts`, `.flow.ts`, `.actions.ts`,
-  `.assertions.ts`. Use it to map a marker to the test(s) that exercise it.
+  `.assertions.ts`. Only needed to resolve the owning test(s) of a `resolved: false` marker.
 
 Note: a `workflow_dispatch` run can be a **partial** run — a non-chromium browser, or a `--grep`
 tag filter — so many tests will be absent. That's fine; those markers are just "not exercised
@@ -29,22 +39,32 @@ this run" (see below), not "passing".
 
 ## Step 1 — find every marker and the test that owns it
 
-`Grep` for `KNOWN-FAILURE\(#` across `tests/functional/**`. For each hit you have `<file>:<line>`
-and the issue number `#N` from the `KNOWN-FAILURE(#N)` text.
+`Read` `marker-inventory.json`. Every marker in the suite is in `markers[]` already — do **not**
+grep for markers yourself.
 
-Work out which test(s) the marker guards. The marker sits on the line directly above a failure's
-*anchor* — the deepest frame of the failing stack that is in a
-`*.{spec,flow,actions,assertions}.ts` file under `tests/functional/` — so it is usually in a
-helper, not the spec:
+For each marker:
 
-- Marker in a `*.spec.ts` → the enclosing `test('<title>', …)` block.
-- Marker in a `*.flow.ts` / `*.actions.ts` / `*.assertions.ts` helper → `Grep` for the enclosing
-  exported function's name to find the `*.spec.ts` (or `*.flow.ts`) that call it, and from there
-  the enclosing `test('<title>', …)` block(s). A helper in a feature folder is normally used only
-  by that folder's specs; if a marker is genuinely reachable from several tests, all of them own
-  it.
+- **`resolved: true`** → its `tests` are the owning test(s). Use them as-is.
+- **`resolved: false`** (older marker, no embedded names) → work out the owning test(s) yourself.
+  The marker sits on the line directly above a failure's *anchor* — the deepest frame of the
+  failing stack that is in a `*.{spec,flow,actions,assertions}.ts` file — so it is usually in a
+  helper:
+  - Marker in a `*.spec.ts` → the enclosing `test('<title>', …)` block.
+  - Marker in a `*.flow.ts` / `*.actions.ts` / `*.assertions.ts` helper → `Grep` for the enclosing
+    exported function's name to find the `*.spec.ts` (or `*.flow.ts`) that call it, and from there
+    the enclosing `test('<title>', …)` block(s). A helper in a feature folder is normally used
+    only by that folder's specs; if a marker is genuinely reachable from several tests, all of
+    them own it.
+
+A `resolved: true` marker's `tests` are the tests that *failed* there when it was filed — usually
+every test through that line, but if the marker is in a shared helper and its `tests` all pass
+this run, sanity-check with the `resolved: false` call-graph resolution before clearing it, in
+case a sibling test that also routes through the line is still failing.
 
 ## Step 2 — decide each marker's fate from this run
+
+Look up each owning test in `results.json` by its `spec` **and** `title` (a title alone can
+collide across specs), and read its `status`:
 
 | This run's result for the owning test(s) | Marker |
 |---|---|
@@ -65,9 +85,10 @@ cleared this run" with a one-line status for each marker you checked.
    `git checkout -b qa/issue-marker-cleanup-run-<RUN ID>`.
 2. `git config user.name` / `user.email` to the bot identity `qa-triage-bot` /
    `qa-triage-bot@users.noreply.github.com`.
-3. Delete **only** the `// KNOWN-FAILURE(#N): …` comment line for each cleared marker — nothing
-   else on the surrounding lines. Keep each removal as its own isolated one-line change so a
-   reviewer can drop any single one they don't trust.
+3. Delete **only** the `// KNOWN-FAILURE(#N) …` comment line (`marker-inventory.json` gives its
+   `file` and `line`) for each cleared marker — nothing else on the surrounding lines. Keep each
+   removal as its own isolated one-line change so a reviewer can drop any single one they don't
+   trust.
 4. Commit, push, and `gh pr create` (a normal PR, **not** a draft) titled
    `QA marker cleanup — run #<RUN ID>`. Capture the PR URL from the command output — Step 4
    needs it.
@@ -84,11 +105,9 @@ actually shipped before merging, and drop any removal they're unsure about.
 
 ## Step 4 — reconcile the linked issues
 
-For each distinct issue `#N` referenced by any **removed** marker, `Grep` the whole repo with the
-regex `KNOWN-FAILURE\(#N\)` — substitute the actual number, keep the backslashes (`Grep` is
-ripgrep, so the parens must be escaped), and keep the closing `\)` so that e.g. `#12` does not
-also match `#123`. That gives the complete set of `file:line`s still pointing at `#N`. Then check
-`gh issue view <N> --json state,title`.
+For each distinct issue `#N` referenced by any **removed** marker: its complete set of markers is
+every `markers[]` entry in `marker-inventory.json` with `issue == N`, and its state is that
+issue's `issues[]` entry. Do **not** re-grep or call `gh issue view`.
 
 Closing `#N` requires that **every** marker pointing at it was *evaluated and cleared in this
 run* — all of them removed by this PR. A marker whose test **did not run this run** (a partial
@@ -120,4 +139,4 @@ confident in. If you drop a removal that was part of an all-clear `Closes #N`, d
 ## When there's nothing to do
 
 If every marker is still failing / flaky / not exercised, open no PR and report the per-marker
-status. If the suite has no `KNOWN-FAILURE` markers at all, say so and stop.
+status. If `marker-inventory.json`'s `markers[]` is empty, say so and stop.

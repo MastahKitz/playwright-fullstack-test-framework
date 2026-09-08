@@ -46,6 +46,25 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Grep every KNOWN-FAILURE marker and pull every qa-triage issue's state
+      # once, here, so the model reads one file instead of re-grepping per marker
+      # and calling `gh issue view` per issue.
+      - name: Build marker inventory
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh label create qa-triage --force \
+            --color BFD4F2 --description "Filed by the QA results-analysis workflow"
+          grep -rn --include='*.ts' 'KNOWN-FAILURE(#' tests/functional/ > markers.txt || true
+          gh issue list --label qa-triage --state all --limit 200 \
+            --json number,state,title > triage-issues.json
+          node scripts/build-marker-inventory.js markers.txt triage-issues.json > marker-inventory.json
+          rm -f markers.txt triage-issues.json
+          echo "::group::marker-inventory.json"
+          cat marker-inventory.json
+          echo "::endgroup::"
+
       - name: Load issue and marker cleanup prompt
         run: |
           {
