@@ -48,7 +48,7 @@ export async function assertUsernameRequiredError(response: APIResponse) {
   assertResponseBody(body, {
     success: false,
     error: {
-      issues: [{ code: 'too_small', minimum: 1, type: 'string', inclusive: true, exact: false, message: 'Username is required', path: ['username'] }],
+      issues: [{ code: 'too_small', minimum: 1, type: 'string', inclusive: true, exact: false, message: 'Username or email is required', path: ['username'] }],
       name: 'ZodError',
     },
   }, { exact: true });

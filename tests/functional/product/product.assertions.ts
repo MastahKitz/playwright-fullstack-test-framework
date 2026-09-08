@@ -1,11 +1,12 @@
 import { Page, expect } from '@playwright/test';
 import { ProductData, PRODUCT_DETAIL_FEATURES } from './product.data';
 
-export async function assertProductListPage(page: Page, totalCount: number) {
+export async function assertProductListPage(page: Page) {
   // header
   await expect.soft(page.getByTestId('catalog-heading')).toHaveText('Product Catalog');
-  // sub-header
-  await expect.soft(page.getByTestId('catalog-product-count')).toHaveText(`Browse our complete selection of ${totalCount} products`);
+  // sub-header — total drifts run-to-run on the shared catalog, so check it against the rendered cards instead of a fixed number
+  const cardCount = await page.getByTestId(/^product-card-/).count();
+  await expect.soft(page.getByTestId('catalog-product-count')).toHaveText(`Browse our complete selection of ${cardCount} products`);
 }
 
 export async function assertProductInList(page: Page, product: ProductData) {

@@ -1,5 +1,3 @@
-export const TOTAL_PRODUCTS_COUNT = 22;
-
 // Static, identical on every product detail page — not per-product data.
 export const PRODUCT_DETAIL_FEATURES = [
   'Free packaging and handling',
