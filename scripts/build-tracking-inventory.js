@@ -1,95 +1,213 @@
 #!/usr/bin/env node
-// Compact the raw triage lists into the inventory the model reads in Step 1 of
-// the results-analysis workflow. That workflow fetches three things before
-// invoking the model: open `qa-triage` issues, open `qa-triage` PRs, and every
-// committed `KNOWN-FAILURE(#N)` marker in the suite. This reshapes them into one
-// small file so the model can match a failure against them locally, and only
-// re-fetch a full issue or PR body (`gh issue view` / `gh pr diff`) for a
-// candidate that actually matches.
+// The single shared tracking inventory, called identically by the
+// qa-results-analysis and qa-issue-marker-cleanup jobs of qa-triage.yml. It
+// answers one question for both — "is this failing test already tracked?" — by
+// producing five lists, all keyed on `spec + title`:
+//
+//   issues       — open `qa-triage` issues and the tests each tracks
+//   triage_prs   — open combined-confident PRs (label `qa-triage:triage`)
+//   decision_prs — open draft decision PRs   (label `qa-triage:decision`)
+//   cleanup_prs  — open marker-removal PRs   (label `qa-triage:cleanup`)
+//   markers      — every committed `// KNOWN-FAILURE(#N)` marker on `main`
+//
+// The three PR lists are pre-split by the `qa-triage:<type>` label so each
+// consumer iterates the one it needs with no filtering.
 //
 // Usage:
 //   node scripts/build-tracking-inventory.js <issues.json> <prs.json> <markers.txt> > tracking-inventory.json
 //
-// <issues.json> / <prs.json> are `gh ... list --json` output; <markers.txt> is
-// `grep -rn` output.
+//   <issues.json> — `gh issue list --state open --label qa-triage --json number,title,body`
+//   <prs.json>    — `gh pr list --state open --label qa-triage --json number,title,headRefName,body,labels`
+//   <markers.txt> — `grep -rn 'KNOWN-FAILURE(#' tests/functional/` output
+//
+// Marker files are read from the working tree, so run this on a checked-out `main`.
 
 const fs = require('fs');
-const { parseGrepOutput } = require('./lib/markers');
 
-// e.g. tests/functional/checkout/checkout.spec.ts:42 — a file:line reference in prose
-const REF_RE = /[A-Za-z0-9_./-]+\.ts:\d+/g;
-const EXCERPT_LEN = 400;
+// --- KNOWN-FAILURE marker parsing ---------------------------------------------
+//
+// A marker is one line, directly above the `test(...)` it guards, no blank line
+// between:
+//
+//   // KNOWN-FAILURE(#123): <one-line reason>
+//
+// The guarded test is derived from position (`deriveGuardedTitle`), never from
+// text in the comment — that's what makes a test rename a non-event. Stacked
+// markers (one test, two unrelated causes) are two such lines, newest on top.
 
-function excerpt(body) {
-  return (body || '').trim().slice(0, EXCERPT_LEN);
-}
+const HEAD_RE = /KNOWN-FAILURE\(#(\d+)\):\s*(.*)/;
+// a `test(...)` / `test.only(...)` / `test.skip(...)` call and its title literal
+// (first arg, single/double/backtick quoted). `test.describe(` deliberately
+// doesn't match — a marker is never above a describe block.
+const TEST_CALL_RE = /^\s*test(?:\.(?:only|skip))?\(\s*(['"`])((?:\\.|(?!\1).)*)\1/;
+const MARKER_LINE_RE = /^\s*\/\/\s*KNOWN-FAILURE\(#\d+\):/;
 
-function refLines(...texts) {
-  const found = [];
-  for (const text of texts) {
-    for (const ref of (text || '').match(REF_RE) || []) {
-      if (!found.includes(ref)) found.push(ref);
-    }
+// `<file>:<line>:<content>` grep triples → [{ file, line, issue, reason }].
+// Marker → test resolution needs the file contents; see deriveGuardedTitle.
+function parseGrepOutput(text) {
+  const markers = [];
+  for (const raw of String(text).split('\n')) {
+    if (!raw.trim()) continue;
+    const first = raw.indexOf(':');
+    const second = raw.indexOf(':', first + 1);
+    if (first === -1 || second === -1) continue;
+    const line = Number(raw.slice(first + 1, second));
+    const m = raw.slice(second + 1).match(HEAD_RE);
+    if (!m || !Number.isInteger(line)) continue;
+    markers.push({ file: raw.slice(0, first), line, issue: Number(m[1]), reason: m[2].trim() });
   }
-  return found;
+  return markers;
 }
 
-// Parse the `## Failure anchors` block (added to every issue/PR body by the
-// results-analysis prompt) into [{ spec, title, anchor }]. This is the Step 1
-// match key, so it must not be at the mercy of the excerpt truncation. Each
-// entry line is `- <spec> :: <test title> — <anchor>`.
-function failureAnchors(body) {
-  const lines = (body || '').split('\n');
-  const start = lines.findIndex((l) => /^#+\s*Failure anchors\s*$/i.test(l));
+// From the marker's 1-based line, scan forward past stacked marker lines and
+// blanks to the next `test(...)` call and return its title. Anything else in
+// between (a stray statement, a `test.describe(`, EOF) → throws with a reason
+// the caller surfaces. `lines` is the file split on '\n' (0-indexed).
+function deriveGuardedTitle(lines, markerLine) {
+  for (let i = markerLine; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.trim() === '') continue;
+    if (MARKER_LINE_RE.test(line)) continue;
+    const m = line.match(TEST_CALL_RE);
+    if (m) return { title: m[2], line: i + 1 };
+    throw new Error(
+      `marker at line ${markerLine} is not directly above a test(...) call ` +
+        `(found "${line.trim().slice(0, 60)}" at line ${i + 1})`,
+    );
+  }
+  throw new Error(`marker at line ${markerLine} has no test(...) call below it`);
+}
+
+// --- body-block parsers ---------------------------------------------------
+
+function blockLines(body, heading) {
+  const lines = String(body || '').split('\n');
+  const start = lines.findIndex((l) => new RegExp(`^#+\\s*${heading}\\s*$`, 'i').test(l));
   if (start === -1) return [];
-  const tests = [];
+  const out = [];
   for (const raw of lines.slice(start + 1)) {
     if (/^#+\s/.test(raw)) break; // next heading ends the block
+    out.push(raw);
+  }
+  return out;
+}
+
+// `## Affected tests` — one `- <spec> :: <title>` entry per line.
+function affectedTests(body) {
+  const tests = [];
+  for (const raw of blockLines(body, 'Affected tests')) {
     const line = raw.trim();
-    if (!line.startsWith('- ')) continue; // skip `frames:` continuation lines
+    if (!line.startsWith('- ')) continue;
     const sep = line.indexOf(' :: ');
     if (sep === -1) continue;
-    const spec = line.slice(2, sep).trim();
-    const rest = line.slice(sep + 4);
-    const dash = rest.lastIndexOf(' — '); // anchor is always the last ` — ` segment
-    tests.push(
-      dash === -1
-        ? { spec, title: rest.trim(), anchor: null }
-        : { spec, title: rest.slice(0, dash).trim(), anchor: rest.slice(dash + 3).trim() },
-    );
+    tests.push({ spec: line.slice(2, sep).trim(), title: line.slice(sep + 4).trim() });
   }
   return tests;
 }
 
-function readJson(path) {
-  return JSON.parse(fs.readFileSync(path, 'utf8'));
+// `## Triage metadata` — the `issues:` line, e.g. `issues: #12, #15`. Absent
+// line (a pure script-fix PR) → []. Trailing `#` comments carry no digits.
+function metadataIssues(body) {
+  for (const raw of blockLines(body, 'Triage metadata')) {
+    const m = raw.match(/^\s*issues:\s*(.*)$/i);
+    if (!m) continue;
+    return [...m[1].matchAll(/#(\d+)/g)].map((x) => Number(x[1]));
+  }
+  return [];
 }
 
+// --- PR type discriminator ---------------------------------------------------
+
+const PR_TYPE_BY_LABEL = {
+  'qa-triage:triage': 'triage_prs',
+  'qa-triage:decision': 'decision_prs',
+  'qa-triage:cleanup': 'cleanup_prs',
+};
+const PR_TYPE_BY_PREFIX = [
+  ['qa/triage-decision-run-', 'decision_prs'],
+  ['qa/triage-run-', 'triage_prs'],
+  ['qa/marker-cleanup-run-', 'cleanup_prs'],
+];
+
+function prType(pr) {
+  const labels = (pr.labels || []).map((l) => (typeof l === 'string' ? l : l.name));
+  for (const label of labels) if (PR_TYPE_BY_LABEL[label]) return PR_TYPE_BY_LABEL[label];
+  const ref = pr.headRefName || '';
+  for (const [prefix, type] of PR_TYPE_BY_PREFIX) {
+    if (ref.startsWith(prefix)) {
+      process.stderr.write(
+        `warning: PR #${pr.number} has no qa-triage:<type> label; fell back to branch prefix "${prefix}" → ${type}\n`,
+      );
+      return type;
+    }
+  }
+  process.stderr.write(
+    `warning: PR #${pr.number} has neither a qa-triage:<type> label nor a known branch prefix (${ref}); skipped\n`,
+  );
+  return null;
+}
+
+// --- markers ---------------------------------------------------------------
+
+function buildMarkers(markersText) {
+  const fileCache = new Map();
+  const out = [];
+  for (const mk of parseGrepOutput(markersText)) {
+    let lines = fileCache.get(mk.file);
+    if (lines === undefined) {
+      try {
+        lines = fs.readFileSync(mk.file, 'utf8').split('\n');
+      } catch (err) {
+        lines = null;
+      }
+      fileCache.set(mk.file, lines);
+    }
+    const entry = { file: mk.file, line: mk.line, issue: mk.issue, reason: mk.reason, test: null };
+    if (lines === null) {
+      entry.malformed = `cannot read ${mk.file}`;
+      process.stderr.write(`warning: ${entry.malformed}\n`);
+    } else {
+      try {
+        const { title } = deriveGuardedTitle(lines, mk.line);
+        entry.test = { spec: mk.file, title };
+      } catch (err) {
+        entry.malformed = err.message;
+        process.stderr.write(`warning: ${mk.file}: ${err.message}\n`);
+      }
+    }
+    out.push(entry);
+  }
+  return out;
+}
+
+// --- main ----------------------------------------------------------------
+
 const [issuesPath, prsPath, markersPath] = process.argv.slice(2);
+const readJson = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
 
 const issues = readJson(issuesPath).map((it) => ({
   number: it.number,
-  title: it.title,
-  tests: failureAnchors(it.body),
-  ref_lines: refLines(it.title, it.body),
-  body_excerpt: excerpt(it.body),
+  summary: it.title,
+  tests: affectedTests(it.body),
 }));
 
-const prs = readJson(prsPath).map((pr) => ({
-  number: pr.number,
-  title: pr.title,
-  head_ref: pr.headRefName,
-  tests: failureAnchors(pr.body),
-  ref_lines: refLines(pr.title, pr.body),
-  body_excerpt: excerpt(pr.body),
-}));
+const inventory = {
+  issues,
+  triage_prs: [],
+  decision_prs: [],
+  cleanup_prs: [],
+  markers: buildMarkers(fs.readFileSync(markersPath, 'utf8')),
+};
 
-const markers = parseGrepOutput(fs.readFileSync(markersPath, 'utf8')).map((mk) => ({
-  file: mk.file,
-  line: mk.line,
-  issue: mk.issue,
-  reason: mk.reason,
-  tests: mk.tests, // [{ spec, title }] parsed from the marker; [] for an older marker
-}));
+for (const pr of readJson(prsPath)) {
+  const type = prType(pr);
+  if (!type) continue;
+  inventory[type].push({
+    number: pr.number,
+    issues: metadataIssues(pr.body),
+    head_ref: pr.headRefName,
+    tests: affectedTests(pr.body),
+  });
+}
 
-process.stdout.write(JSON.stringify({ markers, issues, prs }, null, 2) + '\n');
+process.stdout.write(JSON.stringify(inventory, null, 2) + '\n');
