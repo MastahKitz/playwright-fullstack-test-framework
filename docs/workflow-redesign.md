@@ -1,10 +1,10 @@
 # Automated QA workflow — revised design
 
 Status: **adopted, implementation in progress** (branch `test/workflow-redesign`). This supersedes
-the previous implementation of the three Claude workflows (`qa-pr-review.yml`,
-`qa-results-analysis.yml`, `qa-issue-marker-cleanup.yml`) and the scripts they call. The code,
-prompts, workflows and docs are being brought in line with this document; the live GitHub issue /
-PR migration (§9) is the one step still outstanding.
+the previous implementation — `qa-pr-review.yml` plus the separate `qa-results-analysis.yml` and
+`qa-issue-marker-cleanup.yml` (now merged into `qa-triage.yml`) — and the scripts they call. The
+code, prompts, workflows and docs are being brought in line with this document; the live GitHub
+issue / PR migration (§9) is the one step still outstanding.
 
 The driver for the rewrite: **markers move from the deepest failing code line to the test-case
 level**, and once they do, a stack of accumulated machinery (the `[spec::title]` annotation, the
@@ -75,9 +75,9 @@ the body — it comes from a label (§1.5).
 
 ### 1.4 The shared tracking inventory
 
-**One script, called identically by both the results-analysis and cleanup workflows.** It
-produces five lists, all keyed on `spec + title`. The three PR lists are **pre-split by type** so
-each consumer iterates the one it needs with no filtering:
+**One script, called identically by both jobs of `qa-triage.yml`.** It produces five lists, all
+keyed on `spec + title`. The three PR lists are **pre-split by type** so each consumer iterates
+the one it needs with no filtering:
 
 ```jsonc
 {
@@ -112,7 +112,7 @@ represented by that PR's entry in `triage_prs` / `decision_prs`, not by `markers
 
 | Label | On | Read by |
 |---|---|---|
-| `qa-triage` | every issue and PR this system opens | PR review (skips labelled PRs); inventory `--label qa-triage` filters |
+| `qa-triage` | every issue and PR this system opens | inventory `gh issue/pr list --label qa-triage` filters (PR review skips these PRs by bot author, not by label — see §2) |
 | `qa-triage:triage` | the combined confident PR | inventory → `triage_prs` |
 | `qa-triage:decision` | the draft decision PR | inventory → `decision_prs` |
 | `qa-triage:cleanup` | the marker-removal PR | inventory → `cleanup_prs` |
@@ -131,8 +131,11 @@ the same thing and is the fallback if a label is ever missing. Each workflow `gh
 — the conventions doc only covers test code.) Events: `opened`, `synchronize`,
 `ready_for_review`.
 
-**Skip:** any PR carrying the `qa-triage` label (the triage / decision / cleanup PRs this system
-opens). The reviewer must never lint its own machinery's output.
+**Skip:** any PR whose author is a bot (`github.event.pull_request.user.type == 'Bot'`). The
+triage / decision / cleanup PRs this system opens are authored by `github-actions[bot]`, so this
+covers them — and claude-code-action won't run for a bot actor regardless. (If those workflows
+ever move to a PAT / GitHub App token so their PRs get CI, add a
+`!contains(…labels.*.name, 'qa-triage')` clause too.)
 
 **Inputs to Claude:** the PR diff (`gh pr diff`), `docs/conventions.md`, the changed files and
 their sibling reference files, **and the review's own prior comments on this PR**.
@@ -156,12 +159,26 @@ The review is advisory. It does not block merge.
 
 ---
 
-## 3. Workflow: results analysis
+## 3. Workflow: QA triage
 
-**Trigger:** `workflow_run` on "Playwright Tests" `completed`, only when `conclusion == failure`
-(a flaky pass fails the build via `check-flaky.js`, so this covers flakes too).
+One workflow — `qa-triage.yml` — triggered by `workflow_run` on "Playwright Tests" `completed`,
+with a no-cancel concurrency group (`qa-triage-automation`) so stacked runs serialise. It has two
+jobs:
 
-**Concurrency:** shared no-cancel group with the cleanup workflow (see §6).
+| Job | Runs when | Does |
+|---|---|---|
+| `qa-results-analysis` | `conclusion == failure` | §3.1–§3.2 — triage, issues, triage PR, decision PR |
+| `qa-issue-marker-cleanup` | `!cancelled() && conclusion in (success, failure)`; `needs: [qa-results-analysis]` | §4 — remove green markers, reconcile issues |
+
+`qa-issue-marker-cleanup` `needs` `qa-results-analysis`, so on a failing run it runs **after**
+analysis and its tracking inventory (§1.4) picks up the triage PR analysis just opened — which the
+issue-close guard (§4.2 step 3) depends on. On a passing run the analysis job is skipped and
+cleanup runs immediately (`!cancelled()` lets a skipped `needs` through). Each job does its own
+checkout + report download + inventory build — the inventory in particular *must* be rebuilt for
+cleanup, since its PR half changes the moment analysis opens a PR.
+
+The rest of §3 describes the `qa-results-analysis` job (a flaky pass fails the build via
+`check-flaky.js`, so "failure" covers flakes too). §4 describes `qa-issue-marker-cleanup`.
 
 ### 3.1 Prep steps (deterministic, before Claude)
 
@@ -175,7 +192,8 @@ The review is advisory. It does not block merge.
    ```
    No stack-frame parsing, no anchor. Its only job is so Claude works from a clean list instead
    of traversing a large nested JSON tree.
-4. Ensure the `qa-triage` label exists.
+4. Ensure the `qa-triage`, `qa-triage:triage`, `qa-triage:decision` labels exist (`gh label
+   create --force`).
 5. **Build the shared tracking inventory** (§1.4).
 
 ### 3.2 Claude's job
@@ -253,18 +271,19 @@ so, create nothing.
 
 ---
 
-## 4. Workflow: issue & marker cleanup
+## 4. The `qa-issue-marker-cleanup` job
 
-**Trigger:** `workflow_run` on "Playwright Tests" `completed`, on **both** `success` and
-`failure`.
-
-**Concurrency:** shared no-cancel group with results analysis (§6).
+The second job of `qa-triage.yml` (§3). Runs on a completed run — `success` **or** `failure` —
+via `needs: [qa-results-analysis]` + `if: !cancelled() && …`, so it always runs after the
+analysis job (which is skipped on a green run).
 
 ### 4.1 Prep steps
 
 1. Download the report artifact.
-2. **Build the shared tracking inventory** (§1.4) — the same script, all five lists. (The PR
-   lists *are* needed here — see §4.2.)
+2. Ensure the `qa-triage`, `qa-triage:cleanup` labels exist.
+3. **Build the shared tracking inventory** (§1.4) — the same script, all five lists. Because this
+   job runs after `qa-results-analysis`, the PR lists here include any triage / decision PR that
+   job just opened — which §4.2 step 3 relies on.
 
 ### 4.2 Claude's job
 
@@ -328,15 +347,21 @@ all of its markers clear in one run.
 
 ## 6. Cross-cutting rules
 
-- **Concurrency.** One shared no-cancel concurrency group across `qa-results-analysis` and
-  `qa-issue-marker-cleanup` (e.g. `group: qa-triage-automation`). Serializes every triage
-  action so two runs can't file duplicate issues / open duplicate PRs / race an issue close.
-  Trade-off: a cleanup waits behind an unrelated analysis. Acceptable at this repo's push rate.
-- **Bot PRs.** PR review skips any PR with the `qa-triage` label. All triage / decision /
-  cleanup PRs carry it, plus a `qa-triage:<type>` label (§1.5) the inventory splits on. Each
-  workflow `gh label create --force`s the labels it needs before opening a PR.
-- **Bot identity.** `qa-triage-bot` / `qa-triage-bot@users.noreply.github.com` for every commit
-  these workflows make.
+- **One workflow, ordered jobs.** `qa-results-analysis` and `qa-issue-marker-cleanup` are two
+  jobs of `qa-triage.yml`, with `qa-issue-marker-cleanup` `needs: [qa-results-analysis]` so
+  cleanup always runs after analysis. A workflow-level no-cancel concurrency group
+  (`qa-triage-automation`) serialises whole runs, so two stacked Playwright runs can't drive two
+  triage passes at once (duplicate issues / PRs / raced issue-close). Trade-off: a triage pass
+  waits behind an unrelated one, and cleanup waits behind analysis even on runs where analysis
+  has little to do. Acceptable at this repo's push rate.
+- **Bot PRs.** PR review skips any bot-authored PR (§2), which covers the triage / decision /
+  cleanup PRs. Those still carry `qa-triage` plus a `qa-triage:<type>` label (§1.5) — used by the
+  inventory, not the review. Each workflow `gh label create --force`s the labels it needs before
+  opening a PR.
+- **Bot identity.** The workflows commit as `qa-triage-bot` /
+  `qa-triage-bot@users.noreply.github.com`, but `gh pr create` still opens the PR as
+  `github-actions[bot]` (the `GITHUB_TOKEN` actor) — that's what the review's bot-author skip keys
+  on.
 - **Never push to `main`.** Every marker, fix, issue-close and marker-removal lands via a PR a
   human merges.
 - **Partial runs.** A `workflow_dispatch` run with a `browser` or `@tag` filter produces a
@@ -376,12 +401,14 @@ Each of these was raised and consciously accepted rather than designed around.
 | 4 | Regression (closed issue, test fails again)? | Not tracked once closed — handled as new. No detection. |
 | 5 | Rename resilience? | Match `spec + title`; marker's test is position-derived. No `[spec::title]` bracket, no anchor fallback. Open-PR rename window accepted. |
 | 6 | Intentionally-failing tests churning markers? | No special mechanism. Their issue stays open + marker PR stays unmerged → permanently "tracked" to analysis, invisible to cleanup (which reads `main` only). |
-| 7 | Does cleanup need the PR lists? | Yes. Single shared inventory script for both workflows. Fixes duplicate cleanup PRs (via `cleanup_prs`) and premature issue closes (via `triage_prs` / `decision_prs`). |
+| 7 | Does cleanup need the PR lists? | Yes. Single shared inventory script for both jobs. Fixes duplicate cleanup PRs (via `cleanup_prs`) and premature issue closes (via `triage_prs` / `decision_prs`). |
+| 7a | Analysis and cleanup — order / packaging? | One workflow `qa-triage.yml`, two jobs. `qa-issue-marker-cleanup` `needs: [qa-results-analysis]` so it runs after (on green, analysis is skipped and cleanup still runs via `!cancelled()`). Merged rather than two `workflow_run` workflows so cleanup always sees the Playwright run directly (artifacts, run number) instead of resolving it when triggered by analysis. |
 | 8 | Marked-but-failing / stacked markers? | Cleanup: pass clears all, fail keeps all. Analysis: candidate match **+ root-cause confirmation**; a new cause on a marked test → new issue + stacked marker. |
 | 9 | Decision PR shape? | Draft PR, empty commit, per-group Option 1 (marker lines) / Option 2 (`diff`) / recommendation / per-test close rule. |
 | 10 | PR review re-run on new commits? | Yes, every `synchronize`. Reconcile against own prior comments — post only new/unresolved. |
 | 11 | PR review trigger scope? | `tests/**` only. |
 | 12 | Where does the PR `type` discriminator live? | A `qa-triage:<type>` GitHub label (§1.5), not a body line. Native `gh pr list --label` filtering, UI-visible, unmangleable. Branch prefix is the fallback. |
+| 13 | How does PR review skip its own triage PRs? | By bot author (`user.type == 'Bot'`) — those PRs are opened as `github-actions[bot]`, and claude-code-action won't run for a bot actor anyway. The `qa-triage` label is for the inventory, not the review skip. A label clause is only needed if the workflows ever move off `GITHUB_TOKEN`. |
 
 ---
 
@@ -393,16 +420,17 @@ Each of these was raised and consciously accepted rather than designed around.
 - [x] `lib/markers.js` — bracket stripped, `deriveGuardedTitle` position-derivation helper added.
 - [x] Delete `extract-failure-anchors.js`, `build-marker-inventory.js`.
 - [x] `qa-pr-review.md` — prior-comment reconciliation added; `tests/**`-only scope confirmed.
-- [x] `qa-pr-review.yml` — trigger paths `tests/**`; skips `qa-triage`-labelled PRs;
+- [x] `qa-pr-review.yml` — trigger paths `tests/**`; skips bot-authored PRs;
       `synchronize` + `ready_for_review` events.
 - [x] `qa-results-analysis.md` — Step 1 rewritten as candidate-match + cause-confirmation; markers
       at test level; `## Affected tests` / `## Triage metadata` blocks; combined-PR + decision-PR
-      structure.
-- [x] `qa-results-analysis.yml` — anchor step swapped for `list-run-failures.js`; shared inventory
-      step; shared `qa-triage-automation` concurrency group.
+      structure. (Still a standalone prompt file, loaded by the `qa-results-analysis` job.)
 - [x] `qa-issue-marker-cleanup.md` — rewritten around the shared inventory; call-graph resolution
       dropped; PR-list dedup + the two-condition close check added.
-- [x] `qa-issue-marker-cleanup.yml` — shared inventory step; shared concurrency group.
+- [x] `qa-triage.yml` — **new**, replaces `qa-results-analysis.yml` + `qa-issue-marker-cleanup.yml`.
+      Two jobs (`qa-results-analysis`, `qa-issue-marker-cleanup`); cleanup `needs` analysis;
+      `list-run-failures.js` + shared inventory steps; workflow-level `qa-triage-automation`
+      concurrency group.
 - [ ] Migrate the existing intentional-failure markers/issues/PRs to the new marker format and
       body blocks. **Outstanding** — needs live GitHub state; see the branch's open bot PRs.
 - [x] `README.md` + `docs/design-notes.md` — workflow section and mermaid diagram updated.

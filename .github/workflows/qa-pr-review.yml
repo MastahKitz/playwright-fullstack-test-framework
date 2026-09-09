@@ -14,13 +14,11 @@ permissions:
 
 jobs:
   review:
-    # Skip the triage / decision / cleanup PRs this system opens (all carry the
-    # `qa-triage` label) — the reviewer must never lint its own machinery's
-    # output. The bot-actor guard is a belt-and-braces second check
-    # (claude-code-action refuses to run for a bot actor anyway).
-    if: >
-      github.event.pull_request.user.type != 'Bot' &&
-      !contains(github.event.pull_request.labels.*.name, 'qa-triage')
+    # Skip PRs opened by bots — the triage / decision / cleanup PRs this system
+    # opens are authored by github-actions[bot], and claude-code-action refuses
+    # to run for a bot actor anyway. This review is for human-authored test
+    # changes only.
+    if: github.event.pull_request.user.type != 'Bot'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

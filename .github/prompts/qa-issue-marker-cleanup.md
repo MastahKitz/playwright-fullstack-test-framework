@@ -6,8 +6,9 @@ open a single PR that removes them (closing or commenting on the linked issues).
 markers, never edits test logic, never files issues, and never pushes to `main` — a human
 reviews and merges the PR.
 
-The counterpart workflow `qa-results-analysis.yml` handles the other direction (failing/flaky →
-new markers, issues, fixes). Stay in your lane: you only remove markers that have gone green.
+The counterpart `qa-results-analysis` job (the other job of `qa-triage.yml`, which runs before
+this one) handles the other direction (failing/flaky → new markers, issues, fixes). Stay in your
+lane: you only remove markers that have gone green.
 
 Tool access is deliberately narrow — `Read`/`Grep`/`Glob`/`Edit` and a short list of `git` / `gh`
 subcommands, no general `Bash`, no `jq`/`python3`, no shell pipes. Read `tracking-inventory.json`
@@ -20,8 +21,8 @@ title alone collides across specs.
 
 ## Evidence available
 
-- `tracking-inventory.json` (repo root) — the shared tracking inventory, built by the workflow
-  (the same script the analysis workflow uses). Five lists, all keyed on `spec + title`:
+- `tracking-inventory.json` (repo root) — the shared tracking inventory, built by this job (the
+  same script the `qa-results-analysis` job uses). Five lists, all keyed on `spec + title`:
   - `markers[]` — `{ file, line, issue, reason, test: { spec, title } }` for every committed
     `// KNOWN-FAILURE(#N)` marker on `main`. `test` is **position-derived** by the builder — you
     do not resolve any call graph. A malformed marker has `test: null` and a `malformed` string:

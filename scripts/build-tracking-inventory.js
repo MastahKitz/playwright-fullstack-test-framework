@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // The single shared tracking inventory, called identically by the
-// results-analysis and issue-marker-cleanup workflows. It answers one question
-// for both — "is this failing test already tracked?" — by producing five lists,
-// all keyed on `spec + title`:
+// qa-results-analysis and qa-issue-marker-cleanup jobs of qa-triage.yml. It
+// answers one question for both — "is this failing test already tracked?" — by
+// producing five lists, all keyed on `spec + title`:
 //
 //   issues       — open `qa-triage` issues and the tests each tracks
 //   triage_prs   — open combined-confident PRs (label `qa-triage:triage`)

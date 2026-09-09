@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Flatten a Playwright run's JSON report into the list of failures the
-// results-analysis workflow hands to the model.
+// qa-results-analysis job hands to the model.
 //
 // Replaces extract-failure-anchors.js: no stack-frame parsing, no anchor. The
 // marker now lives at the test-case level, so a failure is identified by

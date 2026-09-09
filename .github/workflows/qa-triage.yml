@@ -1,10 +1,21 @@
-name: QA Results Analysis
+name: QA Triage
 
-# Runs after "Playwright Tests" finishes. Split into its own workflow (rather
-# than a step in playwright.yml) because Claude Code Action only supports
-# being triggered by a fixed set of events, and `push` — what playwright.yml
-# runs on — isn't one of them. `workflow_run` is, so this workflow watches
-# that one instead and pulls its artifacts across.
+# Runs after "Playwright Tests" finishes. One workflow, two jobs:
+#
+#   qa-results-analysis    — only on a failed/flaky run: triages the failures,
+#                            files issues, opens the combined triage PR and the
+#                            draft decision PR.
+#   qa-issue-marker-cleanup — on every completed run: removes KNOWN-FAILURE
+#                            markers whose test went green, reconciles the issues.
+#
+# `qa-issue-marker-cleanup` `needs` `qa-results-analysis`, so on a failing run it
+# runs *after* analysis — its tracking inventory then includes the triage PR
+# analysis just opened, which the issue-close guard depends on. On a passing run
+# analysis is skipped and cleanup runs straight away (`if: !cancelled()`).
+#
+# Split from playwright.yml because Claude Code Action can't be triggered by
+# `push`; `workflow_run` is supported, so this watches that event and pulls the
+# upstream run's artifacts across.
 on:
   workflow_run:
     workflows: ['Playwright Tests']
@@ -17,15 +28,14 @@ permissions:
   actions: read
   id-token: write
 
-# One shared no-cancel group with qa-issue-marker-cleanup so the two triage
-# workflows can never race — no duplicate issues, no duplicate PRs, no
-# double issue-close.
+# No-cancel group so two stacked Playwright runs can't drive two triage passes
+# concurrently — no duplicate issues, no duplicate PRs, no racing issue-close.
 concurrency:
   group: qa-triage-automation
   cancel-in-progress: false
 
 jobs:
-  analyze:
+  qa-results-analysis:
     if: github.event.workflow_run.conclusion == 'failure'
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -127,3 +137,83 @@ jobs:
 
           claude_args: |
             --allowedTools "Read,Grep,Glob,Edit,Bash(git checkout:*),Bash(git config:*),Bash(git add:*),Bash(git commit:*),Bash(git push:*),Bash(gh issue create:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh issue comment:*),Bash(gh pr create:*),Bash(gh pr list:*),Bash(gh pr view:*),Bash(gh pr diff:*)"
+
+  qa-issue-marker-cleanup:
+    needs: [qa-results-analysis]
+    # Runs after analysis on a failing run (so the inventory sees analysis's new
+    # triage PR), and straight away on a passing run (analysis skipped). Only the
+    # real pass/fail outcomes — not a cancelled or skipped Playwright run.
+    if: >
+      !cancelled() &&
+      (github.event.workflow_run.conclusion == 'success' ||
+       github.event.workflow_run.conclusion == 'failure')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - name: Download test report
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-report
+          path: test-report/
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Ensure triage labels exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh label create qa-triage --force \
+            --color BFD4F2 --description "Opened by the QA triage automation"
+          gh label create qa-triage:cleanup --force \
+            --color 0E8A16 --description "QA triage — marker-removal PR"
+
+      # The same shared inventory builder, all five lists. Cleanup needs the PR
+      # lists too: cleanup_prs for the dedup check, triage_prs / decision_prs for
+      # the "don't close an issue a pending PR still references" check — which is
+      # why this job runs after qa-results-analysis.
+      - name: Build tracking inventory
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh issue list --state open --label qa-triage --limit 200 \
+            --json number,title,body > issues.json
+          gh pr list --state open --label qa-triage --limit 200 \
+            --json number,title,headRefName,body,labels > prs.json
+          grep -rn --include='*.ts' 'KNOWN-FAILURE(#' tests/functional/ > markers.txt || true
+          node scripts/build-tracking-inventory.js \
+            issues.json prs.json markers.txt > tracking-inventory.json
+          rm -f issues.json prs.json markers.txt
+          echo "::group::tracking-inventory.json"
+          cat tracking-inventory.json
+          echo "::endgroup::"
+
+      - name: Load issue and marker cleanup prompt
+        run: |
+          {
+            echo 'ISSUE_MARKER_CLEANUP_PROMPT<<PROMPT_EOF'
+            cat .github/prompts/qa-issue-marker-cleanup.md
+            echo PROMPT_EOF
+          } >> "$GITHUB_ENV"
+
+      - name: Retire markers whose tests now pass
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          show_full_output: true
+          prompt: |
+            REPO: ${{ github.repository }}
+            RUN ID: ${{ github.event.workflow_run.id }}
+            RUN URL: ${{ github.event.workflow_run.html_url }}
+            COMMIT: ${{ github.event.workflow_run.head_sha }}
+
+            ${{ env.ISSUE_MARKER_CLEANUP_PROMPT }}
+
+          claude_args: |
+            --allowedTools "Read,Grep,Glob,Edit,Bash(git checkout:*),Bash(git config:*),Bash(git add:*),Bash(git commit:*),Bash(git push:*),Bash(gh pr create:*),Bash(gh issue view:*),Bash(gh issue comment:*)"

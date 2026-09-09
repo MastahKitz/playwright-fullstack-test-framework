@@ -133,10 +133,10 @@ flowchart TD
     Main["push to main"]
     Run["playwright.yml<br/>full suite vs. live storefront"]
     Dash["Dashboard on GitHub Pages<br/>last 5 runs + trend chart"]
-    Triage["qa-results-analysis.yml<br/>Claude triages screenshots + video"]
+    Triage["qa-triage.yml · job: qa-results-analysis<br/>Claude triages screenshots + video"]
     Issue["GitHub issue per root cause<br/>bug / script / infra / inconclusive"]
-    Marker["triage PR (markers + fixes)<br/>+ draft decision PR<br/>labelled qa-triage, review skips it"]
-    Cleanup["qa-issue-marker-cleanup.yml<br/>Claude removes markers that went green"]
+    Marker["triage PR (markers + fixes)<br/>+ draft decision PR<br/>bot-authored, review skips it"]
+    Cleanup["qa-triage.yml · job: qa-issue-marker-cleanup<br/>Claude removes markers that went green"]
 
     PR --> Review
     Review -->|inline comments| PR
@@ -148,6 +148,7 @@ flowchart TD
     Triage --> Marker
     Marker -->|merge| Main
     Run -->|pass or fail| Cleanup
+    Triage -->|needs| Cleanup
     Cleanup -->|merge closes issue| Main
 ```
 
@@ -159,8 +160,8 @@ marked ready for review), Claude reviews the diff against [docs/conventions.md](
 the specific convention violated, with a fix in the repo's existing style. On a re-run it
 reconciles against its own earlier comments — it won't repost something already flagged or
 already fixed in a later commit. If nothing violates a convention, it says so instead of
-manufacturing nitpicks. The triage / decision / cleanup PRs this system opens itself (all carry
-the `qa-triage` label) are skipped.
+manufacturing nitpicks. The triage / decision / cleanup PRs this system opens itself are skipped
+(they're bot-authored, and claude-code-action won't run for a bot actor anyway).
 
 ### Continuous execution
 
@@ -210,10 +211,17 @@ summary, so counts are visible on the Actions run page without opening anything.
 One-time setup: **Settings → Pages → Build and deployment → Source: Deploy from a branch →
 `gh-pages` / `/ (root)`**, after the first run has created the branch.
 
-### Automated failure analysis
+### Automated triage — `qa-triage.yml`
 
-`.github/workflows/qa-results-analysis.yml` — triggered by `workflow_run` when the run above
-fails (a separate workflow because Claude Code Action can't be triggered by `push` directly).
+`.github/workflows/qa-triage.yml` — triggered by `workflow_run` when the run above completes (a
+separate workflow because Claude Code Action can't be triggered by `push` directly). It has two
+jobs: **`qa-results-analysis`** (below) runs only on a failure/flaky run; **`qa-issue-marker-cleanup`**
+(further below) runs on every completed run and `needs` the analysis job, so on a failing run it
+always runs *after* it and sees the triage PR analysis just opened. A workflow-level no-cancel
+concurrency group serialises whole runs.
+
+#### `qa-results-analysis` job
+
 Workflow steps first prepare what Claude shouldn't derive itself — 2fps video frames, a flat
 `run-failures.json` list of every failing/flaky test (`spec`, `title`, `status`, error excerpt),
 and a **shared tracking inventory**: the open `qa-triage` issues, the open triage / decision /
@@ -241,20 +249,19 @@ screenshots, and video frames for each failing/flaky test, and:
   bodies start with `## Triage metadata` + `## Affected tests` blocks.
 
 Analysis is strictly triage: every marker/issue/fix lands via a PR for a human to approve, and it
-never pushes to `main`. It shares a no-cancel concurrency group with the cleanup workflow so the
-two can't race.
+never pushes to `main`.
 
-### Issue and marker cleanup
+#### `qa-issue-marker-cleanup` job
 
-`.github/workflows/qa-issue-marker-cleanup.yml` — triggered by `workflow_run` after **every**
-run, pass or fail (prompt:
-[`qa-issue-marker-cleanup.md`](.github/prompts/qa-issue-marker-cleanup.md)). The mirror image of
-failure analysis, and it builds the **same shared tracking inventory**. Claude takes each
-`KNOWN-FAILURE` marker whose guarded test (position-derived from the marker, no call-graph
-resolution) passed cleanly — first try, no retry — in that run, and opens one PR
-(`qa-triage:cleanup`) removing them; a clean pass clears every marker stacked on the test. For
-each linked issue, it adds `Closes #N` only when **every** marker for `#N` cleared this run
-**and** no unmerged triage/decision PR is about to add another marker for it; otherwise it
-comments on the issue (which cleared, which didn't) and leaves it open. Each removal is an
-isolated one-line change so a reviewer can drop any they don't yet trust — one green run isn't
-proof a bug is fixed. It shares the no-cancel concurrency group with failure analysis.
+Runs on every completed run, pass or fail (prompt:
+[`qa-issue-marker-cleanup.md`](.github/prompts/qa-issue-marker-cleanup.md)), after the analysis
+job (`needs`; on a green run analysis is skipped and this runs straight away). The mirror image of
+analysis, and it builds the **same shared tracking inventory** — rebuilt here so it includes any
+triage PR the analysis job just opened. Claude takes each `KNOWN-FAILURE` marker whose guarded
+test (position-derived from the marker, no call-graph resolution) passed cleanly — first try, no
+retry — in that run, and opens one PR (`qa-triage:cleanup`) removing them; a clean pass clears
+every marker stacked on the test. For each linked issue, it adds `Closes #N` only when **every**
+marker for `#N` cleared this run **and** no unmerged triage/decision PR is about to add another
+marker for it; otherwise it comments on the issue (which cleared, which didn't) and leaves it
+open. Each removal is an isolated one-line change so a reviewer can drop any they don't yet trust
+— one green run isn't proof a bug is fixed.
