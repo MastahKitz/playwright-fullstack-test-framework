@@ -356,7 +356,7 @@ all of its markers clear in one run.
   has little to do. Acceptable at this repo's push rate.
 - **Bot PRs.** PR review skips any bot-authored PR (§2), which covers the triage / decision /
   cleanup PRs. Those still carry `qa-triage` plus a `qa-triage:<type>` label (§1.5) — used by the
-  inventory, not the review. Each workflow `gh label create --force`s the labels it needs before
+  inventory, not the review. Each job `gh label create --force`s the labels it needs before
   opening a PR.
 - **Bot identity.** The workflows commit as `qa-triage-bot` /
   `qa-triage-bot@users.noreply.github.com`, but `gh pr create` still opens the PR as
