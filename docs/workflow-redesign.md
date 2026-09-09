@@ -337,9 +337,9 @@ all of its markers clear in one run.
 |---|---|
 | `extract-failure-anchors.js` | **Deleted.** Replaced by `list-run-failures.js` — flat failure enumeration, no stack parsing, no anchor. |
 | `list-run-failures.js` | **New.** `results.json` → `[{ spec, title, status, error_excerpt }]` for `unexpected` / `flaky` tests. |
-| `build-tracking-inventory.js` | **Rewritten** as the single shared inventory builder (§1.4). Parses the `## Affected tests` + `## Triage metadata` blocks; splits PRs into `triage_prs` / `decision_prs` / `cleanup_prs` by the `qa-triage:*` label; position-derives marker → test; emits `issues` / the three PR lists / `markers`. |
+| `build-tracking-inventory.js` | **Rewritten** as the single shared inventory builder (§1.4). Parses the `## Affected tests` + `## Triage metadata` blocks; splits PRs into `triage_prs` / `decision_prs` / `cleanup_prs` by the `qa-triage:*` label; position-derives marker → test; emits `issues` / the three PR lists / `markers`. The KNOWN-FAILURE marker parsing (`KNOWN-FAILURE(#N): reason` grep triples + grep-line → next `test(...)` title, no `[spec::title]` bracket) lives inline here now — it's the only caller. |
 | `build-marker-inventory.js` | **Deleted.** Cleanup calls `build-tracking-inventory.js` instead. |
-| `lib/markers.js` | **Simplified.** Parser drops the `[spec::title]` bracket and the `tests[]` it produced. `KNOWN-FAILURE(#N): reason` only. Adds the position-derivation helper (grep line → next `test(...)` title). |
+| `lib/markers.js` | **Deleted.** Folded into `build-tracking-inventory.js` (its only consumer once `build-marker-inventory.js` was gone). |
 | `check-flaky.js` | Unchanged. |
 | dashboard scripts | Unchanged. |
 
@@ -416,9 +416,8 @@ Each of these was raised and consciously accepted rather than designed around.
 
 - [x] `list-run-failures.js` — new: `results.json` → flat `[{ spec, title, status, error_excerpt }]`.
 - [x] `build-tracking-inventory.js` — rewritten to the §1.4 shape (block parsers, label-based PR
-      split, marker position-derivation).
-- [x] `lib/markers.js` — bracket stripped, `deriveGuardedTitle` position-derivation helper added.
-- [x] Delete `extract-failure-anchors.js`, `build-marker-inventory.js`.
+      split, marker parsing + position-derivation inlined from the old `lib/markers.js`).
+- [x] Delete `extract-failure-anchors.js`, `build-marker-inventory.js`, `lib/markers.js`.
 - [x] `qa-pr-review.md` — prior-comment reconciliation added; `tests/**`-only scope confirmed.
 - [x] `qa-pr-review.yml` — trigger paths `tests/**`; skips bot-authored PRs;
       `synchronize` + `ready_for_review` events.
