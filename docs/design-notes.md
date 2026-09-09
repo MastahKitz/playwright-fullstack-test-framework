@@ -138,8 +138,8 @@ These are asserted with `expect.any(Number)`, anchored timestamp regexes, and a
 `product-list` (UI and API) asserts `TOTAL_PRODUCTS_COUNT = 22` against a live
 catalog that holds ~21 and drifts; one auth test is left flaky. Both are
 deliberate — a `main` run has to actually fail sometimes to exercise
-`qa-results-analysis.yml` end to end (triage → issue → `KNOWN-FAILURE` marker PR),
-not just the green path.
+`qa-results-analysis.yml` end to end (triage → issue → `KNOWN-FAILURE` marker in
+the triage PR), not just the green path.
 
 ## Reverse-engineered: qademo's auth / session lifecycle
 

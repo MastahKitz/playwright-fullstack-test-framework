@@ -17,6 +17,13 @@ permissions:
   actions: read
   id-token: write
 
+# One shared no-cancel group with qa-issue-marker-cleanup so the two triage
+# workflows can never race — no duplicate issues, no duplicate PRs, no
+# double issue-close.
+concurrency:
+  group: qa-triage-automation
+  cancel-in-progress: false
+
 jobs:
   analyze:
     if: github.event.workflow_run.conclusion == 'failure'
@@ -55,28 +62,31 @@ jobs:
             ffmpeg -loglevel error -i "$video" -vf fps=2 "$dir/video-frames/frame-%03d.png"
           done
 
-      # Pick one deterministic code line per failure — the deepest stack frame in
-      # a functional-test file — so the marker, the issue, and later runs all key
-      # off the same anchor instead of whatever the stack trace happened to top out at.
-      - name: Extract failure anchors
+      # Flatten the nested JSON report into one entry per failing/flaky test so
+      # the model works from a clean list. No stack parsing, no anchor — the
+      # marker lives at the test-case level now, keyed on spec + title.
+      - name: List run failures
         run: |
-          node scripts/extract-failure-anchors.js test-report/results.json > failure-anchors.json
-          echo "::group::failure-anchors.json"
-          cat failure-anchors.json
+          node scripts/list-run-failures.js test-report/results.json > run-failures.json
+          echo "::group::run-failures.json"
+          cat run-failures.json
           echo "::endgroup::"
 
-      - name: Ensure triage label exists
+      - name: Ensure triage labels exist
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: >
-          gh label create qa-triage --force
-          --color BFD4F2
-          --description "Filed by the QA results-analysis workflow"
+        run: |
+          set -euo pipefail
+          gh label create qa-triage --force \
+            --color BFD4F2 --description "Opened by the QA triage automation"
+          gh label create qa-triage:triage --force \
+            --color 1D76DB --description "QA triage — combined confident PR"
+          gh label create qa-triage:decision --force \
+            --color 5319E7 --description "QA triage — draft decision PR"
 
-      # Fetch the three "is this failure already tracked?" lists here rather than
-      # from inside the model: one controlled set of API calls, compacted into a
-      # small index the model reads in Step 1 instead of listing issues/PRs and
-      # grepping markers itself.
+      # Build the shared tracking inventory (issues + the three PR lists +
+      # markers, all keyed on spec + title). One controlled set of API calls,
+      # compacted so the model matches locally in Step 1.
       - name: Build tracking inventory
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -85,7 +95,7 @@ jobs:
           gh issue list --state open --label qa-triage --limit 200 \
             --json number,title,body > issues.json
           gh pr list --state open --label qa-triage --limit 200 \
-            --json number,title,headRefName,body > prs.json
+            --json number,title,headRefName,body,labels > prs.json
           grep -rn --include='*.ts' 'KNOWN-FAILURE(#' tests/functional/ > markers.txt || true
           node scripts/build-tracking-inventory.js \
             issues.json prs.json markers.txt > tracking-inventory.json

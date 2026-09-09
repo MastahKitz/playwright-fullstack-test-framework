@@ -1,37 +1,37 @@
 // Shared parser for KNOWN-FAILURE marker comments.
 //
-// A marker is one line, sitting directly above a failure's anchor:
+// A marker is one line, sitting directly above the `test(...)` call it guards,
+// with no blank line between:
 //
-//   // KNOWN-FAILURE(#123) [<spec>::<test title> | <spec>::<test title>]: <reason> — retriage if this changes
+//   // KNOWN-FAILURE(#123): <one-line reason>
 //
-// The ` [<spec>::<title> | …]` part is optional — older markers omit it. When
-// present it names the test(s) that failed at this line, recorded by the
-// results-analysis workflow so the cleanup workflow doesn't have to resolve the
-// call graph itself. It sits outside the `(#N)` so a test title containing
-// parentheses can't break the parse.
+// The guarded test is derived from position — whatever `test(...)` sits below
+// the marker — never from text inside the comment (see `deriveGuardedTitle`).
+// A test that fails for two unrelated causes carries two stacked marker lines,
+// most recent on top, each its own `// KNOWN-FAILURE(#N):` line.
 
-const HEAD_RE = /KNOWN-FAILURE\(#(\d+)\)(?:\s*\[([^\]]*)\])?:\s*(.*)/;
+const HEAD_RE = /KNOWN-FAILURE\(#(\d+)\):\s*(.*)/;
+
+// A `test(...)` / `test.only(...)` / `test.skip(...)` call and its title literal.
+// The title is the first argument — a single-, double-, or backtick-quoted
+// string. `test.describe(` deliberately does not match: a marker is never placed
+// above a describe block, so hitting one means the marker is malformed.
+const TEST_CALL_RE = /^\s*test(?:\.(?:only|skip))?\(\s*(['"`])((?:\\.|(?!\1).)*)\1/;
+
+// Is this line another marker line (used when scanning past a stack of them)?
+const MARKER_LINE_RE = /^\s*\/\/\s*KNOWN-FAILURE\(#\d+\):/;
 
 // Parse the marker text (everything from `KNOWN-FAILURE` onward) into
-// { issue, tests: [{ spec, title }], reason }, or null if it isn't a marker.
+// { issue, reason }, or null if it isn't a marker.
 function parseMarkerContent(content) {
   const m = String(content).match(HEAD_RE);
   if (!m) return null;
-  const tests = (m[2] || '')
-    .split('|')
-    .map((s) => s.trim())
-    .filter(Boolean)
-    .map((ref) => {
-      const at = ref.indexOf('::');
-      return at === -1
-        ? { spec: null, title: ref }
-        : { spec: ref.slice(0, at).trim(), title: ref.slice(at + 2).trim() };
-    });
-  return { issue: Number(m[1]), tests, reason: m[3].trim() };
+  return { issue: Number(m[1]), reason: m[2].trim() };
 }
 
 // Parse `grep -rn` output (lines of `<file>:<line>:<content>`) into
-// [{ file, line, issue, tests, reason }].
+// [{ file, line, issue, reason }]. Marker → test resolution is not done here —
+// it needs the file's contents; see `deriveGuardedTitle`.
 function parseGrepOutput(text) {
   const markers = [];
   for (const raw of String(text).split('\n')) {
@@ -47,4 +47,29 @@ function parseGrepOutput(text) {
   return markers;
 }
 
-module.exports = { parseMarkerContent, parseGrepOutput };
+// Position-derive the test a marker guards: from the marker line, scan forward
+// past any stacked marker lines and blank lines to the next `test(...)` call and
+// return its title literal. Anything else in between (a stray statement, a
+// `test.describe(`, EOF) means the marker is malformed — throws with a reason
+// the caller surfaces.
+//
+//   lines      — the marker's file, split on '\n' (0-indexed array)
+//   markerLine — the marker's 1-based line number (as `grep -n` reports it)
+//
+// Returns { title, line } where `line` is the 1-based line of the `test(...)` call.
+function deriveGuardedTitle(lines, markerLine) {
+  for (let i = markerLine; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.trim() === '') continue; // blank — canonical markers have none, tolerate anyway
+    if (MARKER_LINE_RE.test(line)) continue; // a stacked marker above the same test
+    const m = line.match(TEST_CALL_RE);
+    if (m) return { title: m[2], line: i + 1 };
+    throw new Error(
+      `marker at line ${markerLine} is not directly above a test(...) call ` +
+        `(found "${line.trim().slice(0, 60)}" at line ${i + 1})`,
+    );
+  }
+  throw new Error(`marker at line ${markerLine} has no test(...) call below it`);
+}
+
+module.exports = { parseMarkerContent, parseGrepOutput, deriveGuardedTitle };

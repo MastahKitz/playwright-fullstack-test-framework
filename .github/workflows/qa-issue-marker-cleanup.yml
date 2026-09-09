@@ -20,8 +20,11 @@ permissions:
   actions: read
   id-token: write
 
+# One shared no-cancel group with qa-results-analysis so the two triage
+# workflows can never race. Trade-off: a cleanup waits behind an unrelated
+# analysis. Acceptable at this repo's push rate.
 concurrency:
-  group: qa-issue-marker-cleanup
+  group: qa-triage-automation
   cancel-in-progress: false
 
 jobs:
@@ -46,23 +49,35 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Grep every KNOWN-FAILURE marker and pull every qa-triage issue's state
-      # once, here, so the model reads one file instead of re-grepping per marker
-      # and calling `gh issue view` per issue.
-      - name: Build marker inventory
+      - name: Ensure triage labels exist
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           gh label create qa-triage --force \
-            --color BFD4F2 --description "Filed by the QA results-analysis workflow"
+            --color BFD4F2 --description "Opened by the QA triage automation"
+          gh label create qa-triage:cleanup --force \
+            --color 0E8A16 --description "QA triage — marker-removal PR"
+
+      # The same shared inventory builder the analysis workflow uses — all five
+      # lists. Cleanup needs the PR lists too: cleanup_prs for the dedup check,
+      # triage_prs / decision_prs for the "don't close an issue a pending PR
+      # still references" check.
+      - name: Build tracking inventory
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh issue list --state open --label qa-triage --limit 200 \
+            --json number,title,body > issues.json
+          gh pr list --state open --label qa-triage --limit 200 \
+            --json number,title,headRefName,body,labels > prs.json
           grep -rn --include='*.ts' 'KNOWN-FAILURE(#' tests/functional/ > markers.txt || true
-          gh issue list --label qa-triage --state all --limit 200 \
-            --json number,state,title > triage-issues.json
-          node scripts/build-marker-inventory.js markers.txt triage-issues.json > marker-inventory.json
-          rm -f markers.txt triage-issues.json
-          echo "::group::marker-inventory.json"
-          cat marker-inventory.json
+          node scripts/build-tracking-inventory.js \
+            issues.json prs.json markers.txt > tracking-inventory.json
+          rm -f issues.json prs.json markers.txt
+          echo "::group::tracking-inventory.json"
+          cat tracking-inventory.json
           echo "::endgroup::"
 
       - name: Load issue and marker cleanup prompt

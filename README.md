@@ -135,7 +135,7 @@ flowchart TD
     Dash["Dashboard on GitHub Pages<br/>last 5 runs + trend chart"]
     Triage["qa-results-analysis.yml<br/>Claude triages screenshots + video"]
     Issue["GitHub issue per root cause<br/>bug / script / infra / inconclusive"]
-    Marker["KNOWN-FAILURE marker PR<br/>review bot skips it"]
+    Marker["triage PR (markers + fixes)<br/>+ draft decision PR<br/>labelled qa-triage, review skips it"]
     Cleanup["qa-issue-marker-cleanup.yml<br/>Claude removes markers that went green"]
 
     PR --> Review
@@ -153,12 +153,14 @@ flowchart TD
 
 ### PR review against conventions
 
-`.github/workflows/qa-pr-review.yml` — on every PR that touches `tests/**` or
-`playwright.config.ts`, Claude reviews the diff against [docs/conventions.md](docs/conventions.md)
+`.github/workflows/qa-pr-review.yml` — on every PR that touches `tests/**` (opened, pushed to, or
+marked ready for review), Claude reviews the diff against [docs/conventions.md](docs/conventions.md)
 (prompt: [`qa-pr-review.md`](.github/prompts/qa-pr-review.md)) and posts inline PR comments citing
-the specific convention violated, with a fix in the repo's existing style. If nothing violates a
-convention, it says so instead of manufacturing nitpicks. PRs opened by bots (the marker PRs
-below) are skipped.
+the specific convention violated, with a fix in the repo's existing style. On a re-run it
+reconciles against its own earlier comments — it won't repost something already flagged or
+already fixed in a later commit. If nothing violates a convention, it says so instead of
+manufacturing nitpicks. The triage / decision / cleanup PRs this system opens itself (all carry
+the `qa-triage` label) are skipped.
 
 ### Continuous execution
 
@@ -212,48 +214,47 @@ One-time setup: **Settings → Pages → Build and deployment → Source: Deploy
 
 `.github/workflows/qa-results-analysis.yml` — triggered by `workflow_run` when the run above
 fails (a separate workflow because Claude Code Action can't be triggered by `push` directly).
-Workflow steps first prepare what Claude shouldn't derive itself — 2fps video frames, and, for
-each failing/flaky test, a deterministic **anchor**: the deepest stack frame in a
-`.spec/.flow/.actions/.assertions.ts` file. In a layered suite the top of a stack trace lands in
-a different file depending on how the test broke, so the anchor is the one stable line the marker
-goes on and every run computes it the same way. Another step fetches the open `qa-triage` issues
-and PRs and every in-code marker and compacts them into a lookup file. Then Claude (prompt:
+Workflow steps first prepare what Claude shouldn't derive itself — 2fps video frames, a flat
+`run-failures.json` list of every failing/flaky test (`spec`, `title`, `status`, error excerpt),
+and a **shared tracking inventory**: the open `qa-triage` issues, the open triage / decision /
+cleanup PRs (pre-split by label), and every committed `KNOWN-FAILURE` marker, all keyed on
+`spec + title`. Then Claude (prompt:
 [`qa-results-analysis.md`](.github/prompts/qa-results-analysis.md)) inspects the JSON report,
-screenshots, and video frames for each failing/flaky test, and for each one:
+screenshots, and video frames for each failing/flaky test, and:
 
-- Rules out that the failure is already tracked, in three places: a
-  `// KNOWN-FAILURE(#123) [<spec>::<test>]: <reason> — retriage if this changes` marker on the
-  anchor line (issue open → skip; issue closed → regression, treated as new); an open GitHub
-  issue; or an open triage/decision PR from an earlier run not yet merged. Matching is by test
-  identity — the `spec :: test title` recorded in the marker and in a `## Failure anchors` block
-  at the top of every issue/PR body — so a rename or a moved line doesn't cause a duplicate.
-  Anything already covered is noted in the summary, not re-filed.
-- Groups failures that share one root cause, then classifies each group as a **likely product
-  bug**, **likely script issue** (stale testid, bad assumption, test-side flake), **likely
-  infra/server flake** (a `waitForResponse` timeout with a healthy screenshot — qademo dropping a
-  request under load), or **inconclusive** — grounded in what the screenshot/video actually shows.
-- Files one GitHub issue per group (except pure script fixes) with the classification, evidence,
-  and a suggested next step.
-- Opens **one PR for the confident groups** — `KNOWN-FAILURE(#N)` markers for product bugs, the
-  actual test fix for script issues — and, for groups it can't call, a separate **draft decision
-  PR** with no code changes whose body lays out a mark-as-bug option and a fix-the-test option
-  per failure for a human to pick.
+- Checks whether the failure is already tracked — a `spec + title` match in an open issue, an
+  open triage/decision PR, or a `// KNOWN-FAILURE(#N): <reason>` marker (the marker sits directly
+  above the `test(...)` it guards, so the guarded test is derived from position and a rename is a
+  non-event). A candidate match is only confirmed once this run's actual root cause is shown to
+  be the *same* cause — a new cause on an already-marked test is treated as new and gets its own
+  issue plus a **stacked** marker.
+- Groups failures that share one root cause, then classifies each group as a **product bug**,
+  **script issue** (stale testid, bad assumption, test-side flake), **infra/server flake** (a
+  `waitForResponse` timeout with a healthy screenshot — qademo dropping a request under load), or
+  **inconclusive** — grounded in what the screenshot/video actually shows.
+- Files one GitHub issue per group (except pure script fixes), body starting with a machine-
+  parseable `## Affected tests` block.
+- Opens **one combined PR for the confident groups** (`qa-triage:triage`) — `KNOWN-FAILURE(#N)`
+  markers for product bugs, the actual test fix for script issues — and, for groups it can't
+  call, a separate **draft decision PR** (`qa-triage:decision`) with no code changes whose body
+  lays out a mark-as-bug option and a fix-the-test option per test for a human to pick. Both PR
+  bodies start with `## Triage metadata` + `## Affected tests` blocks.
 
 Analysis is strictly triage: every marker/issue/fix lands via a PR for a human to approve, and it
-never pushes to `main`.
+never pushes to `main`. It shares a no-cancel concurrency group with the cleanup workflow so the
+two can't race.
 
 ### Issue and marker cleanup
 
 `.github/workflows/qa-issue-marker-cleanup.yml` — triggered by `workflow_run` after **every**
 run, pass or fail (prompt:
-[`qa-issue-marker-cleanup.md`](.github/prompts/qa-issue-marker-cleanup.md)). The
-mirror image of failure analysis. A workflow step greps every `KNOWN-FAILURE(#N)` marker and
-pulls every `qa-triage` issue's state into a lookup file; Claude then takes each marker whose
-guarded test — named in the marker itself, or resolved from the call graph for older markers —
-passed cleanly (first try, no retry) in that run, and opens one PR removing them.
-For each linked issue, if **every** marker pointing at it cleared this run the PR gets a
-`Closes #N` so merging closes the issue; if only some did — the rest still failing, or their
-test simply wasn't exercised in a partial `workflow_dispatch` run — it comments on the issue
-instead (which cleared, which didn't) and leaves it open.
-Each removal is an isolated one-line change so a reviewer can drop any they don't yet trust —
-one green run isn't proof a bug is fixed.
+[`qa-issue-marker-cleanup.md`](.github/prompts/qa-issue-marker-cleanup.md)). The mirror image of
+failure analysis, and it builds the **same shared tracking inventory**. Claude takes each
+`KNOWN-FAILURE` marker whose guarded test (position-derived from the marker, no call-graph
+resolution) passed cleanly — first try, no retry — in that run, and opens one PR
+(`qa-triage:cleanup`) removing them; a clean pass clears every marker stacked on the test. For
+each linked issue, it adds `Closes #N` only when **every** marker for `#N` cleared this run
+**and** no unmerged triage/decision PR is about to add another marker for it; otherwise it
+comments on the issue (which cleared, which didn't) and leaves it open. Each removal is an
+isolated one-line change so a reviewer can drop any they don't yet trust — one green run isn't
+proof a bug is fixed. It shares the no-cancel concurrency group with failure analysis.
