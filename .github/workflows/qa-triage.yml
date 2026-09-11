@@ -7,6 +7,9 @@ name: QA Triage
 #                             draft decision PR.
 #   qa-issue-marker-cleanup — on every completed run: removes KNOWN-FAILURE
 #                             markers whose test went green, reconciles the issues.
+#                             Plain script (scripts/cleanup-known-failure-markers.js),
+#                             not an agent — the decision logic is table-lookup, no
+#                             judgment call an LLM would change the outcome of.
 #   publish-triage-metrics  — only on a failed/flaky run, after analysis: reads
 #                             the issues/PRs analysis just filed (or didn't) and
 #                             publishes this run's decision counts to the
@@ -203,29 +206,15 @@ jobs:
           cat tracking-inventory.json
           echo "::endgroup::"
 
-      - name: Load issue and marker cleanup prompt
-        run: |
-          {
-            echo 'ISSUE_MARKER_CLEANUP_PROMPT<<PROMPT_EOF'
-            cat .github/prompts/qa-issue-marker-cleanup.md
-            echo PROMPT_EOF
-          } >> "$GITHUB_ENV"
-
+      # Deterministic table-lookup + set-membership logic (scripts/cleanup-known-failure-markers.js) —
+      # no case where a model's judgment changes the outcome, so this runs as a plain
+      # script instead of an agent. See the script's header for the full rundown.
       - name: Retire markers whose tests now pass
-        uses: anthropics/claude-code-action@v1
-        with:
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          show_full_output: true
-          prompt: |
-            REPO: ${{ github.repository }}
-            RUN ID: ${{ github.event.workflow_run.id }}
-            RUN URL: ${{ github.event.workflow_run.html_url }}
-            COMMIT: ${{ github.event.workflow_run.head_sha }}
-
-            ${{ env.ISSUE_MARKER_CLEANUP_PROMPT }}
-
-          claude_args: |
-            --allowedTools "Read,Grep,Glob,Edit,Bash(git checkout:*),Bash(git config:*),Bash(git add:*),Bash(git commit:*),Bash(git push:*),Bash(gh pr create:*),Bash(gh issue view:*),Bash(gh issue comment:*)"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+        run: node scripts/cleanup-known-failure-markers.js tracking-inventory.json test-report/results.json
 
   publish-triage-metrics:
     needs: [qa-results-analysis]

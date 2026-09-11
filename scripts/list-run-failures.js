@@ -19,21 +19,11 @@
 //   error_excerpt — first line of the first error stack, trimmed to 200 chars
 
 const fs = require('fs');
-const path = require('path');
+const { specPrefix, specPath } = require('./lib/results-report');
 
 const reportPath = process.argv[2] || 'test-report/results.json';
 const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
-
-// Playwright reports `spec.file` relative to the config's rootDir (the testDir).
-// Re-root it against the repo so it matches the `tests/functional/...` paths the
-// marker grep produces.
-function specPrefix() {
-  const root = report.config && report.config.rootDir;
-  if (!root) return 'tests/functional';
-  const rel = path.relative(process.cwd(), root).split(path.sep).join('/');
-  return rel && !rel.startsWith('..') ? rel : 'tests/functional';
-}
-const PREFIX = specPrefix();
+const PREFIX = specPrefix(report);
 
 function firstErrorLine(test) {
   for (const result of test.results || []) {
@@ -53,7 +43,7 @@ function walk(suite) {
     for (const test of spec.tests || []) {
       if (test.status !== 'unexpected' && test.status !== 'flaky') continue;
       out.push({
-        spec: `${PREFIX}/${spec.file}`.replace(/\\/g, '/'),
+        spec: specPath(PREFIX, spec.file),
         title: spec.title,
         status: test.status,
         error_excerpt: firstErrorLine(test).trim().slice(0, 200),
