@@ -136,7 +136,7 @@ flowchart TD
     Triage["qa-triage.yml · job: qa-results-analysis<br/>Claude triages screenshots + video"]
     Issue["GitHub issue per root cause<br/>bug / script / infra / inconclusive"]
     Marker["triage PR (markers + fixes)<br/>+ draft decision PR<br/>bot-authored, review skips it"]
-    Cleanup["qa-triage.yml · job: qa-issue-marker-cleanup<br/>Claude removes markers that went green"]
+    Cleanup["qa-triage.yml · job: qa-issue-marker-cleanup<br/>script removes markers that went green"]
 
     PR --> Review
     Review -->|inline comments| PR
@@ -253,15 +253,17 @@ never pushes to `main`.
 
 #### `qa-issue-marker-cleanup` job
 
-Runs on every completed run, pass or fail (prompt:
-[`qa-issue-marker-cleanup.md`](.github/prompts/qa-issue-marker-cleanup.md)), after the analysis
-job (`needs`; on a green run analysis is skipped and this runs straight away). The mirror image of
-analysis, and it builds the **same shared tracking inventory** — rebuilt here so it includes any
-triage PR the analysis job just opened. Claude takes each `KNOWN-FAILURE` marker whose guarded
-test (position-derived from the marker, no call-graph resolution) passed cleanly — first try, no
-retry — in that run, and opens one PR (`qa-triage:cleanup`) removing them; a clean pass clears
-every marker stacked on the test. For each linked issue, it adds `Closes #N` only when **every**
-marker for `#N` cleared this run **and** no unmerged triage/decision PR is about to add another
-marker for it; otherwise it comments on the issue (which cleared, which didn't) and leaves it
-open. Each removal is an isolated one-line change so a reviewer can drop any they don't yet trust
-— one green run isn't proof a bug is fixed.
+Runs on every completed run, pass or fail, after the analysis job (`needs`; on a green run
+analysis is skipped and this runs straight away). The mirror image of analysis, and it builds the
+**same shared tracking inventory** — rebuilt here so it includes any triage PR the analysis job
+just opened. Unlike analysis, this is a plain script
+([`cleanup-fully-fixed-issue-markers.js`](scripts/cleanup-fully-fixed-issue-markers.js)), not an agent —
+its decisions are table-lookup and set-membership, with no case where a model's judgment would
+change the outcome. It takes each `KNOWN-FAILURE` marker whose guarded test (position-derived from
+the marker, no call-graph resolution) passed cleanly — first try, no retry — in that run, and
+opens one PR (`qa-triage:cleanup`) removing them; a clean pass clears every marker stacked on the
+test. For each linked issue, it adds `Closes #N` only when **every** marker for `#N` cleared this
+run **and** no unmerged triage/decision PR is about to add another marker for it; otherwise it
+comments on the issue (which cleared, which didn't) and leaves it open. Each removal is an
+isolated one-line change so a reviewer can drop any they don't yet trust — one green run isn't
+proof a bug is fixed.

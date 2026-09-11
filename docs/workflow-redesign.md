@@ -277,6 +277,16 @@ The second job of `qa-triage.yml` (§3). Runs on a completed run — `success` *
 via `needs: [qa-results-analysis]` + `if: !cancelled() && …`, so it always runs after the
 analysis job (which is skipped on a green run).
 
+**Update (post-launch):** originally an agent job (prompt `qa-issue-marker-cleanup.md`, since
+deleted). Converted to a plain script, `scripts/cleanup-fully-fixed-issue-markers.js` — every decision
+below is table-lookup or set-membership, with no step where a model's judgment would change the
+outcome, unlike `qa-results-analysis` (root-causing a failure from a screenshot/video genuinely
+needs one). It also runs on *every* completed run (not just failures, like analysis), so it's the
+higher-volume job of the two — the conversion drops an LLM invocation, most of the time for a run
+that clears no markers at all. The steps below (§4.1-4.3) describe the logic; the script performs
+its own git (branch/commit/push) and `gh` (`pr create`/`issue comment`) calls in place of what an
+agent's tool calls used to do.
+
 ### 4.1 Prep steps
 
 1. Download the report artifact.
@@ -285,7 +295,7 @@ analysis job (which is skipped on a green run).
    job runs after `qa-results-analysis`, the PR lists here include any triage / decision PR that
    job just opened — which §4.2 step 3 relies on.
 
-### 4.2 Claude's job
+### 4.2 The cleanup script's job
 
 **Step 1 — fate of each marker.** For each entry in `markers[]`, look up its `test` (by `spec`
 **and** `title`) in `results.json`:
@@ -342,6 +352,10 @@ all of its markers clear in one run.
 | `lib/markers.js` | **Deleted.** Folded into `build-tracking-inventory.js` (its only consumer once `build-marker-inventory.js` was gone). |
 | `check-flaky.js` | Unchanged. |
 | dashboard scripts | Unchanged. |
+| `cleanup-fully-fixed-issue-markers.js` | **New.** Replaces the `qa-issue-marker-cleanup` agent job (§4 update) — same Step 1-3 logic, plus its own `git`/`gh` calls. |
+| `.github/prompts/qa-issue-marker-cleanup.md` | **Deleted.** No longer an agent job; its logic lives in `cleanup-fully-fixed-issue-markers.js` (and §4 of this doc) instead. |
+| `lib/known-failure-marker.js` | **New.** Marker-line parsing (`parseGrepOutput` / `deriveGuardedTitle` / `MARKER_LINE_RE`), extracted out of `build-tracking-inventory.js` so `cleanup-fully-fixed-issue-markers.js` shares the same marker-line regex rather than risking drift. |
+| `lib/results-report.js` | **New.** `results.json` spec-path reconstruction and status lookup, shared by `list-run-failures.js` and `cleanup-fully-fixed-issue-markers.js`. |
 
 ---
 
@@ -425,12 +439,19 @@ Each of these was raised and consciously accepted rather than designed around.
       at test level; `## Affected tests` / `## Triage metadata` blocks; combined-PR + decision-PR
       structure. (Still a standalone prompt file, loaded by the `qa-results-analysis` job.)
 - [x] `qa-issue-marker-cleanup.md` — rewritten around the shared inventory; call-graph resolution
-      dropped; PR-list dedup + the two-condition close check added.
+      dropped; PR-list dedup + the two-condition close check added. **Superseded** — later deleted
+      and converted to `scripts/cleanup-fully-fixed-issue-markers.js` (§4 update): the job's logic was
+      pure table-lookup, no reasoning step an agent added value to.
 - [x] `qa-triage.yml` — **new**, replaces `qa-results-analysis.yml` + `qa-issue-marker-cleanup.yml`.
       Two jobs (`qa-results-analysis`, `qa-issue-marker-cleanup`); cleanup `needs` analysis;
       `list-run-failures.js` + shared inventory steps; workflow-level `qa-triage-automation`
       concurrency group.
 - [ ] Migrate the existing intentional-failure markers/issues/PRs to the new marker format and
       body blocks. **Outstanding** — needs live GitHub state; see the branch's open bot PRs.
+- [x] `cleanup-fully-fixed-issue-markers.js` — new script replacing the `qa-issue-marker-cleanup`
+      agent job; `qa-triage.yml`'s cleanup job updated to call it instead of `claude-code-action`;
+      `lib/known-failure-marker.js` + `lib/results-report.js` extracted so it shares marker-parsing
+      and results.json-walking logic with `build-tracking-inventory.js` / `list-run-failures.js`
+      rather than duplicating it.
 - [x] `README.md` + `docs/design-notes.md` — workflow section and mermaid diagram updated.
 - [x] Kept as the standalone workflow reference (not folded into `docs/design-notes.md`).
