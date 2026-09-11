@@ -141,17 +141,24 @@ If you have any **product bug** or **script issue** group:
 1. If this run also has Step 3b groups, create that branch first (Step 3b step 1) so it stays a
    clean base. Then `git checkout <COMMIT>` and `git checkout -b qa/triage-run-<RUN ID>`.
 2. `git config user.name qa-triage-bot` / `user.email qa-triage-bot@users.noreply.github.com`.
-3. **Product-bug group:** file one issue with `gh issue create --label qa-triage` (issues carry
-   only `qa-triage`; the `qa-triage:*` type labels go on PRs). The body **starts** with:
+3. **Product-bug group:** file one issue with
+   `gh issue create --label qa-triage --label qa-triage:triage` — yes, on the issue too, not just
+   the PR; it's how the dashboard's triage metrics tell a valid-bug issue from a decision issue
+   without opening either. The body **starts** with:
 
    ```
    ## Affected tests
    - <spec> :: <title>
    - <spec> :: <title>
+
+   Run: #<RUN ID>
    ```
 
-   one line per affected test, `spec` and `title` verbatim from `run-failures.json`. After it, a
-   link to the RUN URL and the Step 2 analysis. Note the issue number `#N`.
+   one `- <spec> :: <title>` line per affected test, verbatim from `run-failures.json`, then the
+   `Run: #<RUN ID>` line verbatim (RUN ID is in the prompt) — this is what scopes the issue to
+   *this* run for the dashboard; it must be the run that just filed the issue, never a run this
+   failure was merely folded into. After it, a link to the RUN URL and the Step 2 analysis. Note
+   the issue number `#N`.
 
    Then add, directly above each affected test's `test(...)` call (no blank line between):
 
@@ -191,9 +198,11 @@ For **infra/server flake** and **inconclusive** groups:
 1. `git checkout <COMMIT>`, then `git checkout -b qa/triage-decision-run-<RUN ID>` — cut this
    **before** the Step 3 branch so it inherits none of its commits. **No file changes.**
 2. Same bot identity as Step 3.
-3. File one issue per group (`gh issue create --label qa-triage`), body starting with the
-   `## Affected tests` block, then the ambiguity writeup and both options verbatim (below), so
-   the issue stands on its own. Note each `#N`.
+3. File one issue per group
+   (`gh issue create --label qa-triage --label qa-triage:decision`), body starting with the
+   `## Affected tests` block, then a `Run: #<RUN ID>` line (same convention as Step 3 — scopes the
+   issue to this run for the dashboard's triage metrics), then the ambiguity writeup and both
+   options verbatim (below), so the issue stands on its own. Note each `#N`.
 4. `git commit --allow-empty -m "QA triage decision — run #<RUN ID>"`, push, and
    `gh pr create --draft --label qa-triage --label qa-triage:decision
    --title "QA triage decision — run #<RUN ID>"`.

@@ -1,19 +1,26 @@
 name: QA Triage
 
-# Runs after "Playwright Tests" finishes. One workflow, two jobs:
+# Runs after "Playwright Tests" finishes. One workflow, three jobs:
 #
-#   qa-results-analysis    — only on a failed/flaky run: triages the failures,
-#                            files issues, opens the combined triage PR and the
-#                            draft decision PR, then publishes this run's
-#                            decision counts to the dashboard's triage-metrics
-#                            table (scripts/publish-triage-metrics.js).
+#   qa-results-analysis     — only on a failed/flaky run: triages the failures,
+#                             files issues, opens the combined triage PR and the
+#                             draft decision PR.
 #   qa-issue-marker-cleanup — on every completed run: removes KNOWN-FAILURE
-#                            markers whose test went green, reconciles the issues.
+#                             markers whose test went green, reconciles the issues.
+#   publish-triage-metrics  — only on a failed/flaky run, after analysis: reads
+#                             the issues/PRs analysis just filed (or didn't) and
+#                             publishes this run's decision counts to the
+#                             dashboard's triage-metrics table
+#                             (scripts/publish-triage-metrics.js).
 #
 # `qa-issue-marker-cleanup` `needs` `qa-results-analysis`, so on a failing run it
 # runs *after* analysis — its tracking inventory then includes the triage PR
 # analysis just opened, which the issue-close guard depends on. On a passing run
 # analysis is skipped and cleanup runs straight away (`if: !cancelled()`).
+# `publish-triage-metrics` also `needs` `qa-results-analysis`, but unlike cleanup
+# it only runs on a failing run — a passing run never triages anything, so
+# there's nothing to publish (as opposed to a failing run that triaged and found
+# nothing new, which is a real zero worth recording).
 #
 # Split from playwright.yml because Claude Code Action can't be triggered by
 # `push`; `workflow_run` is supported, so this watches that event and pulls the
@@ -92,9 +99,9 @@ jobs:
           gh label create qa-triage --force \
             --color BFD4F2 --description "Opened by the QA triage automation"
           gh label create qa-triage:triage --force \
-            --color 1D76DB --description "QA triage — combined confident PR"
+            --color 1D76DB --description "QA triage — confident issue or combined PR"
           gh label create qa-triage:decision --force \
-            --color 5319E7 --description "QA triage — draft decision PR"
+            --color 5319E7 --description "QA triage — decision issue or draft PR"
 
       # Build the shared tracking inventory (issues + the three PR lists +
       # markers, all keyed on spec + title). One controlled set of API calls,
@@ -139,56 +146,6 @@ jobs:
 
           claude_args: |
             --allowedTools "Read,Grep,Glob,Edit,Bash(git checkout:*),Bash(git config:*),Bash(git add:*),Bash(git commit:*),Bash(git push:*),Bash(gh issue create:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh issue comment:*),Bash(gh pr create:*),Bash(gh pr list:*),Bash(gh pr view:*),Bash(gh pr diff:*)"
-
-      # Roll this run's AI decisions (issues raised, valid bugs vs. script
-      # errors vs. unsure) into the dashboard's triage-metrics table. Runs
-      # even when the analysis above found nothing new — a zero entry is
-      # still a real data point. gh-pages is checked out fresh right here
-      # (not reused from earlier in the job) and the publish is retried on a
-      # rejected push, because playwright.yml's own dashboard publish force-
-      # pushes the same branch independently and could race this step.
-      - name: Check out dashboard site
-        if: always()
-        continue-on-error: true
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          path: gh-pages
-
-      - name: Publish triage metrics
-        if: always()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          UPSTREAM_RUN_ID: ${{ github.event.workflow_run.id }}
-          UPSTREAM_RUN_NUMBER: ${{ github.event.workflow_run.run_number }}
-        run: |
-          set -euo pipefail
-          if [ ! -d gh-pages ]; then
-            echo "No gh-pages checkout (dashboard not published yet) — skipping."
-            exit 0
-          fi
-          gh pr list --state open --label qa-triage \
-            --json number,title,body,labels --limit 50 > qa-prs.json
-          git -C gh-pages config user.name 'github-actions[bot]'
-          git -C gh-pages config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          for attempt in 1 2 3 4 5; do
-            node scripts/publish-triage-metrics.js qa-prs.json gh-pages
-            git -C gh-pages add triage-history.json index.html
-            if git -C gh-pages diff --cached --quiet; then
-              echo "No triage metrics change to publish."
-              break
-            fi
-            git -C gh-pages commit -q -m "triage metrics: run #${UPSTREAM_RUN_NUMBER}"
-            if git -C gh-pages push \
-                "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
-                HEAD:gh-pages; then
-              echo "Published."
-              break
-            fi
-            echo "Push rejected (concurrent dashboard publish) — refetching and retrying ($attempt)."
-            git -C gh-pages fetch origin gh-pages
-            git -C gh-pages reset --hard origin/gh-pages
-          done
 
   qa-issue-marker-cleanup:
     needs: [qa-results-analysis]
@@ -269,3 +226,69 @@ jobs:
 
           claude_args: |
             --allowedTools "Read,Grep,Glob,Edit,Bash(git checkout:*),Bash(git config:*),Bash(git add:*),Bash(git commit:*),Bash(git push:*),Bash(gh pr create:*),Bash(gh issue view:*),Bash(gh issue comment:*)"
+
+  publish-triage-metrics:
+    needs: [qa-results-analysis]
+    # Only on a failing run, and only after analysis has actually filed
+    # whatever it's going to file — a passing run never triages anything, so
+    # there's nothing here to publish (see the top-of-file note).
+    if: github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      # gh-pages is checked out fresh here — this job doesn't share a
+      # checkout with qa-results-analysis — and the publish below is retried
+      # on a rejected push, because playwright.yml's own dashboard publish
+      # force-pushes the same branch independently and could race this job.
+      - name: Check out dashboard site
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Publish triage metrics
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UPSTREAM_RUN_ID: ${{ github.event.workflow_run.id }}
+          UPSTREAM_RUN_NUMBER: ${{ github.event.workflow_run.run_number }}
+        run: |
+          set -euo pipefail
+          if [ ! -d gh-pages ]; then
+            echo "No gh-pages checkout (dashboard not published yet) — skipping."
+            exit 0
+          fi
+          # Valid bugs / unsure come straight from GitHub's own state: every
+          # issue analysis files carries qa-triage plus its confident/decision
+          # type label and a `Run: #<RUN ID>` line, so no PR-body parsing is
+          # needed to tell them apart or to scope them to this run. Script
+          # errors have no issue to check against — that count still comes
+          # from the combined PR's own `script-issue-groups:` line.
+          gh issue list --state open --label qa-triage \
+            --json number,body,labels --limit 200 > qa-issues.json
+          gh pr list --state open --label qa-triage \
+            --json number,title,body,labels --limit 50 > qa-prs.json
+          git -C gh-pages config user.name 'github-actions[bot]'
+          git -C gh-pages config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3 4 5; do
+            node scripts/publish-triage-metrics.js qa-issues.json qa-prs.json gh-pages
+            git -C gh-pages add triage-history.json index.html
+            if git -C gh-pages diff --cached --quiet; then
+              echo "No triage metrics change to publish."
+              break
+            fi
+            git -C gh-pages commit -q -m "triage metrics: run #${UPSTREAM_RUN_NUMBER}"
+            if git -C gh-pages push \
+                "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+                HEAD:gh-pages; then
+              echo "Published."
+              break
+            fi
+            echo "Push rejected (concurrent dashboard publish) — refetching and retrying ($attempt)."
+            git -C gh-pages fetch origin gh-pages
+            git -C gh-pages reset --hard origin/gh-pages
+          done

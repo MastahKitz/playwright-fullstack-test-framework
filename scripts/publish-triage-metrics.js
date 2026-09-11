@@ -1,57 +1,48 @@
 #!/usr/bin/env node
 // Rolls one qa-triage run's AI decisions into gh-pages/triage-history.json and
-// regenerates index.html in place. Called once at the end of the
-// qa-results-analysis job (qa-triage.yml), including when it found nothing new
-// — a zero entry is still a real data point, distinct from a run where triage
-// never ran at all (a clean Playwright pass skips that job entirely).
+// regenerates index.html in place. Called once by the publish-triage-metrics
+// job (qa-triage.yml), which only runs on a failing run, after
+// qa-results-analysis — a zero entry (triage ran, found nothing new) is still
+// a real data point, distinct from a passing run where triage never runs at
+// all and this job doesn't either.
 //
-// Counts are new-this-run only, by construction of the triage prompt: a
-// failure whose cause is already tracked is a match in Step 1 and never
-// reaches Step 2's classification, so it's never counted here either. That's
-// what makes summing this file's entries across runs safe — a still-open
-// issue from an earlier run is never recounted just because a later run saw
-// it again.
-//
-// Derivation, from what the triage prompt already puts in a PR's
-// `## Triage metadata` block (qa-results-analysis.md Step 3/3b):
-//   - a `qa-triage:triage` PR's `issues:` line has one issue per product-bug
-//     group -> its length is this run's validBugs contribution.
-//   - that PR's `script-issue-groups: N` line is this run's scriptErrors
-//     contribution (script-issue groups never get an issue, so there's
-//     nothing else to count them from).
-//   - a `qa-triage:decision` PR's `issues:` line has one issue per
-//     infra-flake/inconclusive group -> its length is this run's unsure
-//     contribution.
+// Ground truth, not self-reported counts:
+//   - validBugs / unsure come straight from GitHub's own state. Every issue
+//     qa-results-analysis files carries `qa-triage` plus its type label
+//     (`qa-triage:triage` for a product-bug issue, `qa-triage:decision` for
+//     an infra-flake/inconclusive one) and a `Run: #<RUN ID>` line in the
+//     body (qa-results-analysis.md Step 3.3 / Step 3b.3). So "how many valid
+//     bugs this run" is just "how many qa-triage:triage issues carry this
+//     run's tag" — no PR-body parsing, and no risk of a folded-into-#N
+//     reference leaking in, since a folded-in issue carries an *older* run's
+//     tag, not this one's.
+//   - scriptErrors has no issue to check against (a script-issue group never
+//     gets one), so it's the one number still read out of the combined PR's
+//     own `script-issue-groups:` line — self-reported, but it's the only
+//     thing here without a GitHub object to verify it against.
 // issuesFiled and newFailures are derived sums, not independently trusted.
 //
-// Known gap: Step 2's "folded into #N" case (a new failure sharing an
-// already-tracked cause) comments on the existing issue but opens no new
-// PR/issue, so it isn't counted here. Rare in practice; revisit if it turns
-// out to matter.
-//
 // Usage:
-//   node scripts/publish-triage-metrics.js <prs.json> <siteDir>
+//   node scripts/publish-triage-metrics.js <issues.json> <prs.json> <siteDir>
 //
-//   <prs.json> — `gh pr list --state open --label qa-triage
-//                 --json number,title,body,labels`
-//   <siteDir>  — a gh-pages checkout, mutated in place: reads data.json (for
-//                the run list index.html also needs) and triage-history.json
-//                (prior entries), writes both triage-history.json and
-//                index.html back into the same directory. Left to the caller
-//                to git-add/commit/push.
+//   <issues.json> — `gh issue list --state open --label qa-triage
+//                    --json number,body,labels`
+//   <prs.json>    — `gh pr list --state open --label qa-triage
+//                    --json number,title,body,labels`
+//   <siteDir>     — a gh-pages checkout, mutated in place: reads data.json
+//                   (for the run list index.html also needs) and
+//                   triage-history.json (prior entries), writes both
+//                   triage-history.json and index.html back into the same
+//                   directory. Left to the caller to git-add/commit/push.
 //
-// Two different numbers identify "this run", and neither is this script's own
-// GITHUB_RUN_NUMBER (that would be qa-triage.yml's *own* run, not the
-// Playwright run it's reacting to):
-//   - UPSTREAM_RUN_ID     — github.event.workflow_run.id — what the triage
-//                            prompt puts in PR titles ("run #<RUN ID>").
-//                            Used here to find *this* run's own PRs.
-//   - UPSTREAM_RUN_NUMBER — github.event.workflow_run.run_number — matches
-//                            the key build-report-dashboard.js already uses
-//                            for data.json's runs[].runNumber. Used here as
-//                            triage-history.json's own dedup/prune key so a
-//                            re-run overwrites its own entry instead of
-//                            appending a duplicate.
+// UPSTREAM_RUN_ID (github.event.workflow_run.id) is what both the `Run:
+// #<RUN ID>` issue tag and the PR title ("run #<RUN ID>") carry — used here
+// to scope everything to this run. UPSTREAM_RUN_NUMBER
+// (github.event.workflow_run.run_number) is a different number — it matches
+// the key build-report-dashboard.js uses for data.json's runs[].runNumber —
+// used here only as triage-history.json's own dedup/prune key, never for
+// matching. Neither is this script's own GITHUB_RUN_NUMBER, which would be
+// qa-triage.yml's *own* run, not the Playwright run it's reacting to.
 
 const fs = require('fs');
 const path = require('path');
@@ -59,7 +50,7 @@ const { renderHtml, readJsonSafe } = require('./lib/render-dashboard');
 
 const MAX_TRIAGE_RUNS = 5;
 
-const [prsPath, siteDir = 'gh-pages'] = process.argv.slice(2);
+const [issuesPath, prsPath, siteDir = 'gh-pages'] = process.argv.slice(2);
 const {
   UPSTREAM_RUN_ID,
   UPSTREAM_RUN_NUMBER,
@@ -71,11 +62,26 @@ const runId = UPSTREAM_RUN_ID || '';
 const runNumber = Number(UPSTREAM_RUN_NUMBER) || 0;
 const repoUrl = GITHUB_REPOSITORY ? `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}` : '';
 
-// --- parsing the `## Triage metadata` block --------------------------------
-// Mirrors build-tracking-inventory.js's blockLines/metadataIssues — kept as a
-// separate small copy rather than a shared import so each script's one job
-// (tracking-inventory vs. metrics) stays independently readable; they read
-// the same heading by coincidence of the prompt's format, not by contract.
+function labelsOf(item) {
+  return (item.labels || []).map((l) => (typeof l === 'string' ? l : l.name));
+}
+
+// --- valid bugs / unsure: straight from the issue list -----------------------
+// `Run: #<RUN ID>` is a plain line in the body (qa-results-analysis.md Step
+// 3.3 / 3b.3) — matched with a word boundary after the digits so run 4 can't
+// match a body tagged run 42.
+
+const runTagRe = new RegExp(`Run:\\s*#${runId}(\\D|$)`);
+const allIssues = readJsonSafe(issuesPath, []);
+const thisRunIssues = runId ? allIssues.filter((it) => runTagRe.test(it.body || '')) : [];
+
+const validBugs = thisRunIssues.filter((it) => labelsOf(it).includes('qa-triage:triage')).length;
+const unsure = thisRunIssues.filter((it) => labelsOf(it).includes('qa-triage:decision')).length;
+
+// --- script errors: the one count with no issue to check against ------------
+// PR titles are "QA triage — run #<RUN ID>" (qa-triage.yml's "Analyze test
+// failures" step) — there's at most one qa-triage:triage PR per run (Step 3
+// combines every confident group into a single PR).
 
 function blockLines(body, heading) {
   const lines = String(body || '').split('\n');
@@ -89,15 +95,6 @@ function blockLines(body, heading) {
   return out;
 }
 
-function metadataIssues(body) {
-  for (const raw of blockLines(body, 'Triage metadata')) {
-    const m = raw.match(/^\s*issues:\s*(.*)$/i);
-    if (!m) continue;
-    return [...m[1].matchAll(/#(\d+)/g)].map((x) => Number(x[1]));
-  }
-  return [];
-}
-
 function scriptIssueGroupCount(body) {
   for (const raw of blockLines(body, 'Triage metadata')) {
     const m = raw.match(/^\s*script-issue-groups:\s*(\d+)/i);
@@ -106,32 +103,12 @@ function scriptIssueGroupCount(body) {
   return 0;
 }
 
-function prLabels(pr) {
-  return (pr.labels || []).map((l) => (typeof l === 'string' ? l : l.name));
-}
-
-// --- this run's own PRs only -------------------------------------------------
-// PR titles are "QA triage — run #<RUN ID>" / "QA triage decision — run
-// #<RUN ID>" (qa-triage.yml's "Analyze test failures" step) — RUN ID, not RUN
-// NUMBER. Matching on that, not label alone, keeps an older still-open
-// decision PR from a prior run out of this run's count.
-
 const allPrs = readJsonSafe(prsPath, []);
 const titleRe = new RegExp(`run #${runId}(\\D|$)`);
-const thisRunPrs = runId ? allPrs.filter((pr) => titleRe.test(pr.title || '')) : [];
-
-let validBugs = 0;
-let unsure = 0;
-let scriptErrors = 0;
-for (const pr of thisRunPrs) {
-  const labels = prLabels(pr);
-  if (labels.includes('qa-triage:decision')) {
-    unsure += metadataIssues(pr.body).length;
-  } else if (labels.includes('qa-triage:triage')) {
-    validBugs += metadataIssues(pr.body).length;
-    scriptErrors += scriptIssueGroupCount(pr.body);
-  }
-}
+const triagePr = runId
+  ? allPrs.find((pr) => titleRe.test(pr.title || '') && labelsOf(pr).includes('qa-triage:triage'))
+  : undefined;
+const scriptErrors = triagePr ? scriptIssueGroupCount(triagePr.body) : 0;
 
 const issuesFiled = validBugs + unsure;
 const newFailures = issuesFiled + scriptErrors;
@@ -147,7 +124,7 @@ const triageHistory = [entry, ...previousTriage.filter((r) => r.runNumber !== ru
 
 // data.json is someone else's data (build-report-dashboard.js's run rows) —
 // read whatever's currently there so index.html can be regenerated whole; if
-// it's missing, this triage job somehow ran before any dashboard publish ever
+// it's missing, this job somehow ran before any dashboard publish ever
 // happened, which shouldn't occur (qa-triage.yml only fires after
 // playwright.yml's own dashboard step, which runs `if: always()`).
 const runs = readJsonSafe(path.join(siteDir, 'data.json'), { runs: [] }).runs || [];
