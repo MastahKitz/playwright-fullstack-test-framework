@@ -171,15 +171,18 @@ If you have any **product bug** or **script issue** group:
    ```
    ## Triage metadata
    issues: #<N>, #<M>
+   script-issue-groups: <count>
 
    ## Affected tests
    - <spec> :: <title>
    ```
 
    `issues:` lists every product-bug issue this PR relates to (omit the line entirely if the PR
-   is a pure script fix). `## Affected tests` covers **every** test in the PR. Then one section
-   per group: its classification, the tests it covers, and either the issue link (product bug) or
-   a plain-English description of what was wrong and what you changed (script issue).
+   is a pure script fix). `script-issue-groups:` is how many groups in *this* PR you classified
+   as script issue — a plain count, e.g. `0` or `2` (never omit this line; the dashboard's triage
+   metrics sum it across runs). `## Affected tests` covers **every** test in the PR. Then one
+   section per group: its classification, the tests it covers, and either the issue link (product
+   bug) or a plain-English description of what was wrong and what you changed (script issue).
 
 ## Step 3b — one draft decision PR for the groups you can't call
 
