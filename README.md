@@ -257,7 +257,7 @@ Runs on every completed run, pass or fail, after the analysis job (`needs`; on a
 analysis is skipped and this runs straight away). The mirror image of analysis, and it builds the
 **same shared tracking inventory** — rebuilt here so it includes any triage PR the analysis job
 just opened. Unlike analysis, this is a plain script
-([`cleanup-known-failure-markers.js`](scripts/cleanup-known-failure-markers.js)), not an agent —
+([`cleanup-fully-fixed-issue-markers.js`](scripts/cleanup-fully-fixed-issue-markers.js)), not an agent —
 its decisions are table-lookup and set-membership, with no case where a model's judgment would
 change the outcome. It takes each `KNOWN-FAILURE` marker whose guarded test (position-derived from
 the marker, no call-graph resolution) passed cleanly — first try, no retry — in that run, and

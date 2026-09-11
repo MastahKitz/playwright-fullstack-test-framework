@@ -1,5 +1,5 @@
 // KNOWN-FAILURE marker parsing, shared by build-tracking-inventory.js (reads
-// every marker on main) and cleanup-known-failure-markers.js (deletes the
+// every marker on main) and cleanup-fully-fixed-issue-markers.js (deletes the
 // ones whose test went green). One definition of the marker line format and
 // how it resolves to the test(...) it guards, so the two scripts can't drift.
 //

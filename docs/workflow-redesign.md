@@ -278,7 +278,7 @@ via `needs: [qa-results-analysis]` + `if: !cancelled() && …`, so it always run
 analysis job (which is skipped on a green run).
 
 **Update (post-launch):** originally an agent job (prompt `qa-issue-marker-cleanup.md`, since
-deleted). Converted to a plain script, `scripts/cleanup-known-failure-markers.js` — every decision
+deleted). Converted to a plain script, `scripts/cleanup-fully-fixed-issue-markers.js` — every decision
 below is table-lookup or set-membership, with no step where a model's judgment would change the
 outcome, unlike `qa-results-analysis` (root-causing a failure from a screenshot/video genuinely
 needs one). It also runs on *every* completed run (not just failures, like analysis), so it's the
@@ -352,10 +352,10 @@ all of its markers clear in one run.
 | `lib/markers.js` | **Deleted.** Folded into `build-tracking-inventory.js` (its only consumer once `build-marker-inventory.js` was gone). |
 | `check-flaky.js` | Unchanged. |
 | dashboard scripts | Unchanged. |
-| `cleanup-known-failure-markers.js` | **New.** Replaces the `qa-issue-marker-cleanup` agent job (§4 update) — same Step 1-3 logic, plus its own `git`/`gh` calls. |
-| `.github/prompts/qa-issue-marker-cleanup.md` | **Deleted.** No longer an agent job; its logic lives in `cleanup-known-failure-markers.js` (and §4 of this doc) instead. |
-| `lib/known-failure-marker.js` | **New.** Marker-line parsing (`parseGrepOutput` / `deriveGuardedTitle` / `MARKER_LINE_RE`), extracted out of `build-tracking-inventory.js` so `cleanup-known-failure-markers.js` shares the same marker-line regex rather than risking drift. |
-| `lib/results-report.js` | **New.** `results.json` spec-path reconstruction and status lookup, shared by `list-run-failures.js` and `cleanup-known-failure-markers.js`. |
+| `cleanup-fully-fixed-issue-markers.js` | **New.** Replaces the `qa-issue-marker-cleanup` agent job (§4 update) — same Step 1-3 logic, plus its own `git`/`gh` calls. |
+| `.github/prompts/qa-issue-marker-cleanup.md` | **Deleted.** No longer an agent job; its logic lives in `cleanup-fully-fixed-issue-markers.js` (and §4 of this doc) instead. |
+| `lib/known-failure-marker.js` | **New.** Marker-line parsing (`parseGrepOutput` / `deriveGuardedTitle` / `MARKER_LINE_RE`), extracted out of `build-tracking-inventory.js` so `cleanup-fully-fixed-issue-markers.js` shares the same marker-line regex rather than risking drift. |
+| `lib/results-report.js` | **New.** `results.json` spec-path reconstruction and status lookup, shared by `list-run-failures.js` and `cleanup-fully-fixed-issue-markers.js`. |
 
 ---
 
@@ -440,7 +440,7 @@ Each of these was raised and consciously accepted rather than designed around.
       structure. (Still a standalone prompt file, loaded by the `qa-results-analysis` job.)
 - [x] `qa-issue-marker-cleanup.md` — rewritten around the shared inventory; call-graph resolution
       dropped; PR-list dedup + the two-condition close check added. **Superseded** — later deleted
-      and converted to `scripts/cleanup-known-failure-markers.js` (§4 update): the job's logic was
+      and converted to `scripts/cleanup-fully-fixed-issue-markers.js` (§4 update): the job's logic was
       pure table-lookup, no reasoning step an agent added value to.
 - [x] `qa-triage.yml` — **new**, replaces `qa-results-analysis.yml` + `qa-issue-marker-cleanup.yml`.
       Two jobs (`qa-results-analysis`, `qa-issue-marker-cleanup`); cleanup `needs` analysis;
@@ -448,7 +448,7 @@ Each of these was raised and consciously accepted rather than designed around.
       concurrency group.
 - [ ] Migrate the existing intentional-failure markers/issues/PRs to the new marker format and
       body blocks. **Outstanding** — needs live GitHub state; see the branch's open bot PRs.
-- [x] `cleanup-known-failure-markers.js` — new script replacing the `qa-issue-marker-cleanup`
+- [x] `cleanup-fully-fixed-issue-markers.js` — new script replacing the `qa-issue-marker-cleanup`
       agent job; `qa-triage.yml`'s cleanup job updated to call it instead of `claude-code-action`;
       `lib/known-failure-marker.js` + `lib/results-report.js` extracted so it shares marker-parsing
       and results.json-walking logic with `build-tracking-inventory.js` / `list-run-failures.js`

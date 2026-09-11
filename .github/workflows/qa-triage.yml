@@ -7,7 +7,7 @@ name: QA Triage
 #                             draft decision PR.
 #   qa-issue-marker-cleanup — on every completed run: removes KNOWN-FAILURE
 #                             markers whose test went green, reconciles the issues.
-#                             Plain script (scripts/cleanup-known-failure-markers.js),
+#                             Plain script (scripts/cleanup-fully-fixed-issue-markers.js),
 #                             not an agent — the decision logic is table-lookup, no
 #                             judgment call an LLM would change the outcome of.
 #   publish-triage-metrics  — only on a failed/flaky run, after analysis: reads
@@ -206,15 +206,15 @@ jobs:
           cat tracking-inventory.json
           echo "::endgroup::"
 
-      # Deterministic table-lookup + set-membership logic (scripts/cleanup-known-failure-markers.js) —
+      # Deterministic table-lookup + set-membership logic (scripts/cleanup-fully-fixed-issue-markers.js) —
       # no case where a model's judgment changes the outcome, so this runs as a plain
       # script instead of an agent. See the script's header for the full rundown.
-      - name: Retire markers whose tests now pass
+      - name: Retire markers and issues that are already fully fixed and passing
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUN_ID: ${{ github.event.workflow_run.id }}
           RUN_URL: ${{ github.event.workflow_run.html_url }}
-        run: node scripts/cleanup-known-failure-markers.js tracking-inventory.json test-report/results.json
+        run: node scripts/cleanup-fully-fixed-issue-markers.js tracking-inventory.json test-report/results.json
 
   publish-triage-metrics:
     needs: [qa-results-analysis]

@@ -15,7 +15,7 @@
 //
 // Usage:
 //   RUN_ID=<workflow_run.id> RUN_URL=<workflow_run.html_url> GH_TOKEN=... \
-//     node scripts/cleanup-known-failure-markers.js <tracking-inventory.json> <results.json>
+//     node scripts/cleanup-fully-fixed-issue-markers.js <tracking-inventory.json> <results.json>
 //
 // tracking-inventory.json — from build-tracking-inventory.js (markers / issues /
 //   triage_prs / decision_prs / cleanup_prs, all keyed on spec + title).
