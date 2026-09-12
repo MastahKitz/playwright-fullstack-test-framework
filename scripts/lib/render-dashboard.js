@@ -72,11 +72,13 @@ function renderHtml({ runs: runList, triageHistory = [], repoUrl = '', repositor
   :root {
     --bg: #fff; --fg: #1c2024; --muted: #6b7280; --border: #e5e7eb; --card: #f9fafb;
     --pass: #15803d; --fail: #b91c1c; --fail-hatch: #7f1d1d; --flaky: #b45309; --accent: #2563eb;
+    --yellow: #a16207; --orange: #c2410c;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #0d1117; --fg: #e6edf3; --muted: #8b949e; --border: #30363d; --card: #161b22;
       --pass: #3fb950; --fail: #f85149; --fail-hatch: #ff9d97; --flaky: #d29922; --accent: #58a6ff;
+      --yellow: #e3b341; --orange: #fb923c;
     }
   }
   * { box-sizing: border-box; }
@@ -101,6 +103,7 @@ function renderHtml({ runs: runList, triageHistory = [], repoUrl = '', repositor
   .nowrap { white-space: nowrap; }
   .muted { color: var(--muted); }
   .pass { color: var(--pass); } .fail { color: var(--fail); } .flaky { color: var(--flaky); }
+  .yellow { color: var(--yellow); } .orange { color: var(--orange); }
   code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85em; }
   .report-link { font-weight: 600; text-decoration: none; white-space: nowrap; }
   .report-link:hover { text-decoration: underline; }
@@ -147,7 +150,7 @@ function renderHtml({ runs: runList, triageHistory = [], repoUrl = '', repositor
   .c-mini.pass { background: var(--pass); } .c-mini.fail { background: var(--fail); }
   .c-mini.flaky { background: var(--flaky); } .c-mini.skip { background: var(--muted); }
   .c-tip .rule { grid-column: 1 / -1; border-top: 1px solid var(--border); margin: .22rem 0; }
-  .triage-tree .t-root td:first-child { font-weight: 650; }
+  .triage-tree td:first-child { font-weight: 650; }
   .triage-tree .t-child td:first-child { padding-left: 1.4rem; }
   .triage-tree .t-grandchild td:first-child { padding-left: 2.8rem; color: var(--muted); }
   .triage-tree .branch { color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; margin-right: .3rem; }
@@ -238,11 +241,11 @@ function triageSection(triageHistory) {
       <table class="triage-tree">
         <thead><tr><th>Decision</th><th class="num">Count</th></tr></thead>
         <tbody>
-          <tr class="t-root"><td>New failures</td><td class="num">${totals.newFailures}</td></tr>
-          <tr class="t-child"><td><span class="branch">├─</span> Script errors</td><td class="num">${totals.scriptErrors}</td></tr>
-          <tr class="t-child"><td><span class="branch">└─</span> Issues filed</td><td class="num">${totals.issuesFiled}</td></tr>
-          <tr class="t-grandchild"><td><span class="branch">├─</span> Valid bugs</td><td class="num pass">${totals.validBugs}</td></tr>
-          <tr class="t-grandchild"><td><span class="branch">└─</span> Unsure</td><td class="num flaky">${totals.unsure}</td></tr>
+          <tr class="t-root"><td>New failures</td><td class="num yellow">${totals.newFailures}</td></tr>
+          <tr class="t-child"><td><span class="branch">├─</span> Script errors</td><td class="num pass">${totals.scriptErrors}</td></tr>
+          <tr class="t-child"><td><span class="branch">└─</span> Issues filed</td><td class="num yellow">${totals.issuesFiled}</td></tr>
+          <tr class="t-grandchild"><td><span class="branch">├─</span> Valid bugs</td><td class="num fail">${totals.validBugs}</td></tr>
+          <tr class="t-grandchild"><td><span class="branch">└─</span> Unsure</td><td class="num orange">${totals.unsure}</td></tr>
         </tbody>
       </table>
     </div>
