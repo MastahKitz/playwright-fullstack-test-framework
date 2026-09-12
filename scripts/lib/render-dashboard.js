@@ -205,7 +205,7 @@ ${rows}
       </div>
     </div>
   </section>
-${triageSection(triageHistory)}
+${triageSection(triageHistory, repoUrl)}
 </main>
 ${trendScript(ordered)}
 </body>
@@ -218,7 +218,7 @@ ${trendScript(ordered)}
 // Issues filed = Valid bugs + Unsure. Counts are *new-this-run* only, summed
 // across triageHistory — a still-open issue from an earlier run was never
 // recounted in a later one, so the sum can't double-count it.
-function triageSection(triageHistory) {
+function triageSection(triageHistory, repoUrl) {
   if (!triageHistory || !triageHistory.length) return '';
   const totals = triageHistory.reduce(
     (acc, r) => {
@@ -249,7 +249,16 @@ function triageSection(triageHistory) {
         </tbody>
       </table>
     </div>
-  </section>
+${
+      repoUrl
+        ? `    <p class="cap">
+      <a class="report-link" href="${repoUrl}/issues?q=${encodeURIComponent('is:issue state:open label:qa-triage')}">Open qa-triage issues →</a>
+      &nbsp;·&nbsp;
+      <a class="report-link" href="${repoUrl}/pulls?q=${encodeURIComponent('is:pr state:open label:qa-triage')}">Open qa-triage PRs →</a>
+    </p>
+`
+        : ''
+    }  </section>
 `;
 }
 
