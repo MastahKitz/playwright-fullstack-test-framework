@@ -1,0 +1,43 @@
+name: QA Test Generation (pilot)
+
+# Manual, one-ticket-at-a-time pilot for AI-driven test case generation.
+# Deliberately NOT wired to Claude yet — this first cut only proves out the
+# deterministic prep step (scripts/fetch-jira-ticket.js): given one Jira key,
+# fetch it plus its epic/parent and explicitly linked issues (one level deep,
+# no project-wide search — see the script's header), download any
+# image/video attachments, and print the resulting JSON so it can be
+# eyeballed for correctness before anything is handed to a model.
+on:
+  workflow_dispatch:
+    inputs:
+      ticket:
+        description: 'Jira ticket key (e.g. DEV-1)'
+        required: true
+        type: string
+
+jobs:
+  fetch-ticket:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch Jira ticket
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        run: |
+          node scripts/fetch-jira-ticket.js "${{ inputs.ticket }}" jira-attachments > jira-ticket.json
+          echo "::group::jira-ticket.json"
+          cat jira-ticket.json
+          echo "::endgroup::"
+
+      - name: Upload ticket JSON + attachments
+        uses: actions/upload-artifact@v4
+        with:
+          name: jira-ticket-${{ inputs.ticket }}
+          path: |
+            jira-ticket.json
+            jira-attachments/
+          if-no-files-found: ignore
