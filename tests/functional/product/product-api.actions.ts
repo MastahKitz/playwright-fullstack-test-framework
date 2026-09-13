@@ -32,7 +32,7 @@ export async function sendProductCreateRequest(
 export async function sendProductDeleteRequest(
   request: APIRequestContext,
   accessToken: string,
-  id: number,
+  id: number | string,
 ) {
   return sendApiRequest(request, {
     method: 'DELETE',
