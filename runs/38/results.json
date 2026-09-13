@@ -1,0 +1,980 @@
+{
+  "config": {
+    "argv": [],
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/global.setup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "ci": {
+        "commitHref": "https://github.com/MastahKitz/playwright-fullstack-test-framework/commit/91446f21d6868e461d12fe3570b7fe569bcc8ecb",
+        "commitHash": "91446f21d6868e461d12fe3570b7fe569bcc8ecb",
+        "buildHref": "https://github.com/MastahKitz/playwright-fullstack-test-framework/actions/runs/34672954972"
+      },
+      "gitCommit": {
+        "shortHash": "91446f2",
+        "hash": "91446f21d6868e461d12fe3570b7fe569bcc8ecb",
+        "subject": "beautified dashboard metrics section",
+        "body": "beautified dashboard metrics section\n",
+        "author": {
+          "name": "kitz wang",
+          "email": "mastahkitz@gmail.com",
+          "time": 1789186865000
+        },
+        "committer": {
+          "name": "kitz wang",
+          "email": "mastahkitz@gmail.com",
+          "time": 1789186865000
+        },
+        "branch": "test/refactor0912"
+      },
+      "actualWorkers": 4
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/MastahKitz/playwright-fullstack-test-framework/commit/91446f21d6868e461d12fe3570b7fe569bcc8ecb",
+            "commitHash": "91446f21d6868e461d12fe3570b7fe569bcc8ecb",
+            "buildHref": "https://github.com/MastahKitz/playwright-fullstack-test-framework/actions/runs/34672954972"
+          },
+          "gitCommit": {
+            "shortHash": "91446f2",
+            "hash": "91446f21d6868e461d12fe3570b7fe569bcc8ecb",
+            "subject": "beautified dashboard metrics section",
+            "body": "beautified dashboard metrics section\n",
+            "author": {
+              "name": "kitz wang",
+              "email": "mastahkitz@gmail.com",
+              "time": 1789186865000
+            },
+            "committer": {
+              "name": "kitz wang",
+              "email": "mastahkitz@gmail.com",
+              "time": 1789186865000
+            },
+            "branch": "test/refactor0912"
+          },
+          "actualWorkers": 4
+        },
+        "name": "chromium",
+        "testDir": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.spec.ts"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "test-report",
+          "open": "never"
+        }
+      ],
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-report/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "configFile": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/playwright.config.ts",
+    "rootDir": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional",
+    "quiet": false,
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 10,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "auth/auth-api-error.spec.ts",
+      "file": "auth/auth-api-error.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "auth api - errors",
+          "file": "auth/auth-api-error.spec.ts",
+          "line": 11,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user cannot login with invalid credentials",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 867,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-12T04:26:04.641Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "98a19df4c177413b4efc-66490c6dd86ed91fb4e7",
+              "file": "auth/auth-api-error.spec.ts",
+              "line": 13,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot login with blank username",
+              "ok": false,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 190,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:40:25)\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api.assertions.ts:48:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api-error.spec.ts:20:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                          "column": 25,
+                          "line": 40
+                        },
+                        "snippet": "   at utils/api.utils.ts:40\n\n\u001b[0m \u001b[90m 38 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36mfunction\u001b[39m assertResponseBody(actual\u001b[33m:\u001b[39m unknown\u001b[33m,\u001b[39m expected\u001b[33m:\u001b[39m \u001b[33mRecord\u001b[39m\u001b[33m<\u001b[39m\u001b[33mstring\u001b[39m\u001b[33m,\u001b[39m unknown\u001b[33m>\u001b[39m\u001b[33m,\u001b[39m options\u001b[33m?\u001b[39m\u001b[33m:\u001b[39m { exact\u001b[33m?\u001b[39m\u001b[33m:\u001b[39m boolean }) {\n \u001b[90m 39 |\u001b[39m   \u001b[36mif\u001b[39m (options\u001b[33m?\u001b[39m\u001b[33m.\u001b[39mexact) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoEqual(expected)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m   } \u001b[36melse\u001b[39m {\n \u001b[90m 42 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoMatchObject(expected)\u001b[33m;\u001b[39m\n \u001b[90m 43 |\u001b[39m   }\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                            "column": 25,
+                            "line": 40
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m\n\n   at utils/api.utils.ts:40\n\n  38 | export function assertResponseBody(actual: unknown, expected: Record<string, unknown>, options?: { exact?: boolean }) {\n  39 |   if (options?.exact) {\n> 40 |     expect.soft(actual).toEqual(expected);\n     |                         ^\n  41 |   } else {\n  42 |     expect.soft(actual).toMatchObject(expected);\n  43 |   }\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:40:25)\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api.assertions.ts:48:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api-error.spec.ts:20:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-12T04:26:05.628Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/1c6f5a449869f054a174fc3741502320794de19f.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/44d3f4c1b1c1991421cda4f6990f12b003de41d9.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                        "column": 25,
+                        "line": 40
+                      }
+                    },
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 843,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:40:25)\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api.assertions.ts:48:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api-error.spec.ts:20:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                          "column": 25,
+                          "line": 40
+                        },
+                        "snippet": "   at utils/api.utils.ts:40\n\n\u001b[0m \u001b[90m 38 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36mfunction\u001b[39m assertResponseBody(actual\u001b[33m:\u001b[39m unknown\u001b[33m,\u001b[39m expected\u001b[33m:\u001b[39m \u001b[33mRecord\u001b[39m\u001b[33m<\u001b[39m\u001b[33mstring\u001b[39m\u001b[33m,\u001b[39m unknown\u001b[33m>\u001b[39m\u001b[33m,\u001b[39m options\u001b[33m?\u001b[39m\u001b[33m:\u001b[39m { exact\u001b[33m?\u001b[39m\u001b[33m:\u001b[39m boolean }) {\n \u001b[90m 39 |\u001b[39m   \u001b[36mif\u001b[39m (options\u001b[33m?\u001b[39m\u001b[33m.\u001b[39mexact) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoEqual(expected)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m   } \u001b[36melse\u001b[39m {\n \u001b[90m 42 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoMatchObject(expected)\u001b[33m;\u001b[39m\n \u001b[90m 43 |\u001b[39m   }\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                            "column": 25,
+                            "line": 40
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m\n\n   at utils/api.utils.ts:40\n\n  38 | export function assertResponseBody(actual: unknown, expected: Record<string, unknown>, options?: { exact?: boolean }) {\n  39 |   if (options?.exact) {\n> 40 |     expect.soft(actual).toEqual(expected);\n     |                         ^\n  41 |   } else {\n  42 |     expect.soft(actual).toMatchObject(expected);\n  43 |   }\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:40:25)\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api.assertions.ts:48:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api-error.spec.ts:20:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-09-12T04:26:07.190Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/d3ada48670cebd4888941d4b545e2065b3089428.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/9302acf5d58b3c8f8a355e955f5ecfbb1eac35c8.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                        "column": 25,
+                        "line": 40
+                      }
+                    },
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 697,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:40:25)\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api.assertions.ts:48:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api-error.spec.ts:20:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                          "column": 25,
+                          "line": 40
+                        },
+                        "snippet": "   at utils/api.utils.ts:40\n\n\u001b[0m \u001b[90m 38 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36mfunction\u001b[39m assertResponseBody(actual\u001b[33m:\u001b[39m unknown\u001b[33m,\u001b[39m expected\u001b[33m:\u001b[39m \u001b[33mRecord\u001b[39m\u001b[33m<\u001b[39m\u001b[33mstring\u001b[39m\u001b[33m,\u001b[39m unknown\u001b[33m>\u001b[39m\u001b[33m,\u001b[39m options\u001b[33m?\u001b[39m\u001b[33m:\u001b[39m { exact\u001b[33m?\u001b[39m\u001b[33m:\u001b[39m boolean }) {\n \u001b[90m 39 |\u001b[39m   \u001b[36mif\u001b[39m (options\u001b[33m?\u001b[39m\u001b[33m.\u001b[39mexact) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoEqual(expected)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m   } \u001b[36melse\u001b[39m {\n \u001b[90m 42 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoMatchObject(expected)\u001b[33m;\u001b[39m\n \u001b[90m 43 |\u001b[39m   }\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                            "column": 25,
+                            "line": 40
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m\n\n   at utils/api.utils.ts:40\n\n  38 | export function assertResponseBody(actual: unknown, expected: Record<string, unknown>, options?: { exact?: boolean }) {\n  39 |   if (options?.exact) {\n> 40 |     expect.soft(actual).toEqual(expected);\n     |                         ^\n  41 |   } else {\n  42 |     expect.soft(actual).toMatchObject(expected);\n  43 |   }\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:40:25)\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api.assertions.ts:48:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api-error.spec.ts:20:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-09-12T04:26:09.227Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/b1c1c45c97859789eb641b4e54f59b5f3ec1815f.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/85d0cf71a59be2f3f982f16985f704b5bf645e0d.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                        "column": 25,
+                        "line": 40
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "98a19df4c177413b4efc-dd573a828ae006ffdfb5",
+              "file": "auth/auth-api-error.spec.ts",
+              "line": 18,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot login with blank password",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 504,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-12T04:26:10.756Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "98a19df4c177413b4efc-416a6e18416508f2c6a1",
+              "file": "auth/auth-api-error.spec.ts",
+              "line": 23,
+              "column": 7
+            },
+            {
+              "title": "validate locked user cannot login",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 314,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-12T04:26:11.383Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "98a19df4c177413b4efc-379eb3d1f3e239d4fb67",
+              "file": "auth/auth-api-error.spec.ts",
+              "line": 28,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "auth/auth-api.spec.ts",
+      "file": "auth/auth-api.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "auth api",
+          "file": "auth/auth-api.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate standard user can login",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1140,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-12T04:26:04.686Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "960ed654433cba842d5e-85febc5ceabce5b0720d",
+              "file": "auth/auth-api.spec.ts",
+              "line": 10,
+              "column": 7
+            },
+            {
+              "title": "validate admin user can login",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 505,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-12T04:26:05.904Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "960ed654433cba842d5e-7ad5e27eefbcbf021518",
+              "file": "auth/auth-api.spec.ts",
+              "line": 15,
+              "column": 7
+            },
+            {
+              "title": "validate standard user can logout",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 771,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-12T04:26:06.457Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "960ed654433cba842d5e-8f68d805e13066ae4ff3",
+              "file": "auth/auth-api.spec.ts",
+              "line": 20,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "auth/auth-error.spec.ts",
+      "file": "auth/auth-error.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "auth - errors",
+          "file": "auth/auth-error.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user cannot login with invalid credentials",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 2749,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-12T04:26:04.761Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "812bc745f1822d6eb442-06f062ed4565a6dcf15d",
+              "file": "auth/auth-error.spec.ts",
+              "line": 9,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot login with blank username",
+              "ok": false,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 7577,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts:21:78)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-error.spec.ts:16:38",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                          "column": 78,
+                          "line": 21
+                        },
+                        "snippet": "   at auth/auth.assertions.ts:21\n\n\u001b[0m \u001b[90m 19 |\u001b[39m\n \u001b[90m 20 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertUsernameRequiredError(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 21 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Username is required'\u001b[39m\u001b[33m,\u001b[39m { exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m }))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 22 |\u001b[39m }\n \u001b[90m 23 |\u001b[39m\n \u001b[90m 24 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertPasswordRequiredError(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m) {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                            "column": 78,
+                            "line": 21
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n\n\n   at auth/auth.assertions.ts:21\n\n  19 |\n  20 | export async function assertUsernameRequiredError(page: Page) {\n> 21 |   await expect.soft(page.getByText('Username is required', { exact: true })).toBeVisible();\n     |                                                                              ^\n  22 | }\n  23 |\n  24 | export async function assertPasswordRequiredError(page: Page) {\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts:21:78)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-error.spec.ts:16:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-12T04:26:07.770Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/3d4a9fe4dff26083d16ddd88745b1d1b9f62712a.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/4db11f2bbe761a2bd65ffd17e2afc62f95593e9c.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/b564037b4df359350f0369365a11d2042ae7b8b6.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/e268d2203c73b1694afbf51e31d762a4ed0121db.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                        "column": 78,
+                        "line": 21
+                      }
+                    },
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7010,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts:21:78)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-error.spec.ts:16:38",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                          "column": 78,
+                          "line": 21
+                        },
+                        "snippet": "   at auth/auth.assertions.ts:21\n\n\u001b[0m \u001b[90m 19 |\u001b[39m\n \u001b[90m 20 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertUsernameRequiredError(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 21 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Username is required'\u001b[39m\u001b[33m,\u001b[39m { exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m }))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 22 |\u001b[39m }\n \u001b[90m 23 |\u001b[39m\n \u001b[90m 24 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertPasswordRequiredError(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m) {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                            "column": 78,
+                            "line": 21
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n\n\n   at auth/auth.assertions.ts:21\n\n  19 |\n  20 | export async function assertUsernameRequiredError(page: Page) {\n> 21 |   await expect.soft(page.getByText('Username is required', { exact: true })).toBeVisible();\n     |                                                                              ^\n  22 | }\n  23 |\n  24 | export async function assertPasswordRequiredError(page: Page) {\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts:21:78)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-error.spec.ts:16:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-09-12T04:26:16.298Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/a95465aca55a55051392342872a48f8790cc0783.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/a4c1f50e9ac65793b8ea9ffda91dcc85a5955d56.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/1e2a2be03aef1d7684e364325c410de8f1f64205.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/5cd61dae74059aadf17fade37d8670516cdca7b3.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                        "column": 78,
+                        "line": 21
+                      }
+                    },
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 6942,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts:21:78)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-error.spec.ts:16:38",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                          "column": 78,
+                          "line": 21
+                        },
+                        "snippet": "   at auth/auth.assertions.ts:21\n\n\u001b[0m \u001b[90m 19 |\u001b[39m\n \u001b[90m 20 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertUsernameRequiredError(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 21 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Username is required'\u001b[39m\u001b[33m,\u001b[39m { exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m }))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 22 |\u001b[39m }\n \u001b[90m 23 |\u001b[39m\n \u001b[90m 24 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertPasswordRequiredError(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m) {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                            "column": 78,
+                            "line": 21
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n\n\n   at auth/auth.assertions.ts:21\n\n  19 |\n  20 | export async function assertUsernameRequiredError(page: Page) {\n> 21 |   await expect.soft(page.getByText('Username is required', { exact: true })).toBeVisible();\n     |                                                                              ^\n  22 | }\n  23 |\n  24 | export async function assertPasswordRequiredError(page: Page) {\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts:21:78)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-error.spec.ts:16:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-09-12T04:26:24.225Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/0144752ae0a3bc60ab6fbe24b05840af518ecb48.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/36790b92b4911d4bd851d92b881b6cf4988f279e.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/14a46efb479c638bad07fc53d6a44183775488b3.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/4ea74a1127e13dca0c9e2e6107df19cc7b1363e8.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                        "column": 78,
+                        "line": 21
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "812bc745f1822d6eb442-7ce82a7c6c5c6d2ea6b6",
+              "file": "auth/auth-error.spec.ts",
+              "line": 14,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot login with blank password",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1934,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-12T04:26:32.047Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "812bc745f1822d6eb442-cedc834b1eb0712ccace",
+              "file": "auth/auth-error.spec.ts",
+              "line": 19,
+              "column": 7
+            },
+            {
+              "title": "validate locked user cannot login",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2601,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-12T04:26:34.115Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "812bc745f1822d6eb442-507131583560e71b22e0",
+              "file": "auth/auth-error.spec.ts",
+              "line": 24,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "auth/auth.spec.ts",
+      "file": "auth/auth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "auth",
+          "file": "auth/auth.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate standard user can login",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 4128,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-12T04:26:04.717Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "11ab049aabb515b3eeb7-6387e91433c783a9fd63",
+              "file": "auth/auth.spec.ts",
+              "line": 9,
+              "column": 7
+            },
+            {
+              "title": "validate admin user can login",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 3347,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-12T04:26:09.100Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "11ab049aabb515b3eeb7-036f8c07bccd02d73e60",
+              "file": "auth/auth.spec.ts",
+              "line": 15,
+              "column": 7
+            },
+            {
+              "title": "validate standard user can logout",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 3385,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-12T04:26:12.465Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "11ab049aabb515b3eeb7-4b6d94debb1e15cd87f9",
+              "file": "auth/auth.spec.ts",
+              "line": 21,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-12T04:25:57.071Z",
+    "duration": 39709.001953125,
+    "expected": 12,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

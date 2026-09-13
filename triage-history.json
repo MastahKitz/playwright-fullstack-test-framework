@@ -1,0 +1,34 @@
+[
+  {
+    "runNumber": 39,
+    "newFailures": 0,
+    "scriptErrors": 0,
+    "issuesFiled": 0,
+    "validBugs": 0,
+    "unsure": 0
+  },
+  {
+    "runNumber": 38,
+    "newFailures": 0,
+    "scriptErrors": 0,
+    "issuesFiled": 0,
+    "validBugs": 0,
+    "unsure": 0
+  },
+  {
+    "runNumber": 37,
+    "newFailures": 0,
+    "scriptErrors": 0,
+    "issuesFiled": 0,
+    "validBugs": 0,
+    "unsure": 0
+  },
+  {
+    "runNumber": 36,
+    "newFailures": 2,
+    "scriptErrors": 2,
+    "issuesFiled": 0,
+    "validBugs": 0,
+    "unsure": 0
+  }
+]
