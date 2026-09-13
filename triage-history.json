@@ -1,5 +1,13 @@
 [
   {
+    "runNumber": 40,
+    "newFailures": 0,
+    "scriptErrors": 0,
+    "issuesFiled": 0,
+    "validBugs": 0,
+    "unsure": 0
+  },
+  {
     "runNumber": 39,
     "newFailures": 0,
     "scriptErrors": 0,
