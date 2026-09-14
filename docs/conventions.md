@@ -180,3 +180,23 @@ elsewhere in the repo.
     `deleteProduct`, …) can run in `beforeAll`/`afterAll` the same way, composed inline at the call
     site. There's no `*InHook` twin to write or maintain per flow function; the flow function itself
     stays the single source of truth, and hook-vs-per-test is just how it's called.
+
+18. **Navigate through the UI, not the URL bar — `openHomePage` is the one exception.** Every page
+    other than the home page is reached the way a real user reaches it: a click action from
+    wherever the flow already is, not `page.goto('/some-path')`. The suite has exactly one
+    `page.goto(...)` call — `openHomePage` in `auth.actions.ts`. Every other page comes from a click
+    armed with its own rule-11 wait: the login page is reached via `clickSignInLink` from the home
+    page, never `page.goto('/login')`. Jumping straight to a URL skips the navigation a test could
+    otherwise catch breaking (a moved link, a dead button) and skips the click's deterministic wait.
+
+19. **An assertion that already exists gets composed, not re-derived.** Before writing a new named
+    assertion, check whether an existing one — in the same file, a sibling feature file in the same
+    domain, or another domain's `.assertions.ts` — already checks some or all of the same
+    conditions, and call it instead of re-asserting the same `expect` lines. `assertCartDetails`
+    calls the file's own `assertCartItem` per item (`cart.assertions.ts`); the same principle holds
+    across sibling files in a domain, not only within one file — an assertion added in a new
+    `signup.assertions.ts` that checks "the user is logged in" (nav username text, logout button
+    visible, sign-in link hidden) calls `assertLoggedIn` from `auth.assertions.ts` for that part and
+    adds only what's actually new on top (a post-registration redirect check, say). This is rule 5's
+    reuse principle applied to assertions, not just `.utils.ts` helpers — the same check written
+    twice is a duplication bug the moment one copy gets updated and the other doesn't.
