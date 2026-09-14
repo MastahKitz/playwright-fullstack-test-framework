@@ -26,6 +26,24 @@ elsewhere in the repo.
    (+ `auth-api-error.spec.ts`) next to `auth.actions.ts` etc. Only the interaction layer differs:
    `sendApiRequest(...)` (`utils/api.utils.ts`) instead of `page.*`.
 
+   **What makes a sub-feature "independently testable"** (subfolder) rather than the same feature
+   at a different layer or path (suffix on the existing base name): a genuinely different
+   page/entry-point with its own fields and its own data shape, not reachable as a state of an
+   existing feature's flow. `order/cart` (view/modify the cart) and `order/checkout` (shipping +
+   payment form, place the order) are separate pages with separate data shapes, even though one
+   leads to the other. A different *interaction layer* of the same feature is `-api`, not a
+   subfolder (`auth-api.*` is still login/logout, not a new feature). A negative-path variant of
+   the same feature is an `-error` sibling spec (`auth-error.spec.ts`, `checkout-error.spec.ts`),
+   not a subfolder either. A domain can mix a flat base feature with subfoldered ones — adding a
+   subfolder for a new sub-feature is never a reason to move or rename files that are already flat.
+   Concretely: `auth`'s existing flat `auth.*.ts` is login/logout — a real page of its own, so it
+   stays exactly where it is. Sign-up is a different page with its own fields and its own data
+   shape (email, phone, username, password, confirm-password vs. login's username/password), not a
+   state of the login flow, so it's an independently-testable sub-feature and belongs in its own
+   `auth/signup/` subfolder (`signup.actions.ts`, `signup.assertions.ts`, etc.) — the same
+   reasoning as `order/cart` vs `order/checkout`, applied the first time `auth` needed more than
+   one feature.
+
 2. **`.spec.ts` files contain no raw `page.*` calls and no raw `expect(...)`.** They call
    flow / assertion helpers. Calling a single named **action** directly from a spec is fine when
    there's no multi-step journey to name (the suite does this with `openHomePage`,
