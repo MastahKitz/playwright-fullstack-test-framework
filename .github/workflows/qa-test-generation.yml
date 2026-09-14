@@ -1,12 +1,24 @@
 name: QA Test Generation (pilot)
 
-# Manual, one-ticket-at-a-time pilot for AI-driven test case generation.
-# Deliberately NOT wired to Claude yet — this first cut only proves out the
-# deterministic prep step (scripts/fetch-jira-ticket.js): given one Jira key,
-# fetch it plus its epic/parent and explicitly linked issues (one level deep,
-# no project-wide search — see the script's header), download any
-# image/video attachments, and print the resulting JSON so it can be
-# eyeballed for correctness before anything is handed to a model.
+# Manual, one-ticket-at-a-time pilot for AI-driven test case generation. Two
+# jobs:
+#
+#   fetch-ticket    — deterministic prep: given one Jira key, fetch it plus
+#                     its epic/parent and explicitly linked issues (one level
+#                     deep, no project-wide search — see
+#                     scripts/fetch-jira-ticket.js's header), download any
+#                     image/video attachments, print the resulting JSON so it
+#                     can be eyeballed, and hand it off as an artifact.
+#   generate-tests  — hands the ticket to Claude: identify what scenarios the
+#                     story implies, check them against the existing suite,
+#                     write the confident ones as real test code in a PR, and
+#                     open an issue asking a human for anything ambiguous
+#                     instead of guessing. See .github/prompts/qa-test-generation.md.
+#                     Neither job runs the new tests — playwright.yml only
+#                     triggers on push to main, so that happens after merge,
+#                     same as any other test change; if a generated test then
+#                     fails or flakes, qa-triage.yml picks it up like any
+#                     other failure.
 on:
   workflow_dispatch:
     inputs:
@@ -14,6 +26,12 @@ on:
         description: 'Jira ticket key (e.g. DEV-1)'
         required: true
         type: string
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
 
 jobs:
   fetch-ticket:
@@ -41,3 +59,69 @@ jobs:
             jira-ticket.json
             jira-attachments/
           if-no-files-found: ignore
+
+  generate-tests:
+    needs: fetch-ticket
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download ticket JSON + attachments
+        uses: actions/download-artifact@v4
+        with:
+          name: jira-ticket-${{ inputs.ticket }}
+          path: .
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Extract video frames from any video attachments
+        run: |
+          if [ -d jira-attachments ]; then
+            shopt -s nullglob
+            for video in jira-attachments/*.mp4 jira-attachments/*.mov jira-attachments/*.webm jira-attachments/*.mkv jira-attachments/*.avi; do
+              base=$(basename "$video")
+              name="${base%.*}"
+              outdir="jira-attachments/video-frames/$name"
+              mkdir -p "$outdir"
+              ffmpeg -loglevel error -i "$video" -vf fps=2 "$outdir/frame-%03d.png"
+            done
+          fi
+
+      - name: Ensure test-generation label exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create qa-test-generation --force \
+            --color F9D0C4 --description "Opened by the QA test-generation automation"
+
+      - name: Load test-generation prompt
+        # The prompt references docs/conventions.md as the source of truth; inline it
+        # here so the conventions are guaranteed to be in context, not just fetchable.
+        run: |
+          {
+            echo 'TEST_GENERATION_PROMPT<<PROMPT_EOF'
+            cat .github/prompts/qa-test-generation.md
+            echo
+            echo '---'
+            echo '# docs/conventions.md'
+            echo
+            cat docs/conventions.md
+            echo PROMPT_EOF
+          } >> "$GITHUB_ENV"
+
+      - name: Identify and generate test coverage
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          show_full_output: true
+          prompt: |
+            REPO: ${{ github.repository }}
+            TICKET: ${{ inputs.ticket }}
+            RUN NUMBER: ${{ github.run_number }}
+
+            ${{ env.TEST_GENERATION_PROMPT }}
+
+          claude_args: |
+            --allowedTools "Read,Grep,Glob,Edit,Write,Bash(git checkout:*),Bash(git config:*),Bash(git add:*),Bash(git commit:*),Bash(git push:*),Bash(gh pr create:*),Bash(gh issue create:*)"
