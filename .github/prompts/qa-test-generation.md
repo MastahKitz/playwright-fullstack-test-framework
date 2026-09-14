@@ -135,17 +135,17 @@ Skip this step entirely if there are no confident scenarios.
 3. Write the actual test code for every confident scenario, following `docs/conventions.md`
    exactly — correct file split (rule 1), `.spec.ts` calling only flow/assertion helpers or a
    single named action (rule 2), testid-first locators (rule 6), `expect.soft` in assertions
-   (rule 7), exact-match assertions (rule 8), `{ tag: [...] }` matching the domain plus `@api` /
-   `@mutating` where it applies (rule 9), a deterministic wait after every click — never
-   `waitForTimeout` (rule 11), and the `'validate user can/cannot <do something>'` title shape
-   (rule 13). Before picking where a new scenario's files go, apply rule 1's subfolder test: is
-   this a genuinely different page/entry-point with its own data shape (→ its own `<feature>/`
-   subfolder, e.g. `auth/signup/`, `order/cart`, `order/checkout`), the same feature at a different
-   interaction layer (→ `-api` suffix, sibling to the UI files, not a subfolder), or a negative-path
-   variant of an existing feature (→ `-error` suffix spec, not a subfolder)? Never bolt a
-   genuinely-new feature onto an existing flat domain file just because the domain already has one,
-   and never move or rename files that are already flat to "make room" for a new subfoldered
-   feature — adding a subfolder never touches what's already there.
+   (rule 7), exact-match assertions (rule 8), `{ tag: [...] }` matching the spec's own feature
+   folder plus `@api` / `@mutating` where it applies (rule 9), a deterministic wait after every
+   click — never `waitForTimeout` (rule 11), and the `'validate user can/cannot <do something>'`
+   title shape (rule 13). Before picking where a new scenario's files go, apply rule 1's
+   subfolder test: is this a genuinely different page/entry-point with its own data shape (→ its
+   own `<feature>/` subfolder, e.g. `auth/signup/`, `order/cart`, `order/checkout`), the same
+   feature at a different interaction layer (→ `-api` suffix, sibling to the UI files, not a
+   subfolder), or a negative-path variant of an existing feature (→ `-error` suffix spec, not a
+   subfolder)? Never bolt a genuinely-new feature onto an existing flat domain file just because
+   the domain already has one, and never move or rename files that are already flat to "make
+   room" for a new subfoldered feature — adding a subfolder never touches what's already there.
 4. Commit, push, and open the PR:
    `gh pr create --label qa-test-generation --title "QA test generation — <TICKET>: <ticket
    summary>"`. Body:
