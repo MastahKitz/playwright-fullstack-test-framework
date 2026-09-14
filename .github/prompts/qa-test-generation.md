@@ -58,11 +58,31 @@ every PR you open, the same as any other change to `tests/**`.
 
 ## Step 1 — read the ticket, list the scenarios
 
-Translate the ticket into concrete scenarios: what should be true, from a user's (or, for an
-API-layer story, a client's) perspective, for this story to be considered covered. Pull scenarios
-from the description's acceptance criteria if it has them. If the ticket is only a title/summary
-with no real acceptance criteria, work only from what's actually stated — don't invent
-requirements the ticket doesn't ask for.
+Translate the ticket into concrete scenarios: what should be true, from a user's perspective, for
+this story to be considered covered. Pull scenarios from the description's acceptance criteria if
+it has them. If the ticket is only a title/summary with no real acceptance criteria, work only
+from what's actually stated — don't invent requirements the ticket doesn't ask for.
+
+A ticket almost never mentions the API explicitly — it describes a page, not an endpoint — so
+**don't decide whether this feature gets API-layer scenarios by whether the ticket talks about an
+API.** Decide it from domain precedent instead: check whether the feature's domain already
+contains any `<name>-api.*.ts` files (`Glob tests/functional/<domain>/*-api.*`).
+- **Domain already has an established UI+API pairing** (e.g. `auth/` has `auth-api.spec.ts`
+  alongside `auth.spec.ts` for login) → that question is already answered for this domain. Add the
+  client-facing equivalent of each UI scenario as its own scenario in this list — same rule-1 file
+  split, `-api` suffix — and take it through Step 2 exactly like a UI scenario, including finding
+  the real endpoint/payload live (`browser_network_requests`) the same way you'd find a testid.
+  Don't stop at spot-checking one API scenario incidentally while grounding something else; list
+  and cover the API layer as deliberately as the UI layer.
+- **Domain has no `-api` files at all** → there's no established precedent either way (the same
+  situation that led to declining cart-api coverage previously — a human call, not something to
+  infer). Whether this new feature should get API-layer tests is a genuine scope question: note it
+  in your summary and, if nothing else about the ticket is flagged, flag it on its own (Step 4)
+  rather than silently deciding either way.
+
+Either way, **never let API-layer coverage simply go unmentioned.** Your final summary and the PR
+body must say what happened to it — generated, already covered, or flagged — the same as every
+other scenario.
 
 ## Step 2 — check existing coverage, then classify each new scenario
 
@@ -118,8 +138,14 @@ Skip this step entirely if there are no confident scenarios.
    (rule 7), exact-match assertions (rule 8), `{ tag: [...] }` matching the domain plus `@api` /
    `@mutating` where it applies (rule 9), a deterministic wait after every click — never
    `waitForTimeout` (rule 11), and the `'validate user can/cannot <do something>'` title shape
-   (rule 13). If the domain/feature folder doesn't exist yet, create it with the same file split
-   as an existing domain, don't bolt the new scenario onto an unrelated file.
+   (rule 13). Before picking where a new scenario's files go, apply rule 1's subfolder test: is
+   this a genuinely different page/entry-point with its own data shape (→ its own `<feature>/`
+   subfolder, e.g. `auth/signup/`, `order/cart`, `order/checkout`), the same feature at a different
+   interaction layer (→ `-api` suffix, sibling to the UI files, not a subfolder), or a negative-path
+   variant of an existing feature (→ `-error` suffix spec, not a subfolder)? Never bolt a
+   genuinely-new feature onto an existing flat domain file just because the domain already has one,
+   and never move or rename files that are already flat to "make room" for a new subfoldered
+   feature — adding a subfolder never touches what's already there.
 4. Commit, push, and open the PR:
    `gh pr create --label qa-test-generation --title "QA test generation — <TICKET>: <ticket
    summary>"`. Body:
@@ -173,5 +199,8 @@ Ask a precise question per scenario, not a generic "please clarify."
 
 ## Output
 
-End with a plain-English summary: the ticket key, every scenario from Step 1, and what happened to
-each — already covered, generated in PR #N, or flagged in issue #N.
+End with a plain-English summary: the ticket key, every scenario from Step 1 (UI and, per the
+domain-precedent check above, API), and what happened to each — already covered, generated in
+PR #N, or flagged in issue #N. If a whole layer went uncovered, say so explicitly and why — a
+layer that's simply absent from the summary, with no PR/issue/coverage note at all, is the failure
+mode this section exists to prevent.
