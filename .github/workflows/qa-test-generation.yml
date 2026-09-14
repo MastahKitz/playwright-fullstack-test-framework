@@ -96,6 +96,19 @@ jobs:
           gh label create qa-test-generation --force \
             --color F9D0C4 --description "Opened by the QA test-generation automation"
 
+      # Ticket text only ever says WHAT is expected — HOW it's actually built (real
+      # testids, real DOM structure, real flow) is something the app itself has to
+      # answer. Installed here (not via the repo's own package.json) because
+      # @playwright/mcp pulls its own pinned playwright-core; installing browsers
+      # against whatever `playwright` npx resolves keeps that pairing consistent.
+      - name: Install Playwright browsers for the MCP server
+        run: npx --yes playwright install --with-deps chromium
+
+      - name: Compute admin password's daily date suffix
+        id: admin-date-suffix
+        # Mirrors tests/functional/auth/auth.data.ts's todayDateSuffix(): DDMMYYYY.
+        run: echo "suffix=$(date +%d%m%Y)" >> "$GITHUB_OUTPUT"
+
       - name: Load test-generation prompt
         # The prompt references docs/conventions.md as the source of truth; inline it
         # here so the conventions are guaranteed to be in context, not just fetchable.
@@ -112,6 +125,16 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: Identify and generate test coverage
+        env:
+          # For logging into the live app to ground HOW a feature works — real
+          # testids, real flow — never to decide WHAT the correct behavior is
+          # (that's the ticket's job). Same accounts the Playwright suite itself
+          # uses (tests/functional/auth/auth.data.ts); admin's password rotates
+          # daily by date suffix, computed the same way that file computes it.
+          STANDARD_USER_USERNAME: ${{ secrets.QA_STANDARD_USER_USERNAME }}
+          STANDARD_USER_PASSWORD: ${{ secrets.QA_STANDARD_USER_PASSWORD }}
+          ADMIN_USER_USERNAME: ${{ secrets.QA_ADMIN_USER_USERNAME }}
+          ADMIN_USER_PASSWORD: ${{ secrets.QA_ADMIN_USER_PASSWORD_PREFIX }}${{ steps.admin-date-suffix.outputs.suffix }}
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -120,8 +143,12 @@ jobs:
             REPO: ${{ github.repository }}
             TICKET: ${{ inputs.ticket }}
             RUN NUMBER: ${{ github.run_number }}
+            APP BASE URL: https://qademo.com
+            STANDARD USER LOGIN: ${{ env.STANDARD_USER_USERNAME }} / ${{ env.STANDARD_USER_PASSWORD }}
+            ADMIN USER LOGIN: ${{ env.ADMIN_USER_USERNAME }} / ${{ env.ADMIN_USER_PASSWORD }}
 
             ${{ env.TEST_GENERATION_PROMPT }}
 
           claude_args: |
-            --allowedTools "Read,Grep,Glob,Edit,Write,Bash(git checkout:*),Bash(git config:*),Bash(git add:*),Bash(git commit:*),Bash(git push:*),Bash(gh pr create:*),Bash(gh issue create:*)"
+            --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["-y","@playwright/mcp@latest","--headless","--isolated","--browser","chromium"]}}}'
+            --allowedTools "Read,Grep,Glob,Edit,Write,Bash(git checkout:*),Bash(git config:*),Bash(git add:*),Bash(git commit:*),Bash(git push:*),Bash(gh pr create:*),Bash(gh issue create:*),mcp__playwright__browser_navigate,mcp__playwright__browser_click,mcp__playwright__browser_type,mcp__playwright__browser_snapshot,mcp__playwright__browser_evaluate,mcp__playwright__browser_wait_for,mcp__playwright__browser_press_key,mcp__playwright__browser_select_option,mcp__playwright__browser_fill_form,mcp__playwright__browser_take_screenshot,mcp__playwright__browser_tabs,mcp__playwright__browser_network_requests,mcp__playwright__browser_close"
