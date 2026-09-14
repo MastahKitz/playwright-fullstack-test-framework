@@ -108,13 +108,20 @@ elsewhere in the repo.
    `expect.stringMatching(/regex/)` into the same `expected` object alongside the exact fields;
    don't drop to a full partial match just because one field is dynamic.
 
-9. **Every `test.describe(...)` has a `{ tag: '@xxx' }`** matching its domain (`@auth`,
-   `@product`, `@cart`, `@checkout`). API-layer specs carry a second `@api` tag alongside the
-   domain tag — `{ tag: ['@auth', '@api'] }` in `auth-api.spec.ts` — so the API suite can be run
-   or filtered independently of the UI suite. A spec whose tests are transactional — create,
-   edit, delete, import, or anything else that mutates real server-side data rather than only
-   reading it — also carries `@mutating`: `{ tag: ['@product', '@api', '@mutating'] }` in
-   `product-api-create.spec.ts` / `product-api-delete.spec.ts`. CI runs `@mutating` specs as
+9. **Every `test.describe(...)` has a `{ tag: '@xxx' }` matching the feature folder the spec
+   file lives in** — the last path segment under `tests/functional/`, not necessarily the domain
+   it's nested under. A flat domain's specs tag with the domain name (`tests/functional/auth/*`
+   → `@auth`); a subfoldered sub-feature (rule 1) tags with *its own* folder name, not its
+   parent's (`tests/functional/order/cart/*` → `@cart`, `tests/functional/order/checkout/*` →
+   `@checkout`, never `@order`; `tests/functional/auth/signup/*` → `@signup`, never `@auth`).
+   Derive the tag from the folder every time — this file doesn't keep a registry of valid tags to
+   extend when a new domain or sub-feature is added. API-layer specs carry a second `@api` tag
+   alongside the feature tag — `{ tag: ['@auth', '@api'] }` in `auth-api.spec.ts` — so the API
+   suite can be run or filtered independently of the UI suite. A spec whose tests are
+   transactional — create, edit, delete, import, or anything else that mutates real server-side
+   data rather than only reading it — also carries `@mutating`: `{ tag: ['@product', '@api',
+   '@mutating'] }` in `product-api-create.spec.ts` / `product-api-delete.spec.ts`. CI runs
+   `@mutating` specs as
    their own phase, isolated from the rest of the suite (`playwright.yml`,
    `playwright.config.ts`'s `chromium-mutating` project), so a create/delete never races a
    list/count assertion elsewhere — see design-notes.md's "Calls worth explaining" for why that
