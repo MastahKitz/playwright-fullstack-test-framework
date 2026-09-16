@@ -14,7 +14,7 @@ name: QA Test Generation (pilot)
 #                      component/label/parent (scripts/fetch-related-jira-tickets.js,
 #                      recall only), embed whatever isn't already cached
 #                      (scripts/score-related-jira-tickets.js, via Voyage),
-#                      keep only candidates at or above a 0.6 cosine-similarity
+#                      keep only candidates at or above a 0.8 cosine-similarity
 #                      threshold, and hand the filtered, scored list off as an
 #                      artifact. The embedding cache lives on gh-pages
 #                      (jira-embedding-cache.json) so a ticket already scored
@@ -109,7 +109,7 @@ jobs:
         run: |
           mkdir -p gh-pages
           node scripts/score-related-jira-tickets.js \
-            jira-ticket.json related-candidates.json gh-pages/jira-embedding-cache.json 0.6 \
+            jira-ticket.json related-candidates.json gh-pages/jira-embedding-cache.json 0.8 \
             > related-tickets.json
           echo "::group::related-tickets.json"
           cat related-tickets.json
@@ -155,7 +155,7 @@ jobs:
   generate-tests:
     needs: [fetch-ticket, related-tickets]
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -196,21 +196,25 @@ jobs:
 
       # Ticket text only ever says WHAT is expected — HOW it's actually built (real
       # testids, real DOM structure, real flow) is something the app itself has to
-      # answer. Installed here (not via the repo's own package.json) because
-      # @playwright/mcp pulls its own pinned playwright-core; installing browsers
-      # against whatever `playwright` npx resolves keeps that pairing consistent —
-      # which requires @playwright/mcp's own `playwright` to actually be the one
-      # `npx playwright` resolves. Without a prior local install, a bare
-      # `npx playwright install` fetches whatever's tagged latest-STABLE on the
-      # registry, which can trail @playwright/mcp's own pin (it's shipped an
-      # alpha build ahead of the latest stable release before) and installs a
-      # different Chromium build than the MCP server actually expects at
-      # runtime — exactly what broke run #8 ("chromium-1244 not installed, only
-      # chromium-1243 present"). Installing @playwright/mcp first makes its own
-      # `playwright` the one `node_modules/.bin` resolves, so the two can never
-      # drift apart, regardless of which version "latest" is on either side.
+      # answer. Deliberately installed OUTSIDE the repo checkout, in $RUNNER_TEMP:
+      # @playwright/mcp pulls its own pinned playwright-core (often ahead of
+      # latest-stable — it's shipped alpha builds before), so the browser here has
+      # to be resolved the same way @playwright/mcp itself will resolve it, not
+      # against whatever's tagged latest-stable on the registry. The naive fix —
+      # `npm install @playwright/mcp` from the repo root — is actually worse: this
+      # repo's own committed package-lock.json already pins an old `playwright`
+      # (via @playwright/test), and `npm install` (unlike a bare `npx`) honors
+      # that lockfile, so it silently downgrades the resolved version instead of
+      # matching @playwright/mcp's. That's exactly what broke run #9 after run
+      # #8's fix attempt. Running `npm install` in an unrelated temp directory
+      # with its own throwaway package.json avoids the repo's lockfile entirely,
+      # so @playwright/mcp's own pinned playwright-core is what actually resolves
+      # — verified locally before landing this (see run #8/#9 postmortem).
       - name: Install Playwright browsers for the MCP server
         run: |
+          mkdir -p "$RUNNER_TEMP/mcp-browser-install"
+          cd "$RUNNER_TEMP/mcp-browser-install"
+          npm init -y >/dev/null
           npm install --no-save @playwright/mcp@latest
           npx playwright install --with-deps chromium
 
