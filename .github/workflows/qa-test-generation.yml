@@ -14,7 +14,7 @@ name: QA Test Generation (pilot)
 #                      component/label/parent (scripts/fetch-related-jira-tickets.js,
 #                      recall only), embed whatever isn't already cached
 #                      (scripts/score-related-jira-tickets.js, via Voyage),
-#                      keep only candidates at or above a 0.6 cosine-similarity
+#                      keep only candidates at or above a 0.8 cosine-similarity
 #                      threshold, and hand the filtered, scored list off as an
 #                      artifact. The embedding cache lives on gh-pages
 #                      (jira-embedding-cache.json) so a ticket already scored
@@ -109,7 +109,7 @@ jobs:
         run: |
           mkdir -p gh-pages
           node scripts/score-related-jira-tickets.js \
-            jira-ticket.json related-candidates.json gh-pages/jira-embedding-cache.json 0.6 \
+            jira-ticket.json related-candidates.json gh-pages/jira-embedding-cache.json 0.8 \
             > related-tickets.json
           echo "::group::related-tickets.json"
           cat related-tickets.json
@@ -155,7 +155,7 @@ jobs:
   generate-tests:
     needs: [fetch-ticket, related-tickets]
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
