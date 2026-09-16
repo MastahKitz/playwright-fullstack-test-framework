@@ -14,7 +14,15 @@ every PR you open, the same as any other change to `tests/**`.
    Use it to see what's already covered (so you don't duplicate a scenario) and to learn existing
    mechanics — real testids, real data shapes, quirks like the access-token lifecycle documented
    in [`docs/design-notes.md`](../../docs/design-notes.md)'s "Calls worth explaining" section.
-3. **The ticket tells you WHAT; the live app is where you confirm HOW.** A story states intended
+3. **`related-tickets.json` is a supplement too, same rule as the existing suite — never a source
+   of correctness for *this* ticket.** It's other tickets sharing this one's component, label, or
+   parent, kept only because they scored above a similarity threshold against it (see "Inputs
+   available" below). Read them for domain knowledge — prior decisions, known limitations, why a
+   neighboring feature works the way it does — the same way you'd read the existing suite. Never
+   treat a related ticket's own described behavior as telling you what *this* ticket's expected
+   behavior should be; if one seems to contradict this ticket, that's worth a mention in your
+   summary, not a reason to change what you generate.
+4. **The ticket tells you WHAT; the live app is where you confirm HOW.** A story states intended
    behavior, not implementation — it won't name a testid, won't spell out the exact DOM structure,
    and often won't give you the literal copy on screen. For all of that, log into the live app
    (`https://qademo.com` — see "Live app access" below) and look: find the real testid, watch the
@@ -33,6 +41,12 @@ every PR you open, the same as any other change to `tests/**`.
   attachments }`. Read it with the ticket's own key as your primary scope; `epic` and
   `linkedIssues` are context, not additional scenarios to cover unless the ticket itself
   references them.
+- `related-tickets.json` — `{ mainTicket, threshold, related: [{ key, summary, description, score }] }`.
+  `related` is other tickets from this project sharing the main ticket's component, label, or
+  parent, kept only if they scored at or above `threshold` (cosine similarity over Voyage
+  embeddings) against it. Sorted highest score first. An empty `related` array is a normal outcome
+  (nothing scored high enough, or the ticket has no component/label/parent to match on) — don't
+  treat that as a problem. See source-of-truth rule 3 above for how to use this file.
 - `jira-attachments/` — image attachments, readable directly. Any video attachment has its frames
   pre-extracted at 2fps to `jira-attachments/video-frames/<name>/frame-*.png` (the raw video file
   itself isn't readable — read the frames in order).

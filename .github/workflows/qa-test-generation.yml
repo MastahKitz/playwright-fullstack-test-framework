@@ -1,24 +1,37 @@
 name: QA Test Generation (pilot)
 
-# Manual, one-ticket-at-a-time pilot for AI-driven test case generation. Two
+# Manual, one-ticket-at-a-time pilot for AI-driven test case generation. Three
 # jobs:
 #
-#   fetch-ticket    — deterministic prep: given one Jira key, fetch it plus
-#                     its epic/parent and explicitly linked issues (one level
-#                     deep, no project-wide search — see
-#                     scripts/fetch-jira-ticket.js's header), download any
-#                     image/video attachments, print the resulting JSON so it
-#                     can be eyeballed, and hand it off as an artifact.
-#   generate-tests  — hands the ticket to Claude: identify what scenarios the
-#                     story implies, check them against the existing suite,
-#                     write the confident ones as real test code in a PR, and
-#                     open an issue asking a human for anything ambiguous
-#                     instead of guessing. See .github/prompts/qa-test-generation.md.
-#                     Neither job runs the new tests — playwright.yml only
-#                     triggers on push to main, so that happens after merge,
-#                     same as any other test change; if a generated test then
-#                     fails or flakes, qa-triage.yml picks it up like any
-#                     other failure.
+#   fetch-ticket     — deterministic prep: given one Jira key, fetch it plus
+#                      its epic/parent and explicitly linked issues (one level
+#                      deep, no project-wide search — see
+#                      scripts/fetch-jira-ticket.js's header), download any
+#                      image/video attachments, print the resulting JSON so it
+#                      can be eyeballed, and hand it off as an artifact.
+#   related-tickets  — RAG retrieval for extra domain context: JQL-search the
+#                      main ticket's own project for tickets sharing its
+#                      component/label/parent (scripts/fetch-related-jira-tickets.js,
+#                      recall only), embed whatever isn't already cached
+#                      (scripts/score-related-jira-tickets.js, via Voyage),
+#                      keep only candidates at or above a 0.6 cosine-similarity
+#                      threshold, and hand the filtered, scored list off as an
+#                      artifact. The embedding cache lives on gh-pages
+#                      (jira-embedding-cache.json) so a ticket already scored
+#                      in a prior run — main or candidate — is never
+#                      re-embedded unless Jira's own `updated` timestamp on it
+#                      has moved. See memory: qa-test-generation-rag-related-tickets.
+#   generate-tests   — hands the ticket to Claude: identify what scenarios the
+#                      story implies, check them against the existing suite
+#                      and the related tickets for domain context, write the
+#                      confident ones as real test code in a PR, and open an
+#                      issue asking a human for anything ambiguous instead of
+#                      guessing. See .github/prompts/qa-test-generation.md.
+#                      No job here runs the new tests — playwright.yml only
+#                      triggers on push to main, so that happens after merge,
+#                      same as any other test change; if a generated test then
+#                      fails or flakes, qa-triage.yml picks it up like any
+#                      other failure.
 on:
   workflow_dispatch:
     inputs:
@@ -60,8 +73,87 @@ jobs:
             jira-attachments/
           if-no-files-found: ignore
 
-  generate-tests:
+  related-tickets:
     needs: fetch-ticket
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download ticket JSON
+        uses: actions/download-artifact@v4
+        with:
+          name: jira-ticket-${{ inputs.ticket }}
+          path: .
+
+      # Best-effort cache: if gh-pages doesn't exist yet (e.g. first-ever run,
+      # dashboard never published), fall through to an empty local cache file
+      # instead of failing — every ticket just gets embedded fresh this once.
+      - name: Check out embedding cache
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Find JQL candidates (component/label/parent match)
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        run: node scripts/fetch-related-jira-tickets.js "${{ inputs.ticket }}" > related-candidates.json
+
+      - name: Embed + score candidates, filter by similarity threshold
+        env:
+          VOYAGE_API_KEY: ${{ secrets.VOYAGE_API_KEY }}
+        run: |
+          mkdir -p gh-pages
+          node scripts/score-related-jira-tickets.js \
+            jira-ticket.json related-candidates.json gh-pages/jira-embedding-cache.json 0.6 \
+            > related-tickets.json
+          echo "::group::related-tickets.json"
+          cat related-tickets.json
+          echo "::endgroup::"
+
+      - name: Upload related tickets
+        uses: actions/upload-artifact@v4
+        with:
+          name: related-tickets-${{ inputs.ticket }}
+          path: related-tickets.json
+
+      # Same retry-on-rejected-push pattern as qa-triage.yml's publish step —
+      # playwright.yml force-pushes gh-pages independently and could race this.
+      - name: Publish updated embedding cache
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ ! -d gh-pages/.git ]; then
+            echo "No gh-pages checkout (branch doesn't exist yet) — skipping cache publish."
+            exit 0
+          fi
+          git -C gh-pages config user.name 'github-actions[bot]'
+          git -C gh-pages config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3 4 5; do
+            git -C gh-pages add jira-embedding-cache.json
+            if git -C gh-pages diff --cached --quiet; then
+              echo "No embedding cache change to publish."
+              break
+            fi
+            git -C gh-pages commit -q -m "embedding cache: ${{ inputs.ticket }}"
+            if git -C gh-pages push \
+                "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+                HEAD:gh-pages; then
+              echo "Published."
+              break
+            fi
+            echo "Push rejected (concurrent publish) — refetching and retrying ($attempt)."
+            git -C gh-pages fetch origin gh-pages
+            git -C gh-pages reset --hard origin/gh-pages
+          done
+
+  generate-tests:
+    needs: [fetch-ticket, related-tickets]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -71,6 +163,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: jira-ticket-${{ inputs.ticket }}
+          path: .
+
+      - name: Download related tickets
+        uses: actions/download-artifact@v4
+        with:
+          name: related-tickets-${{ inputs.ticket }}
           path: .
 
       - name: Install ffmpeg
