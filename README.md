@@ -160,8 +160,14 @@ marked ready for review), Claude reviews the diff against [docs/conventions.md](
 the specific convention violated, with a fix in the repo's existing style. On a re-run it
 reconciles against its own earlier comments — it won't repost something already flagged or
 already fixed in a later commit. If nothing violates a convention, it says so instead of
-manufacturing nitpicks. The triage / decision / cleanup PRs this system opens itself are skipped
-(they're bot-authored, and claude-code-action won't run for a bot actor anyway).
+manufacturing nitpicks. The triage / decision / cleanup PRs `qa-triage.yml` opens, and the PRs
+[AI test-generation](#ai-test-generation-from-a-jira-ticket--qa-test-generationyml) opens, are
+skipped while every commit on them is still from this repo's own automation
+(`qa-test-gen-bot` / `qa-triage-bot`, per those workflows' own prompts) — those already had
+`docs/conventions.md` fed into their own generation, so a second bot re-checking the same content
+against the same doc adds nothing. The check looks at each commit currently on the PR, not who
+opened it, so the moment a human pushes their own commit onto one of these bot-opened PRs, review
+runs against it exactly like any other PR.
 
 ### Continuous execution
 
@@ -188,7 +194,8 @@ Credentials are supplied as GitHub Actions secrets: `QA_STANDARD_USER_USERNAME` 
 `<prefix><DDMMYYYY>`; the date suffix is computed in `auth.data.ts`, so only the fixed prefix is
 stored as a secret. The Claude workflows also need
 `CLAUDE_CODE_OAUTH_TOKEN` (from `claude setup-token` — uses your Claude subscription, no
-separate API billing).
+separate API billing). [AI test-generation](#ai-test-generation-from-a-jira-ticket--qa-test-generationyml)
+additionally needs `JIRA_BASE_URL` / `JIRA_EMAIL` / `JIRA_API_TOKEN` and `VOYAGE_API_KEY`.
 
 ### Test report dashboard
 
@@ -267,3 +274,71 @@ run **and** no unmerged triage/decision PR is about to add another marker for it
 comments on the issue (which cleared, which didn't) and leaves it open. Each removal is an
 isolated one-line change so a reviewer can drop any they don't yet trust — one green run isn't
 proof a bug is fixed.
+
+### AI test-generation from a Jira ticket — `qa-test-generation.yml`
+
+A separate entry point from everything above: instead of starting from a human-opened PR, this
+one starts from a Jira ticket and *produces* the PR. Manual, one-ticket-at-a-time pilot —
+**Actions → QA Test Generation (pilot) → Run workflow**, given a ticket key (e.g. `DEV-1`).
+
+```mermaid
+flowchart TD
+    Ticket["Jira ticket<br/>(workflow_dispatch, one key)"]
+    Fetch["fetch-ticket<br/>ticket + epic/linked issues + attachments"]
+    Related["related-tickets<br/>JQL recall (component/label/parent)<br/>→ Voyage embed → cosine ≥ 0.8<br/>cache on gh-pages"]
+    Gen["generate-tests<br/>Claude: existing suite + live app<br/>grounding via Playwright MCP"]
+    TestPR["PR — qa-test-generation label<br/>confident scenarios as real tests"]
+    NeedsIssue["Issue — qa-test-generation label<br/>ambiguous scenarios, one question each"]
+    HumanCommit{"human pushes a commit<br/>onto the PR?"}
+    PRReview["qa-pr-review.yml"]
+    Merge["merge to main<br/>(same as any tests/** PR)"]
+
+    Ticket --> Fetch --> Related --> Gen
+    Gen -->|scenarios it's confident about| TestPR
+    Gen -->|ambiguous scenarios| NeedsIssue
+    TestPR --> HumanCommit
+    HumanCommit -->|yes| PRReview
+    HumanCommit -->|no, merges as-is| Merge
+    PRReview -->|inline comments| TestPR
+    PRReview -->|no violations, human merges| Merge
+```
+
+Three jobs, each handing an artifact to the next:
+
+- **`fetch-ticket`** (`timeout-minutes: 5`) — `scripts/fetch-jira-ticket.js` pulls the ticket plus
+  its epic/parent and explicitly linked issues (one level deep, no project-wide search), downloads
+  any image/video attachments (video frames pre-extracted at 2fps for the next job to read), and
+  uploads the result as an artifact.
+- **`related-tickets`** (`timeout-minutes: 10`) — RAG retrieval for extra domain context, *not*
+  correctness. `scripts/fetch-related-jira-tickets.js` runs a JQL search of the main ticket's own
+  project for tickets sharing its component/label/parent (recall only); whatever isn't already
+  cached gets embedded via Voyage (`scripts/score-related-jira-tickets.js`, model `voyage-3.5`),
+  and only candidates at or above a **0.8 cosine-similarity** threshold survive, sorted by score.
+  The embedding cache (`jira-embedding-cache.json`) lives on `gh-pages`, keyed by each ticket's own
+  `updated` timestamp, so nothing gets re-embedded across runs unless the ticket actually changed.
+  An empty `related` list is a normal outcome, not a failure — the threshold started at 0.6 and
+  was raised to 0.8 after a real run showed same-module-but-different-feature tickets (e.g. a
+  login-form ticket against a registration ticket, both labeled `auth`) scoring 0.70–0.76, well
+  above 0.6 but clearly below the 0.85+ genuinely-related tickets scored — cosine similarity from
+  short, same-domain ticket text clusters in a high band regardless of fine-grained relevance, so
+  the cutoff needs calibrating against real examples rather than assumed.
+- **`generate-tests`** (`timeout-minutes: 30`) — hands the ticket, the related-tickets context, and
+  [`docs/conventions.md`](docs/conventions.md) to Claude
+  (prompt: [`qa-test-generation.md`](.github/prompts/qa-test-generation.md)). It reads
+  `tests/functional/**` to see what's already covered, drives a headless browser via
+  `@playwright/mcp` against the live app to ground *how* a scenario needs to be written (real
+  testids, real flow, real request shapes — never to decide what's *correct*, that's the ticket's
+  job), then for every scenario it's confident about writes the actual test code and opens one PR;
+  for anything ambiguous or contradicted by what it observed live, it opens one issue asking a
+  precise question instead of guessing. Either step is skipped entirely if there's nothing for it
+  to do (all covered already, or nothing flagged). No job here runs the newly generated tests —
+  they go through `playwright.yml` after merge like any other change to `tests/**`, and a
+  subsequent failure or flake is picked up by `qa-triage.yml` like any other.
+
+The PR it opens (and the triage/decision/cleanup PRs above) are **not** re-run through
+`qa-pr-review.yml` automatically — see the note at the end of
+[PR review against conventions](#pr-review-against-conventions): those already had
+`docs/conventions.md` fed into their own generation, so review only kicks in once a human commits
+their own change on top. A human still has to merge every PR this opens either way — same as any
+other change to `tests/**` — the gate above is about whether the *conventions checker* also runs a
+second pass, not about whether a human reviews it.
