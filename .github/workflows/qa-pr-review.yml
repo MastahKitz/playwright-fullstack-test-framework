@@ -14,11 +14,6 @@ permissions:
 
 jobs:
   review:
-    # Skip PRs opened by bots — the triage / decision / cleanup PRs this system
-    # opens are authored by github-actions[bot], and claude-code-action refuses
-    # to run for a bot actor anyway. This review is for human-authored test
-    # changes only.
-    if: github.event.pull_request.user.type != 'Bot'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -26,7 +21,32 @@ jobs:
         with:
           fetch-depth: 1
 
+      # This repo's own automation commits as qa-test-gen-bot / qa-triage-bot (see
+      # .github/prompts/qa-test-generation.md, qa-results-analysis.md) — those PRs
+      # already had conventions.md fed into their own generation, so a second bot
+      # re-checking the same content against the same doc is redundant. What
+      # actually needs review is any commit *not* from those identities, whoever
+      # opened the PR — so this checks every commit currently on the PR rather
+      # than just who opened it, and skips only while all of them are still
+      # bot-only. The moment a human pushes their own commit onto a bot-opened
+      # PR, this flips and review runs against it, same as any other PR.
+      - name: Check whether every commit on this PR is still bot-only
+        id: gate
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          all_bot=true
+          while IFS= read -r email; do
+            case "$email" in
+              qa-test-gen-bot@users.noreply.github.com|qa-triage-bot@users.noreply.github.com) ;;
+              *) all_bot=false ;;
+            esac
+          done < <(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/commits" --jq '.[].commit.author.email')
+          echo "all_bot=$all_bot" >> "$GITHUB_OUTPUT"
+
       - name: Load review prompt
+        if: steps.gate.outputs.all_bot != 'true'
         # The prompt references docs/conventions.md as the source of truth; inline it
         # here so the conventions are guaranteed to be in context, not just fetchable.
         run: |
@@ -42,6 +62,7 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: Review PR against test framework conventions
+        if: steps.gate.outputs.all_bot != 'true'
         uses: anthropics/claude-code-action@v1
         with:
           # Generated via `claude setup-token` (uses your Claude subscription, no separate
