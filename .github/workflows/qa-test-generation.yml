@@ -198,9 +198,21 @@ jobs:
       # testids, real DOM structure, real flow) is something the app itself has to
       # answer. Installed here (not via the repo's own package.json) because
       # @playwright/mcp pulls its own pinned playwright-core; installing browsers
-      # against whatever `playwright` npx resolves keeps that pairing consistent.
+      # against whatever `playwright` npx resolves keeps that pairing consistent —
+      # which requires @playwright/mcp's own `playwright` to actually be the one
+      # `npx playwright` resolves. Without a prior local install, a bare
+      # `npx playwright install` fetches whatever's tagged latest-STABLE on the
+      # registry, which can trail @playwright/mcp's own pin (it's shipped an
+      # alpha build ahead of the latest stable release before) and installs a
+      # different Chromium build than the MCP server actually expects at
+      # runtime — exactly what broke run #8 ("chromium-1244 not installed, only
+      # chromium-1243 present"). Installing @playwright/mcp first makes its own
+      # `playwright` the one `node_modules/.bin` resolves, so the two can never
+      # drift apart, regardless of which version "latest" is on either side.
       - name: Install Playwright browsers for the MCP server
-        run: npx --yes playwright install --with-deps chromium
+        run: |
+          npm install --no-save @playwright/mcp@latest
+          npx playwright install --with-deps chromium
 
       - name: Compute admin password's daily date suffix
         id: admin-date-suffix
