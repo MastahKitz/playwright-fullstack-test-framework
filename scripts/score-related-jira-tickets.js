@@ -27,7 +27,7 @@
 //   <cacheFile>       - path to the embedding cache JSON. Read if present
 //                        (missing file == empty cache, first run); rewritten
 //                        in place whenever any ticket needed a fresh embedding.
-//   [threshold]       - cosine similarity cutoff, default 0.6.
+//   [threshold]       - cosine similarity cutoff, default 0.8.
 //
 // Output (stdout):
 //   { mainTicket: string, threshold: number, related: [{ key, summary, description, score }] }
@@ -39,7 +39,7 @@ const fs = require('fs');
 const VOYAGE_MODEL = 'voyage-3.5';
 
 const [mainTicketPath, candidatesPath, cacheFile, thresholdArg] = process.argv.slice(2);
-const THRESHOLD = thresholdArg !== undefined ? Number(thresholdArg) : 0.6;
+const THRESHOLD = thresholdArg !== undefined ? Number(thresholdArg) : 0.8;
 
 if (!mainTicketPath || !candidatesPath || !cacheFile) {
   console.error(
