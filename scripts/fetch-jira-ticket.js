@@ -24,10 +24,16 @@
 // Output shape:
 //   {
 //     key, summary, description, components: [string], labels: [string],
+//     updated: string,
 //     epic: { key, summary, description } | null,
 //     linkedIssues: [ { key, type, summary, description } ],
 //     attachments: [ { filename, mimeType, localPath | null } ]
 //   }
+//   `updated` (Jira's own last-modified timestamp) is included so the
+//   RAG-retrieved-related-tickets pipeline (scripts/fetch-related-jira-tickets.js,
+//   scripts/score-related-jira-tickets.js) can cache this ticket's embedding
+//   the same way it caches every candidate's — see memory:
+//   qa-test-generation-rag-related-tickets.
 
 const fs = require('fs');
 const path = require('path');
@@ -48,7 +54,7 @@ if (!JIRA_BASE_URL || !JIRA_EMAIL || !JIRA_API_TOKEN) {
 }
 
 const AUTH_HEADER = `Basic ${Buffer.from(`${JIRA_EMAIL}:${JIRA_API_TOKEN}`).toString('base64')}`;
-const FIELDS = 'summary,description,attachment,issuelinks,parent,components,labels';
+const FIELDS = 'summary,description,attachment,issuelinks,parent,components,labels,updated';
 
 async function jiraGet(urlPath) {
   const res = await fetch(`${JIRA_BASE_URL}${urlPath}`, {
@@ -117,6 +123,7 @@ async function main() {
     description: adfToText(fields.description).trim(),
     components: (fields.components || []).map((c) => c.name),
     labels: fields.labels || [],
+    updated: fields.updated,
     epic,
     linkedIssues,
     attachments,
