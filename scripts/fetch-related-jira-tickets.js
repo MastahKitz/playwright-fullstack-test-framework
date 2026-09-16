@@ -26,7 +26,14 @@
 const { adfToText } = require('./lib/adf-to-text');
 
 const TICKET_KEY = process.argv[2];
-const MAX_RESULTS = Number(process.argv[3]) || 25;
+// 100 is the real ceiling here, not an arbitrary choice: Jira caps
+// /rest/api/3/search/jql at 100 results per request whenever a `fields`
+// parameter is set (confirmed by Atlassian as intended behavior, not a bug —
+// https://community.atlassian.com/forums/Jira-questions/Why-is-rest-api-3-search-jql-only-returning-100-issues-when/qaq-p/2936002),
+// and this script always requests fields. Asking for more just gets silently
+// truncated back to 100, so going higher would need real pagination via
+// nextPageToken, which this script doesn't implement (recall step only).
+const MAX_RESULTS = Number(process.argv[3]) || 100;
 
 if (!TICKET_KEY) {
   console.error('Usage: node scripts/fetch-related-jira-tickets.js <TICKET-KEY> [maxResults]');
@@ -82,7 +89,13 @@ async function main() {
     return;
   }
 
-  const jql = `project = ${projectKey} AND key != ${TICKET_KEY} AND (${orClauses.join(' OR ')})`;
+  // ORDER BY updated DESC matters once matches exceed MAX_RESULTS (very
+  // plausible on an established project — a single OR across
+  // component/label/parent can pull in hundreds of tickets): it biases the
+  // page we keep toward recently-touched tickets, which are both more likely
+  // relevant to current work and more likely to reflect current conventions
+  // than whatever arbitrary order Jira would otherwise return.
+  const jql = `project = ${projectKey} AND key != ${TICKET_KEY} AND (${orClauses.join(' OR ')}) ORDER BY updated DESC`;
 
   // /rest/api/3/search is deprecated on Jira Cloud; /search/jql is the
   // current replacement (same request shape, minus startAt/total paging).
@@ -102,7 +115,17 @@ async function main() {
   if (!res.ok) {
     throw new Error(`Jira search failed: ${res.status} ${res.statusText}\n${await res.text()}`);
   }
-  const { issues } = await res.json();
+  const { issues, isLast } = await res.json();
+
+  // isLast === false means more matches exist beyond this one page — this
+  // script doesn't paginate (recall step only, see header), so surface the
+  // drop instead of silently discarding candidates with no trace.
+  if (isLast === false) {
+    console.error(
+      `Warning: JQL matched more than ${MAX_RESULTS} candidate(s) for ${TICKET_KEY} — ` +
+        `keeping only the ${MAX_RESULTS} most recently updated.`,
+    );
+  }
 
   const candidates = issues.map((c) => ({
     key: c.key,
