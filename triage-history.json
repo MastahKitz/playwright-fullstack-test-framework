@@ -1,5 +1,13 @@
 [
   {
+    "runNumber": 52,
+    "newFailures": 0,
+    "scriptErrors": 0,
+    "issuesFiled": 0,
+    "validBugs": 0,
+    "unsure": 0
+  },
+  {
     "runNumber": 51,
     "newFailures": 3,
     "scriptErrors": 2,
@@ -25,14 +33,6 @@
   },
   {
     "runNumber": 48,
-    "newFailures": 0,
-    "scriptErrors": 0,
-    "issuesFiled": 0,
-    "validBugs": 0,
-    "unsure": 0
-  },
-  {
-    "runNumber": 47,
     "newFailures": 0,
     "scriptErrors": 0,
     "issuesFiled": 0,
