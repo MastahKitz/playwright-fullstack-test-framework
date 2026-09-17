@@ -1,0 +1,2316 @@
+{
+  "config": {
+    "argv": [],
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/global.setup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "ci": {
+        "commitHref": "https://github.com/MastahKitz/playwright-fullstack-test-framework/commit/7f435cb52cda4620fe3a76d4928aa4451ac0bd11",
+        "commitHash": "7f435cb52cda4620fe3a76d4928aa4451ac0bd11",
+        "buildHref": "https://github.com/MastahKitz/playwright-fullstack-test-framework/actions/runs/35181583598"
+      },
+      "gitCommit": {
+        "shortHash": "7f435cb",
+        "hash": "7f435cb52cda4620fe3a76d4928aa4451ac0bd11",
+        "subject": "Test/update doc0916 (#112)",
+        "body": "Test/update doc0916 (#112)\n\n* Fix MCP browser/version mismatch in qa-test-generation.yml\n\n@playwright/mcp@latest bumped to an alpha playwright build (0.0.81,\n2026-09-14) whose default Chromium build outran what the workflow's\nseparate, unpinned `npx playwright install` step fetches (latest-stable\ntrails the MCP's alpha pin). Install @playwright/mcp first so the\nbrowser-install step resolves its own bundled playwright instead of an\nindependently-resolved \"latest\", keeping the two from drifting apart\nregardless of future version bumps on either side.\n\nRoot-caused from run #8 (https://github.com/MastahKitz/playwright-fullstack-test-framework/actions/runs/35079886799),\nwhich blocked before writing any test code because the MCP server's\nbrowser (chromium-1244) wasn't installed (only chromium-1243 was).\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>\n\n* update docs\n\n---------\n\nCo-authored-by: Claude Sonnet 5 <noreply@anthropic.com>",
+        "author": {
+          "name": "keith.wang",
+          "email": "mastahkitz@gmail.com",
+          "time": 1789571442000
+        },
+        "committer": {
+          "name": "GitHub",
+          "email": "noreply@github.com",
+          "time": 1789571442000
+        },
+        "branch": "main"
+      },
+      "actualWorkers": 7
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/MastahKitz/playwright-fullstack-test-framework/commit/7f435cb52cda4620fe3a76d4928aa4451ac0bd11",
+            "commitHash": "7f435cb52cda4620fe3a76d4928aa4451ac0bd11",
+            "buildHref": "https://github.com/MastahKitz/playwright-fullstack-test-framework/actions/runs/35181583598"
+          },
+          "gitCommit": {
+            "shortHash": "7f435cb",
+            "hash": "7f435cb52cda4620fe3a76d4928aa4451ac0bd11",
+            "subject": "Test/update doc0916 (#112)",
+            "body": "Test/update doc0916 (#112)\n\n* Fix MCP browser/version mismatch in qa-test-generation.yml\n\n@playwright/mcp@latest bumped to an alpha playwright build (0.0.81,\n2026-09-14) whose default Chromium build outran what the workflow's\nseparate, unpinned `npx playwright install` step fetches (latest-stable\ntrails the MCP's alpha pin). Install @playwright/mcp first so the\nbrowser-install step resolves its own bundled playwright instead of an\nindependently-resolved \"latest\", keeping the two from drifting apart\nregardless of future version bumps on either side.\n\nRoot-caused from run #8 (https://github.com/MastahKitz/playwright-fullstack-test-framework/actions/runs/35079886799),\nwhich blocked before writing any test code because the MCP server's\nbrowser (chromium-1244) wasn't installed (only chromium-1243 was).\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>\n\n* update docs\n\n---------\n\nCo-authored-by: Claude Sonnet 5 <noreply@anthropic.com>",
+            "author": {
+              "name": "keith.wang",
+              "email": "mastahkitz@gmail.com",
+              "time": 1789571442000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1789571442000
+            },
+            "branch": "main"
+          },
+          "actualWorkers": 2
+        },
+        "name": "webkit-mutating",
+        "testDir": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.spec.ts"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/test-results",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/MastahKitz/playwright-fullstack-test-framework/commit/7f435cb52cda4620fe3a76d4928aa4451ac0bd11",
+            "commitHash": "7f435cb52cda4620fe3a76d4928aa4451ac0bd11",
+            "buildHref": "https://github.com/MastahKitz/playwright-fullstack-test-framework/actions/runs/35181583598"
+          },
+          "gitCommit": {
+            "shortHash": "7f435cb",
+            "hash": "7f435cb52cda4620fe3a76d4928aa4451ac0bd11",
+            "subject": "Test/update doc0916 (#112)",
+            "body": "Test/update doc0916 (#112)\n\n* Fix MCP browser/version mismatch in qa-test-generation.yml\n\n@playwright/mcp@latest bumped to an alpha playwright build (0.0.81,\n2026-09-14) whose default Chromium build outran what the workflow's\nseparate, unpinned `npx playwright install` step fetches (latest-stable\ntrails the MCP's alpha pin). Install @playwright/mcp first so the\nbrowser-install step resolves its own bundled playwright instead of an\nindependently-resolved \"latest\", keeping the two from drifting apart\nregardless of future version bumps on either side.\n\nRoot-caused from run #8 (https://github.com/MastahKitz/playwright-fullstack-test-framework/actions/runs/35079886799),\nwhich blocked before writing any test code because the MCP server's\nbrowser (chromium-1244) wasn't installed (only chromium-1243 was).\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>\n\n* update docs\n\n---------\n\nCo-authored-by: Claude Sonnet 5 <noreply@anthropic.com>",
+            "author": {
+              "name": "keith.wang",
+              "email": "mastahkitz@gmail.com",
+              "time": 1789571442000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1789571442000
+            },
+            "branch": "main"
+          },
+          "actualWorkers": 5
+        },
+        "name": "webkit",
+        "testDir": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.spec.ts"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "test-report",
+          "open": "never"
+        }
+      ],
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-report/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "configFile": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/playwright.config.ts",
+    "rootDir": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional",
+    "quiet": false,
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 10,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "product/product-api-create.spec.ts",
+      "file": "product/product-api-create.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "product create api",
+          "file": "product/product-api-create.spec.ts",
+          "line": 11,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate admin can create a product",
+              "ok": true,
+              "tags": [
+                "product",
+                "api",
+                "mutating"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit-mutating",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1677,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:21:48.506Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7a81ac3defb1c277bf14-fec20bf798c3c66601f3",
+              "file": "product/product-api-create.spec.ts",
+              "line": 27,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product/product-api-delete.spec.ts",
+      "file": "product/product-api-delete.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "product delete api",
+          "file": "product/product-api-delete.spec.ts",
+          "line": 10,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate admin can delete a product",
+              "ok": true,
+              "tags": [
+                "product",
+                "api",
+                "mutating"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit-mutating",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1615,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:21:48.481Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3f40dd04b50657bb55f8-7c558b22721bd2c028f2",
+              "file": "product/product-api-delete.spec.ts",
+              "line": 19,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "auth/auth-api-error.spec.ts",
+      "file": "auth/auth-api-error.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "auth api - errors",
+          "file": "auth/auth-api-error.spec.ts",
+          "line": 11,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user cannot login with invalid credentials",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 879,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:21:57.393Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "98a19df4c177413b4efc-34363127995acf973003",
+              "file": "auth/auth-api-error.spec.ts",
+              "line": 13,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot login with blank username",
+              "ok": false,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 197,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:40:25)\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api.assertions.ts:48:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api-error.spec.ts:20:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                          "column": 25,
+                          "line": 40
+                        },
+                        "snippet": "   at utils/api.utils.ts:40\n\n\u001b[0m \u001b[90m 38 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36mfunction\u001b[39m assertResponseBody(actual\u001b[33m:\u001b[39m unknown\u001b[33m,\u001b[39m expected\u001b[33m:\u001b[39m \u001b[33mRecord\u001b[39m\u001b[33m<\u001b[39m\u001b[33mstring\u001b[39m\u001b[33m,\u001b[39m unknown\u001b[33m>\u001b[39m\u001b[33m,\u001b[39m options\u001b[33m?\u001b[39m\u001b[33m:\u001b[39m { exact\u001b[33m?\u001b[39m\u001b[33m:\u001b[39m boolean }) {\n \u001b[90m 39 |\u001b[39m   \u001b[36mif\u001b[39m (options\u001b[33m?\u001b[39m\u001b[33m.\u001b[39mexact) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoEqual(expected)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m   } \u001b[36melse\u001b[39m {\n \u001b[90m 42 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoMatchObject(expected)\u001b[33m;\u001b[39m\n \u001b[90m 43 |\u001b[39m   }\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                            "column": 25,
+                            "line": 40
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m\n\n   at utils/api.utils.ts:40\n\n  38 | export function assertResponseBody(actual: unknown, expected: Record<string, unknown>, options?: { exact?: boolean }) {\n  39 |   if (options?.exact) {\n> 40 |     expect.soft(actual).toEqual(expected);\n     |                         ^\n  41 |   } else {\n  42 |     expect.soft(actual).toMatchObject(expected);\n  43 |   }\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:40:25)\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api.assertions.ts:48:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api-error.spec.ts:20:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:21:58.409Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/bb77fc5dba0aef1354900bda24b108b29f390076.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/693cc669a9e15e42daee69c89fe8f5bb9b38d30f.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                        "column": 25,
+                        "line": 40
+                      }
+                    },
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 738,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:40:25)\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api.assertions.ts:48:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api-error.spec.ts:20:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                          "column": 25,
+                          "line": 40
+                        },
+                        "snippet": "   at utils/api.utils.ts:40\n\n\u001b[0m \u001b[90m 38 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36mfunction\u001b[39m assertResponseBody(actual\u001b[33m:\u001b[39m unknown\u001b[33m,\u001b[39m expected\u001b[33m:\u001b[39m \u001b[33mRecord\u001b[39m\u001b[33m<\u001b[39m\u001b[33mstring\u001b[39m\u001b[33m,\u001b[39m unknown\u001b[33m>\u001b[39m\u001b[33m,\u001b[39m options\u001b[33m?\u001b[39m\u001b[33m:\u001b[39m { exact\u001b[33m?\u001b[39m\u001b[33m:\u001b[39m boolean }) {\n \u001b[90m 39 |\u001b[39m   \u001b[36mif\u001b[39m (options\u001b[33m?\u001b[39m\u001b[33m.\u001b[39mexact) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoEqual(expected)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m   } \u001b[36melse\u001b[39m {\n \u001b[90m 42 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoMatchObject(expected)\u001b[33m;\u001b[39m\n \u001b[90m 43 |\u001b[39m   }\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                            "column": 25,
+                            "line": 40
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m\n\n   at utils/api.utils.ts:40\n\n  38 | export function assertResponseBody(actual: unknown, expected: Record<string, unknown>, options?: { exact?: boolean }) {\n  39 |   if (options?.exact) {\n> 40 |     expect.soft(actual).toEqual(expected);\n     |                         ^\n  41 |   } else {\n  42 |     expect.soft(actual).toMatchObject(expected);\n  43 |   }\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:40:25)\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api.assertions.ts:48:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api-error.spec.ts:20:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-09-17T04:22:01.425Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/0d728a53041b16d84795908ec58b3980e32574e0.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/ff6691698c9495218900f85ad693354cfb5a9fda.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                        "column": 25,
+                        "line": 40
+                      }
+                    },
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 963,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:40:25)\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api.assertions.ts:48:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api-error.spec.ts:20:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                          "column": 25,
+                          "line": 40
+                        },
+                        "snippet": "   at utils/api.utils.ts:40\n\n\u001b[0m \u001b[90m 38 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36mfunction\u001b[39m assertResponseBody(actual\u001b[33m:\u001b[39m unknown\u001b[33m,\u001b[39m expected\u001b[33m:\u001b[39m \u001b[33mRecord\u001b[39m\u001b[33m<\u001b[39m\u001b[33mstring\u001b[39m\u001b[33m,\u001b[39m unknown\u001b[33m>\u001b[39m\u001b[33m,\u001b[39m options\u001b[33m?\u001b[39m\u001b[33m:\u001b[39m { exact\u001b[33m?\u001b[39m\u001b[33m:\u001b[39m boolean }) {\n \u001b[90m 39 |\u001b[39m   \u001b[36mif\u001b[39m (options\u001b[33m?\u001b[39m\u001b[33m.\u001b[39mexact) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoEqual(expected)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m   } \u001b[36melse\u001b[39m {\n \u001b[90m 42 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoMatchObject(expected)\u001b[33m;\u001b[39m\n \u001b[90m 43 |\u001b[39m   }\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                            "column": 25,
+                            "line": 40
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[33m@@ -3,11 +3,11 @@\u001b[39m\n\u001b[2m      \"issues\": Array [\u001b[22m\n\u001b[2m        Object {\u001b[22m\n\u001b[2m          \"code\": \"too_small\",\u001b[22m\n\u001b[2m          \"exact\": false,\u001b[22m\n\u001b[2m          \"inclusive\": true,\u001b[22m\n\u001b[32m-         \"message\": \"Username is required\",\u001b[39m\n\u001b[31m+         \"message\": \"Username or email is required\",\u001b[39m\n\u001b[2m          \"minimum\": 1,\u001b[22m\n\u001b[2m          \"path\": Array [\u001b[22m\n\u001b[2m            \"username\",\u001b[22m\n\u001b[2m          ],\u001b[22m\n\u001b[2m          \"type\": \"string\",\u001b[22m\n\n   at utils/api.utils.ts:40\n\n  38 | export function assertResponseBody(actual: unknown, expected: Record<string, unknown>, options?: { exact?: boolean }) {\n  39 |   if (options?.exact) {\n> 40 |     expect.soft(actual).toEqual(expected);\n     |                         ^\n  41 |   } else {\n  42 |     expect.soft(actual).toMatchObject(expected);\n  43 |   }\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:40:25)\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api.assertions.ts:48:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-api-error.spec.ts:20:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-09-17T04:22:05.727Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/348fea02f23bc05ae7acd6b880911b5d6bbe7043.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/2a00db2e2f3dcd8b18f8adb745ab98c0b784ed73.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                        "column": 25,
+                        "line": 40
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "98a19df4c177413b4efc-574705a91d8e11dd2963",
+              "file": "auth/auth-api-error.spec.ts",
+              "line": 18,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot login with blank password",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1031,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:08.721Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "98a19df4c177413b4efc-6f68ac7c6969e973dd9a",
+              "file": "auth/auth-api-error.spec.ts",
+              "line": 23,
+              "column": 7
+            },
+            {
+              "title": "validate locked user cannot login",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 577,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:09.969Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "98a19df4c177413b4efc-dcc6853fe46a6100d964",
+              "file": "auth/auth-api-error.spec.ts",
+              "line": 28,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "auth/auth-api.spec.ts",
+      "file": "auth/auth-api.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "auth api",
+          "file": "auth/auth-api.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate standard user can login",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1280,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:21:57.412Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "960ed654433cba842d5e-1de4d9cadd83ddcd3ac4",
+              "file": "auth/auth-api.spec.ts",
+              "line": 10,
+              "column": 7
+            },
+            {
+              "title": "validate admin user can login",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 678,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:21:58.897Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "960ed654433cba842d5e-63f9b50c800f5796948f",
+              "file": "auth/auth-api.spec.ts",
+              "line": 15,
+              "column": 7
+            },
+            {
+              "title": "validate standard user can logout",
+              "ok": true,
+              "tags": [
+                "auth",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1026,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:21:59.641Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "960ed654433cba842d5e-bb71cc4bfa6e69354493",
+              "file": "auth/auth-api.spec.ts",
+              "line": 20,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "auth/auth-error.spec.ts",
+      "file": "auth/auth-error.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "auth - errors",
+          "file": "auth/auth-error.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user cannot login with invalid credentials",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 8567,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:21:57.367Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "812bc745f1822d6eb442-b5801eea7985513aebaf",
+              "file": "auth/auth-error.spec.ts",
+              "line": 9,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot login with blank username",
+              "ok": false,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 13889,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts:21:78)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-error.spec.ts:16:38",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                          "column": 78,
+                          "line": 21
+                        },
+                        "snippet": "   at auth/auth.assertions.ts:21\n\n\u001b[0m \u001b[90m 19 |\u001b[39m\n \u001b[90m 20 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertUsernameRequiredError(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 21 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Username is required'\u001b[39m\u001b[33m,\u001b[39m { exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m }))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 22 |\u001b[39m }\n \u001b[90m 23 |\u001b[39m\n \u001b[90m 24 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertPasswordRequiredError(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m) {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                            "column": 78,
+                            "line": 21
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n\n\n   at auth/auth.assertions.ts:21\n\n  19 |\n  20 | export async function assertUsernameRequiredError(page: Page) {\n> 21 |   await expect.soft(page.getByText('Username is required', { exact: true })).toBeVisible();\n     |                                                                              ^\n  22 | }\n  23 |\n  24 | export async function assertPasswordRequiredError(page: Page) {\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts:21:78)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-error.spec.ts:16:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:06.319Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/657246a610001de32c45ca4c42231b6e4059a464.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/eead6823ff51995b9e2b253429fb1d9a6666d585.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/afbd4bdcb1887fc2f9f8b57b738e485598803247.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/1f9b6add8df2c7e57afcd8b3d6f452007fb5ca0a.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                        "column": 78,
+                        "line": 21
+                      }
+                    },
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 14186,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts:21:78)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-error.spec.ts:16:38",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                          "column": 78,
+                          "line": 21
+                        },
+                        "snippet": "   at auth/auth.assertions.ts:21\n\n\u001b[0m \u001b[90m 19 |\u001b[39m\n \u001b[90m 20 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertUsernameRequiredError(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 21 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Username is required'\u001b[39m\u001b[33m,\u001b[39m { exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m }))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 22 |\u001b[39m }\n \u001b[90m 23 |\u001b[39m\n \u001b[90m 24 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertPasswordRequiredError(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m) {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                            "column": 78,
+                            "line": 21
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n\n\n   at auth/auth.assertions.ts:21\n\n  19 |\n  20 | export async function assertUsernameRequiredError(page: Page) {\n> 21 |   await expect.soft(page.getByText('Username is required', { exact: true })).toBeVisible();\n     |                                                                              ^\n  22 | }\n  23 |\n  24 | export async function assertPasswordRequiredError(page: Page) {\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts:21:78)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-error.spec.ts:16:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-09-17T04:22:24.623Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/24b2db03a43fdb7d5989770f000871ffb5365d87.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/867695212faa9b9a4ee18b92b756a189f36ec29b.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/15a740190a503cebd6afff47e34684200f59d5d6.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/da9265b9900446dc24a30494fc7ea9d3020d8f5b.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                        "column": 78,
+                        "line": 21
+                      }
+                    },
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 12474,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts:21:78)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-error.spec.ts:16:38",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                          "column": 78,
+                          "line": 21
+                        },
+                        "snippet": "   at auth/auth.assertions.ts:21\n\n\u001b[0m \u001b[90m 19 |\u001b[39m\n \u001b[90m 20 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertUsernameRequiredError(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 21 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Username is required'\u001b[39m\u001b[33m,\u001b[39m { exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m }))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 22 |\u001b[39m }\n \u001b[90m 23 |\u001b[39m\n \u001b[90m 24 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertPasswordRequiredError(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m) {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                            "column": 78,
+                            "line": 21
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Username is required', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"soft toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Username is required', { exact: true })\u001b[22m\n\n\n   at auth/auth.assertions.ts:21\n\n  19 |\n  20 | export async function assertUsernameRequiredError(page: Page) {\n> 21 |   await expect.soft(page.getByText('Username is required', { exact: true })).toBeVisible();\n     |                                                                              ^\n  22 | }\n  23 |\n  24 | export async function assertPasswordRequiredError(page: Page) {\n    at assertUsernameRequiredError (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts:21:78)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth-error.spec.ts:16:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-09-17T04:22:42.414Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/d90f2d89eda37ad4811520f5f144c025c18ade70.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/064fc5158438fc8b5485cac2b904e011f84b6976.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/8280e05d2e8c2bdd56ac292115923b8f50f0ad13.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/ad07acaa82ebc92e57d3ebaf086dbf9346422bbc.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/auth/auth.assertions.ts",
+                        "column": 78,
+                        "line": 21
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "812bc745f1822d6eb442-e9937494bddae129fc26",
+              "file": "auth/auth-error.spec.ts",
+              "line": 14,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot login with blank password",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 15,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4618,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:57.115Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "812bc745f1822d6eb442-35bfc215ea6bdc52c6c2",
+              "file": "auth/auth-error.spec.ts",
+              "line": 19,
+              "column": 7
+            },
+            {
+              "title": "validate locked user cannot login",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 15,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4693,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:23:01.927Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "812bc745f1822d6eb442-d6433d8422f86d301702",
+              "file": "auth/auth-error.spec.ts",
+              "line": 24,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "auth/auth.spec.ts",
+      "file": "auth/auth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "auth",
+          "file": "auth/auth.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate standard user can login",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 10017,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:21:57.808Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "11ab049aabb515b3eeb7-964159361353095b2a08",
+              "file": "auth/auth.spec.ts",
+              "line": 9,
+              "column": 7
+            },
+            {
+              "title": "validate admin user can login",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 13535,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:08.091Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "11ab049aabb515b3eeb7-18f6d36b9de0b6df9c5f",
+              "file": "auth/auth.spec.ts",
+              "line": 15,
+              "column": 7
+            },
+            {
+              "title": "validate standard user can logout",
+              "ok": true,
+              "tags": [
+                "auth"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 14849,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:21.699Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "11ab049aabb515b3eeb7-b3381757fbcdce64c54c",
+              "file": "auth/auth.spec.ts",
+              "line": 21,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "order/cart/cart.spec.ts",
+      "file": "order/cart/cart.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "cart",
+          "file": "order/cart/cart.spec.ts",
+          "line": 15,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user can add a product to the cart",
+              "ok": true,
+              "tags": [
+                "cart"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 10254,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:21:57.957Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0c8bf9231599cdbd5a9c-ac75bb9724c389db5a23",
+              "file": "order/cart/cart.spec.ts",
+              "line": 27,
+              "column": 7
+            },
+            {
+              "title": "validate user can add another product to the cart",
+              "ok": true,
+              "tags": [
+                "cart"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 11701,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:10.333Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0c8bf9231599cdbd5a9c-e160b779d79a5d4d964a",
+              "file": "order/cart/cart.spec.ts",
+              "line": 34,
+              "column": 7
+            },
+            {
+              "title": "validate user can increase product quantity in the cart",
+              "ok": true,
+              "tags": [
+                "cart"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 6280,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:22.155Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0c8bf9231599cdbd5a9c-76ea74d535b1dfd607e1",
+              "file": "order/cart/cart.spec.ts",
+              "line": 41,
+              "column": 7
+            },
+            {
+              "title": "validate user can decrease product quantity in the cart",
+              "ok": true,
+              "tags": [
+                "cart"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 6640,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:28.557Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0c8bf9231599cdbd5a9c-ec522a3d895a1d382646",
+              "file": "order/cart/cart.spec.ts",
+              "line": 47,
+              "column": 7
+            },
+            {
+              "title": "validate user can remove a product from the cart",
+              "ok": true,
+              "tags": [
+                "cart"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 5883,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:35.274Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0c8bf9231599cdbd5a9c-34da60a91b35b50cb8ec",
+              "file": "order/cart/cart.spec.ts",
+              "line": 53,
+              "column": 7
+            },
+            {
+              "title": "validate user can remove another product from the cart",
+              "ok": true,
+              "tags": [
+                "cart"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 4751,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:41.208Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0c8bf9231599cdbd5a9c-8afbdacf8fc8ef330774",
+              "file": "order/cart/cart.spec.ts",
+              "line": 59,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "order/checkout/checkout-error.spec.ts",
+      "file": "order/checkout/checkout-error.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "checkout - errors",
+          "file": "order/checkout/checkout-error.spec.ts",
+          "line": 20,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user cannot checkout with a blank first name",
+              "ok": true,
+              "tags": [
+                "checkout"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 5206,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:00.844Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d6b487077df482931c0e-1466a3c7337c25ef68b6",
+              "file": "order/checkout/checkout-error.spec.ts",
+              "line": 34,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot checkout with a blank last name",
+              "ok": true,
+              "tags": [
+                "checkout"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 8141,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:20.386Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d6b487077df482931c0e-0f11cba12bf0dba86bf8",
+              "file": "order/checkout/checkout-error.spec.ts",
+              "line": 40,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot checkout with a blank shipping address",
+              "ok": true,
+              "tags": [
+                "checkout"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4593,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:28.598Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d6b487077df482931c0e-975aee18194ab110a9ab",
+              "file": "order/checkout/checkout-error.spec.ts",
+              "line": 46,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot checkout with a blank card number",
+              "ok": true,
+              "tags": [
+                "checkout"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 5448,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:33.292Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d6b487077df482931c0e-72cad235ac9bd9784f44",
+              "file": "order/checkout/checkout-error.spec.ts",
+              "line": 52,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot checkout with a blank card expiry",
+              "ok": true,
+              "tags": [
+                "checkout"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 6677,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:38.875Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d6b487077df482931c0e-cfeb77fb2af28f246d0a",
+              "file": "order/checkout/checkout-error.spec.ts",
+              "line": 58,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot checkout with a blank card CVV",
+              "ok": true,
+              "tags": [
+                "checkout"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4119,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:45.613Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d6b487077df482931c0e-7cb66de4a14e8ef39292",
+              "file": "order/checkout/checkout-error.spec.ts",
+              "line": 64,
+              "column": 7
+            },
+            {
+              "title": "validate user cannot checkout with a blank name on card",
+              "ok": true,
+              "tags": [
+                "checkout"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4142,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:49.793Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d6b487077df482931c0e-0db9ac74d07039d4fa17",
+              "file": "order/checkout/checkout-error.spec.ts",
+              "line": 70,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "order/checkout/checkout.spec.ts",
+      "file": "order/checkout/checkout.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "checkout",
+          "file": "order/checkout/checkout.spec.ts",
+          "line": 10,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user can checkout products from the cart",
+              "ok": true,
+              "tags": [
+                "checkout"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 27343,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:10.676Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "559ea4ecfe34de0b5625-c49d0a7ce749dc04b766",
+              "file": "order/checkout/checkout.spec.ts",
+              "line": 12,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product/product-api-details-error.spec.ts",
+      "file": "product/product-api-details-error.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "product details api - errors",
+          "file": "product/product-api-details-error.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user cannot view a product that does not exist",
+              "ok": true,
+              "tags": [
+                "product",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 907,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:36.670Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0531a781c5b45e1e76aa-d7feb13e03e34829e040",
+              "file": "product/product-api-details-error.spec.ts",
+              "line": 7,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product/product-api-details.spec.ts",
+      "file": "product/product-api-details.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "product details api",
+          "file": "product/product-api-details.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user can view in-stock product details",
+              "ok": true,
+              "tags": [
+                "product",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 329,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:37.686Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1d5f3893e8d8416027c7-a8fc054fcfad931efab4",
+              "file": "product/product-api-details.spec.ts",
+              "line": 8,
+              "column": 7
+            },
+            {
+              "title": "validate user can view out-of-stock product details",
+              "ok": true,
+              "tags": [
+                "product",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 316,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:38.071Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1d5f3893e8d8416027c7-9584e42bfa7d1b5b5a2b",
+              "file": "product/product-api-details.spec.ts",
+              "line": 13,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product/product-api-list.spec.ts",
+      "file": "product/product-api-list.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "product list api",
+          "file": "product/product-api-list.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user can view the product list",
+              "ok": false,
+              "tags": [
+                "product",
+                "api"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 3,
+                      "status": "failed",
+                      "duration": 488,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 39,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 39,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:42:25)\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:46:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                          "column": 25,
+                          "line": 42
+                        },
+                        "snippet": "   at utils/api.utils.ts:42\n\n\u001b[0m \u001b[90m 40 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoEqual(expected)\u001b[33m;\u001b[39m\n \u001b[90m 41 |\u001b[39m   } \u001b[36melse\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 42 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoMatchObject(expected)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 43 |\u001b[39m   }\n \u001b[90m 44 |\u001b[39m }\n \u001b[90m 45 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                            "column": 25,
+                            "line": 42
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 39,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m\n\n   at utils/api.utils.ts:42\n\n  40 |     expect.soft(actual).toEqual(expected);\n  41 |   } else {\n> 42 |     expect.soft(actual).toMatchObject(expected);\n     |                         ^\n  43 |   }\n  44 | }\n  45 |\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:42:25)\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:46:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts",
+                            "column": 26,
+                            "line": 50
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m22\u001b[39m\nReceived length: \u001b[31m39\u001b[39m\nReceived array:  \u001b[31m[{\"createdAt\": \"2026-08-27 12:01:10\", \"description\": \"samad sir product\", \"id\": 18, \"imageKey\": \"products/1787850622373-d1cfbfd5.jpg\", \"imageUrl\": \"/api/images/products/1787850622373-d1cfbfd5.jpg\", \"isActive\": true, \"name\": \"Batman Tshirt \", \"price\": 500, \"slug\": \"batman-tshirt\", \"stock\": 0, \"updatedAt\": \"2026-09-08 12:59:13\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Portable Bluetooth speaker with 360-degree sound and 12-hour battery life.\", \"id\": 4, \"imageKey\": \"products/1783414430049-e232a0f7.jpeg\", \"imageUrl\": \"/api/images/products/1783414430049-e232a0f7.jpeg\", \"isActive\": true, \"name\": \"Bluetooth Speaker\", \"price\": 159.99, \"slug\": \"bluetooth-speaker\", \"stock\": 1078, \"updatedAt\": \"2026-09-16 13:45:12\"}, {\"createdAt\": \"2026-09-05 18:32:17\", \"description\": null, \"id\": 91, \"imageKey\": null, \"isActive\": true, \"name\": \"Bluetooth speaker Test\", \"price\": 1, \"slug\": \"bluetooth-speaker-test\", \"stock\": 0, \"updatedAt\": \"2026-09-08 14:08:12\"}, {\"createdAt\": \"2026-08-27 19:26:06\", \"description\": \"Compact desktop storage tray - updated\", \"id\": 19, \"imageKey\": null, \"isActive\": true, \"name\": \"Desk Organizer\", \"price\": 18.5, \"slug\": \"desk-organizer\", \"stock\": 0, \"updatedAt\": \"2026-09-09 08:56:08\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Water-resistant fitness tracker with sleep monitoring and smartphone notifications.\", \"id\": 5, \"imageKey\": \"products/fitness_tracker.jpg\", \"imageUrl\": \"/api/images/products/fitness_tracker.jpg\", \"isActive\": true, \"name\": \"Fitness Tracker\", \"price\": 89.99, \"slug\": \"fitness-tracker\", \"stock\": 101, \"updatedAt\": \"2026-09-17 04:22:34\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Durable laptop backpack with multiple compartments and USB charging port.\", \"id\": 3, \"imageKey\": \"products/laptop_backpack.jpg\", \"imageUrl\": \"/api/images/products/laptop_backpack.jpg\", \"isActive\": true, \"name\": \"Laptop Backpack\", \"price\": 49.99, \"slug\": \"laptop-backpack\", \"stock\": 469, \"updatedAt\": \"2026-09-17 04:22:35\"}, {\"createdAt\": \"2026-08-25 12:54:07\", \"description\": null, \"id\": 15, \"imageKey\": \"products/1787662419559-f0518193.jpg\", \"imageUrl\": \"/api/images/products/1787662419559-f0518193.jpg\", \"isActive\": true, \"name\": \"Laptop Holder\", \"price\": 20, \"slug\": \"laptop-holder\", \"stock\": 73, \"updatedAt\": \"2026-09-16 07:33:54\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"RGB mechanical gaming keyboard with customizable keys and wrist rest.\", \"id\": 7, \"imageKey\": \"products/mechanical_keyboard.jpg\", \"imageUrl\": \"/api/images/products/mechanical_keyboard.jpg\", \"isActive\": true, \"name\": \"Mechanical Keyboard\", \"price\": 149.99, \"slug\": \"mechanical-keyboard\", \"stock\": 363, \"updatedAt\": \"2026-09-14 18:13:48\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"20000mAh power bank with fast charging and multiple USB ports.\", \"id\": 9, \"imageKey\": \"products/powerbank.jpg\", \"imageUrl\": \"/api/images/products/powerbank.jpg\", \"isActive\": true, \"name\": \"Power Bank\", \"price\": 59.99, \"slug\": \"power-bank\", \"stock\": 416, \"updatedAt\": \"2026-09-16 03:43:48\"}, {\"createdAt\": \"2026-09-10 04:06:33\", \"description\": \"Created by Selenium automated regression test.\", \"id\": 132, \"imageKey\": null, \"isActive\": true, \"name\": \"Selenium Automation Product 1789013192548 Updated\", \"price\": 19.99, \"slug\": \"selenium-automation-product-1789013192548-updated\", \"stock\": 5, \"updatedAt\": \"2026-09-16 03:42:21\"}, …]\u001b[39m\n\n   at product/product-api.assertions.ts:50\n\n  48 |     meta: { total: TOTAL_PRODUCTS_COUNT },\n  49 |   }, { exact: false });\n> 50 |   expect.soft(body.data).toHaveLength(TOTAL_PRODUCTS_COUNT);\n     |                          ^\n  51 | }\n  52 |\n  53 | export async function assertProductInList(response: APIResponse, expected: ExpectedProduct) {\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:50:26)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:38.462Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/fe0edf0d9d9156950c2290e3faf2edcc7e096aad.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/08a532e5490c335a5c2ea3cab24134d51e3f5dde.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                        "column": 25,
+                        "line": 42
+                      }
+                    },
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 3,
+                      "status": "failed",
+                      "duration": 1212,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 39,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 39,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:42:25)\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:46:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                          "column": 25,
+                          "line": 42
+                        },
+                        "snippet": "   at utils/api.utils.ts:42\n\n\u001b[0m \u001b[90m 40 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoEqual(expected)\u001b[33m;\u001b[39m\n \u001b[90m 41 |\u001b[39m   } \u001b[36melse\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 42 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoMatchObject(expected)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 43 |\u001b[39m   }\n \u001b[90m 44 |\u001b[39m }\n \u001b[90m 45 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                            "column": 25,
+                            "line": 42
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 39,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m\n\n   at utils/api.utils.ts:42\n\n  40 |     expect.soft(actual).toEqual(expected);\n  41 |   } else {\n> 42 |     expect.soft(actual).toMatchObject(expected);\n     |                         ^\n  43 |   }\n  44 | }\n  45 |\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:42:25)\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:46:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts",
+                            "column": 26,
+                            "line": 50
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m22\u001b[39m\nReceived length: \u001b[31m39\u001b[39m\nReceived array:  \u001b[31m[{\"createdAt\": \"2026-08-27 12:01:10\", \"description\": \"samad sir product\", \"id\": 18, \"imageKey\": \"products/1787850622373-d1cfbfd5.jpg\", \"imageUrl\": \"/api/images/products/1787850622373-d1cfbfd5.jpg\", \"isActive\": true, \"name\": \"Batman Tshirt \", \"price\": 500, \"slug\": \"batman-tshirt\", \"stock\": 0, \"updatedAt\": \"2026-09-08 12:59:13\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Portable Bluetooth speaker with 360-degree sound and 12-hour battery life.\", \"id\": 4, \"imageKey\": \"products/1783414430049-e232a0f7.jpeg\", \"imageUrl\": \"/api/images/products/1783414430049-e232a0f7.jpeg\", \"isActive\": true, \"name\": \"Bluetooth Speaker\", \"price\": 159.99, \"slug\": \"bluetooth-speaker\", \"stock\": 1078, \"updatedAt\": \"2026-09-16 13:45:12\"}, {\"createdAt\": \"2026-09-05 18:32:17\", \"description\": null, \"id\": 91, \"imageKey\": null, \"isActive\": true, \"name\": \"Bluetooth speaker Test\", \"price\": 1, \"slug\": \"bluetooth-speaker-test\", \"stock\": 0, \"updatedAt\": \"2026-09-08 14:08:12\"}, {\"createdAt\": \"2026-08-27 19:26:06\", \"description\": \"Compact desktop storage tray - updated\", \"id\": 19, \"imageKey\": null, \"isActive\": true, \"name\": \"Desk Organizer\", \"price\": 18.5, \"slug\": \"desk-organizer\", \"stock\": 0, \"updatedAt\": \"2026-09-09 08:56:08\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Water-resistant fitness tracker with sleep monitoring and smartphone notifications.\", \"id\": 5, \"imageKey\": \"products/fitness_tracker.jpg\", \"imageUrl\": \"/api/images/products/fitness_tracker.jpg\", \"isActive\": true, \"name\": \"Fitness Tracker\", \"price\": 89.99, \"slug\": \"fitness-tracker\", \"stock\": 101, \"updatedAt\": \"2026-09-17 04:22:34\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Durable laptop backpack with multiple compartments and USB charging port.\", \"id\": 3, \"imageKey\": \"products/laptop_backpack.jpg\", \"imageUrl\": \"/api/images/products/laptop_backpack.jpg\", \"isActive\": true, \"name\": \"Laptop Backpack\", \"price\": 49.99, \"slug\": \"laptop-backpack\", \"stock\": 469, \"updatedAt\": \"2026-09-17 04:22:35\"}, {\"createdAt\": \"2026-08-25 12:54:07\", \"description\": null, \"id\": 15, \"imageKey\": \"products/1787662419559-f0518193.jpg\", \"imageUrl\": \"/api/images/products/1787662419559-f0518193.jpg\", \"isActive\": true, \"name\": \"Laptop Holder\", \"price\": 20, \"slug\": \"laptop-holder\", \"stock\": 73, \"updatedAt\": \"2026-09-16 07:33:54\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"RGB mechanical gaming keyboard with customizable keys and wrist rest.\", \"id\": 7, \"imageKey\": \"products/mechanical_keyboard.jpg\", \"imageUrl\": \"/api/images/products/mechanical_keyboard.jpg\", \"isActive\": true, \"name\": \"Mechanical Keyboard\", \"price\": 149.99, \"slug\": \"mechanical-keyboard\", \"stock\": 363, \"updatedAt\": \"2026-09-14 18:13:48\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"20000mAh power bank with fast charging and multiple USB ports.\", \"id\": 9, \"imageKey\": \"products/powerbank.jpg\", \"imageUrl\": \"/api/images/products/powerbank.jpg\", \"isActive\": true, \"name\": \"Power Bank\", \"price\": 59.99, \"slug\": \"power-bank\", \"stock\": 416, \"updatedAt\": \"2026-09-16 03:43:48\"}, {\"createdAt\": \"2026-09-10 04:06:33\", \"description\": \"Created by Selenium automated regression test.\", \"id\": 132, \"imageKey\": null, \"isActive\": true, \"name\": \"Selenium Automation Product 1789013192548 Updated\", \"price\": 19.99, \"slug\": \"selenium-automation-product-1789013192548-updated\", \"stock\": 5, \"updatedAt\": \"2026-09-16 03:42:21\"}, …]\u001b[39m\n\n   at product/product-api.assertions.ts:50\n\n  48 |     meta: { total: TOTAL_PRODUCTS_COUNT },\n  49 |   }, { exact: false });\n> 50 |   expect.soft(body.data).toHaveLength(TOTAL_PRODUCTS_COUNT);\n     |                          ^\n  51 | }\n  52 |\n  53 | export async function assertProductInList(response: APIResponse, expected: ExpectedProduct) {\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:50:26)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-09-17T04:22:40.705Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/9a527e42f497601e205621d651a390a5b62e3448.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/613968cb02bf363e5016465c1432ff1344baae9b.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                        "column": 25,
+                        "line": 42
+                      }
+                    },
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 3,
+                      "status": "failed",
+                      "duration": 1273,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 39,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 39,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:42:25)\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:46:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                          "column": 25,
+                          "line": 42
+                        },
+                        "snippet": "   at utils/api.utils.ts:42\n\n\u001b[0m \u001b[90m 40 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoEqual(expected)\u001b[33m;\u001b[39m\n \u001b[90m 41 |\u001b[39m   } \u001b[36melse\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 42 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(actual)\u001b[33m.\u001b[39mtoMatchObject(expected)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 43 |\u001b[39m   }\n \u001b[90m 44 |\u001b[39m }\n \u001b[90m 45 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                            "column": 25,
+                            "line": 42
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"meta\": Object {\u001b[22m\n\u001b[32m-     \"total\": 22,\u001b[39m\n\u001b[31m+     \"total\": 39,\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"success\": true,\u001b[22m\n\u001b[2m  }\u001b[22m\n\n   at utils/api.utils.ts:42\n\n  40 |     expect.soft(actual).toEqual(expected);\n  41 |   } else {\n> 42 |     expect.soft(actual).toMatchObject(expected);\n     |                         ^\n  43 |   }\n  44 | }\n  45 |\n    at assertResponseBody (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts:42:25)\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:46:21)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5"
+                        },
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts",
+                            "column": 26,
+                            "line": 50
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m22\u001b[39m\nReceived length: \u001b[31m39\u001b[39m\nReceived array:  \u001b[31m[{\"createdAt\": \"2026-08-27 12:01:10\", \"description\": \"samad sir product\", \"id\": 18, \"imageKey\": \"products/1787850622373-d1cfbfd5.jpg\", \"imageUrl\": \"/api/images/products/1787850622373-d1cfbfd5.jpg\", \"isActive\": true, \"name\": \"Batman Tshirt \", \"price\": 500, \"slug\": \"batman-tshirt\", \"stock\": 0, \"updatedAt\": \"2026-09-08 12:59:13\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Portable Bluetooth speaker with 360-degree sound and 12-hour battery life.\", \"id\": 4, \"imageKey\": \"products/1783414430049-e232a0f7.jpeg\", \"imageUrl\": \"/api/images/products/1783414430049-e232a0f7.jpeg\", \"isActive\": true, \"name\": \"Bluetooth Speaker\", \"price\": 159.99, \"slug\": \"bluetooth-speaker\", \"stock\": 1078, \"updatedAt\": \"2026-09-16 13:45:12\"}, {\"createdAt\": \"2026-09-05 18:32:17\", \"description\": null, \"id\": 91, \"imageKey\": null, \"isActive\": true, \"name\": \"Bluetooth speaker Test\", \"price\": 1, \"slug\": \"bluetooth-speaker-test\", \"stock\": 0, \"updatedAt\": \"2026-09-08 14:08:12\"}, {\"createdAt\": \"2026-08-27 19:26:06\", \"description\": \"Compact desktop storage tray - updated\", \"id\": 19, \"imageKey\": null, \"isActive\": true, \"name\": \"Desk Organizer\", \"price\": 18.5, \"slug\": \"desk-organizer\", \"stock\": 0, \"updatedAt\": \"2026-09-09 08:56:08\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Water-resistant fitness tracker with sleep monitoring and smartphone notifications.\", \"id\": 5, \"imageKey\": \"products/fitness_tracker.jpg\", \"imageUrl\": \"/api/images/products/fitness_tracker.jpg\", \"isActive\": true, \"name\": \"Fitness Tracker\", \"price\": 89.99, \"slug\": \"fitness-tracker\", \"stock\": 101, \"updatedAt\": \"2026-09-17 04:22:34\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"Durable laptop backpack with multiple compartments and USB charging port.\", \"id\": 3, \"imageKey\": \"products/laptop_backpack.jpg\", \"imageUrl\": \"/api/images/products/laptop_backpack.jpg\", \"isActive\": true, \"name\": \"Laptop Backpack\", \"price\": 49.99, \"slug\": \"laptop-backpack\", \"stock\": 469, \"updatedAt\": \"2026-09-17 04:22:35\"}, {\"createdAt\": \"2026-08-25 12:54:07\", \"description\": null, \"id\": 15, \"imageKey\": \"products/1787662419559-f0518193.jpg\", \"imageUrl\": \"/api/images/products/1787662419559-f0518193.jpg\", \"isActive\": true, \"name\": \"Laptop Holder\", \"price\": 20, \"slug\": \"laptop-holder\", \"stock\": 73, \"updatedAt\": \"2026-09-16 07:33:54\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"RGB mechanical gaming keyboard with customizable keys and wrist rest.\", \"id\": 7, \"imageKey\": \"products/mechanical_keyboard.jpg\", \"imageUrl\": \"/api/images/products/mechanical_keyboard.jpg\", \"isActive\": true, \"name\": \"Mechanical Keyboard\", \"price\": 149.99, \"slug\": \"mechanical-keyboard\", \"stock\": 363, \"updatedAt\": \"2026-09-14 18:13:48\"}, {\"createdAt\": \"2025-12-29 09:11:50\", \"description\": \"20000mAh power bank with fast charging and multiple USB ports.\", \"id\": 9, \"imageKey\": \"products/powerbank.jpg\", \"imageUrl\": \"/api/images/products/powerbank.jpg\", \"isActive\": true, \"name\": \"Power Bank\", \"price\": 59.99, \"slug\": \"power-bank\", \"stock\": 416, \"updatedAt\": \"2026-09-16 03:43:48\"}, {\"createdAt\": \"2026-09-10 04:06:33\", \"description\": \"Created by Selenium automated regression test.\", \"id\": 132, \"imageKey\": null, \"isActive\": true, \"name\": \"Selenium Automation Product 1789013192548 Updated\", \"price\": 19.99, \"slug\": \"selenium-automation-product-1789013192548-updated\", \"stock\": 5, \"updatedAt\": \"2026-09-16 03:42:21\"}, …]\u001b[39m\n\n   at product/product-api.assertions.ts:50\n\n  48 |     meta: { total: TOTAL_PRODUCTS_COUNT },\n  49 |   }, { exact: false });\n> 50 |   expect.soft(body.data).toHaveLength(TOTAL_PRODUCTS_COUNT);\n     |                          ^\n  51 | }\n  52 |\n  53 | export async function assertProductInList(response: APIResponse, expected: ExpectedProduct) {\n    at assertProductListSuccess (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api.assertions.ts:50:26)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-api-list.spec.ts:10:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-09-17T04:22:44.873Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/47776c2986370961bbac886959370c968c9b6a1a.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/945d1bba7c792ab1d9c62319a79027808cfd53ae.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/utils/api.utils.ts",
+                        "column": 25,
+                        "line": 42
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "c58856cfdeb52e4c75a7-6357e04546a9bafd7184",
+              "file": "product/product-api-list.spec.ts",
+              "line": 8,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product/product-details.spec.ts",
+      "file": "product/product-details.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "product details",
+          "file": "product/product-details.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user can view in-stock product details",
+              "ok": true,
+              "tags": [
+                "product"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13040,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:38.735Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6ff5e364342853be8443-a39d322098f28e77365b",
+              "file": "product/product-details.spec.ts",
+              "line": 8,
+              "column": 7
+            },
+            {
+              "title": "validate user can view out-of-stock product details",
+              "ok": true,
+              "tags": [
+                "product"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5630,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:51.812Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6ff5e364342853be8443-17aa28ecdd4569d20fbd",
+              "file": "product/product-details.spec.ts",
+              "line": 13,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product/product-list.spec.ts",
+      "file": "product/product-list.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "product list",
+          "file": "product/product-list.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "validate user can view the product list page",
+              "ok": false,
+              "tags": [
+                "product"
+              ],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 3,
+                      "status": "failed",
+                      "duration": 12667,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of \u001b[7m22\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of \u001b[7m39\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    13 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 39 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 39 products\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of \u001b[7m22\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of \u001b[7m39\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    13 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 39 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 39 products\"\u001b[22m\n\n    at assertProductListPage (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts:8:64)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-list.spec.ts:10:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                          "column": 64,
+                          "line": 8
+                        },
+                        "snippet": "   at product/product.assertions.ts:8\n\n\u001b[0m \u001b[90m  6 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'catalog-heading'\u001b[39m))\u001b[33m.\u001b[39mtoHaveText(\u001b[32m'Product Catalog'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m  7 |\u001b[39m   \u001b[90m// sub-header\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  8 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'catalog-product-count'\u001b[39m))\u001b[33m.\u001b[39mtoHaveText(\u001b[32m`Browse our complete selection of ${totalCount} products`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  9 |\u001b[39m }\n \u001b[90m 10 |\u001b[39m\n \u001b[90m 11 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertProductInList(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m\u001b[33m,\u001b[39m product\u001b[33m:\u001b[39m \u001b[33mProductData\u001b[39m) {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                            "column": 64,
+                            "line": 8
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of \u001b[7m22\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of \u001b[7m39\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    13 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 39 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 39 products\"\u001b[22m\n\n\n   at product/product.assertions.ts:8\n\n   6 |   await expect.soft(page.getByTestId('catalog-heading')).toHaveText('Product Catalog');\n   7 |   // sub-header\n>  8 |   await expect.soft(page.getByTestId('catalog-product-count')).toHaveText(`Browse our complete selection of ${totalCount} products`);\n     |                                                                ^\n   9 | }\n  10 |\n  11 | export async function assertProductInList(page: Page, product: ProductData) {\n    at assertProductListPage (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts:8:64)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-list.spec.ts:10:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-17T04:22:48.582Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/9d0797ea41337a76ec0138b73a19d2596b176566.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/f6d8d7e86837de6b5be79a76f5270db0071173a3.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/7dd852b547b728cd4141661ea92bb311329c7ad2.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/dfeb39762c963af740aa35d66e6de6cfe532f3f2.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                        "column": 64,
+                        "line": 8
+                      }
+                    },
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 9794,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of \u001b[7m22\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of \u001b[7m39\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    14 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 39 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 39 products\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of \u001b[7m22\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of \u001b[7m39\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    14 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 39 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 39 products\"\u001b[22m\n\n    at assertProductListPage (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts:8:64)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-list.spec.ts:10:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                          "column": 64,
+                          "line": 8
+                        },
+                        "snippet": "   at product/product.assertions.ts:8\n\n\u001b[0m \u001b[90m  6 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'catalog-heading'\u001b[39m))\u001b[33m.\u001b[39mtoHaveText(\u001b[32m'Product Catalog'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m  7 |\u001b[39m   \u001b[90m// sub-header\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  8 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'catalog-product-count'\u001b[39m))\u001b[33m.\u001b[39mtoHaveText(\u001b[32m`Browse our complete selection of ${totalCount} products`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  9 |\u001b[39m }\n \u001b[90m 10 |\u001b[39m\n \u001b[90m 11 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertProductInList(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m\u001b[33m,\u001b[39m product\u001b[33m:\u001b[39m \u001b[33mProductData\u001b[39m) {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                            "column": 64,
+                            "line": 8
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of \u001b[7m22\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of \u001b[7m39\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    14 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 39 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 39 products\"\u001b[22m\n\n\n   at product/product.assertions.ts:8\n\n   6 |   await expect.soft(page.getByTestId('catalog-heading')).toHaveText('Product Catalog');\n   7 |   // sub-header\n>  8 |   await expect.soft(page.getByTestId('catalog-product-count')).toHaveText(`Browse our complete selection of ${totalCount} products`);\n     |                                                                ^\n   9 | }\n  10 |\n  11 | export async function assertProductInList(page: Page, product: ProductData) {\n    at assertProductListPage (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts:8:64)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-list.spec.ts:10:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-09-17T04:23:03.120Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/35f7223df569e0eb7b615fceecfde246ab708e07.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/be4724d769af368362d273a63d2eaa9c70f82f47.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/01413aadbedf078275596f9d14f31643da2f5399.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/dfe48cbe00ce178bf63adca0881ddcd006f5865e.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                        "column": 64,
+                        "line": 8
+                      }
+                    },
+                    {
+                      "workerIndex": 17,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 8883,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of \u001b[7m22\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of \u001b[7m39\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    14 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 39 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 39 products\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of \u001b[7m22\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of \u001b[7m39\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    14 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 39 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 39 products\"\u001b[22m\n\n    at assertProductListPage (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts:8:64)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-list.spec.ts:10:5",
+                        "location": {
+                          "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                          "column": 64,
+                          "line": 8
+                        },
+                        "snippet": "   at product/product.assertions.ts:8\n\n\u001b[0m \u001b[90m  6 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'catalog-heading'\u001b[39m))\u001b[33m.\u001b[39mtoHaveText(\u001b[32m'Product Catalog'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m  7 |\u001b[39m   \u001b[90m// sub-header\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  8 |\u001b[39m   \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39msoft(page\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'catalog-product-count'\u001b[39m))\u001b[33m.\u001b[39mtoHaveText(\u001b[32m`Browse our complete selection of ${totalCount} products`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  9 |\u001b[39m }\n \u001b[90m 10 |\u001b[39m\n \u001b[90m 11 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m assertProductInList(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m\u001b[33m,\u001b[39m product\u001b[33m:\u001b[39m \u001b[33mProductData\u001b[39m) {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                            "column": 64,
+                            "line": 8
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('catalog-product-count')\nExpected: \u001b[32m\"Browse our complete selection of \u001b[7m22\u001b[27m products\"\u001b[39m\nReceived: \u001b[31m\"Browse our complete selection of \u001b[7m39\u001b[27m products\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"soft toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('catalog-product-count')\u001b[22m\n\u001b[2m    14 × locator resolved to <p class=\"mt-2 text-lg text-slate-600\" data-testid=\"catalog-product-count\">Browse our complete selection of 39 products</p>\u001b[22m\n\u001b[2m       - unexpected value \"Browse our complete selection of 39 products\"\u001b[22m\n\n\n   at product/product.assertions.ts:8\n\n   6 |   await expect.soft(page.getByTestId('catalog-heading')).toHaveText('Product Catalog');\n   7 |   // sub-header\n>  8 |   await expect.soft(page.getByTestId('catalog-product-count')).toHaveText(`Browse our complete selection of ${totalCount} products`);\n     |                                                                ^\n   9 | }\n  10 |\n  11 | export async function assertProductInList(page: Page, product: ProductData) {\n    at assertProductListPage (/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts:8:64)\n    at /home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product-list.spec.ts:10:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-09-17T04:23:13.954Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/72a88490672a7771cd710471ffb2c6acc13d377f.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/65c5a189f02b2725dd18e9784c705dbea9635b95.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/2b84bc5794c64d3ab6fac496db7c412620f016cc.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/merged-blobs/resources/18200415f5fe2168cc593f5f9ef0c37aa1e8c711.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/home/runner/work/playwright-fullstack-test-framework/playwright-fullstack-test-framework/tests/functional/product/product.assertions.ts",
+                        "column": 64,
+                        "line": 8
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "55c53689e1a467cb70f7-31748b788d1d9a6c4bc0",
+              "file": "product/product-list.spec.ts",
+              "line": 8,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-17T04:21:36.678Z",
+    "duration": 106639.84912109375,
+    "expected": 33,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  }
+}
