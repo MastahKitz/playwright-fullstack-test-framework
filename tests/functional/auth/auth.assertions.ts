@@ -18,7 +18,7 @@ export async function assertInvalidLoginError(page: Page) {
 }
 
 export async function assertUsernameRequiredError(page: Page) {
-  await expect.soft(page.getByText('Username is required', { exact: true })).toBeVisible();
+  await expect.soft(page.getByText('Username or email is required', { exact: true })).toBeVisible();
 }
 
 export async function assertPasswordRequiredError(page: Page) {

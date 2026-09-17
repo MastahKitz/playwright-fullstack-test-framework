@@ -9,8 +9,6 @@ import {
   ExpectedProduct,
   expectedSlug,
 } from './product-api.data';
-import { TOTAL_PRODUCTS_COUNT } from './product.data';
-
 // "YYYY-MM-DD HH:MM:SS" — the shape the API returns for createdAt/updatedAt.
 const TIMESTAMP = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
 
@@ -45,9 +43,9 @@ export async function assertProductListSuccess(response: APIResponse) {
   const body: ProductListResponseBody = await response.json();
   assertResponseBody(body, {
     success: true,
-    meta: { total: TOTAL_PRODUCTS_COUNT },
   }, { exact: false });
-  expect.soft(body.data).toHaveLength(TOTAL_PRODUCTS_COUNT);
+  // qademo's catalog is shared/live and grows over time; assert internal consistency instead of a fixed count.
+  expect.soft(body.data.length, 'meta.total should match the number of products returned').toBe(body.meta.total);
 }
 
 export async function assertProductInList(response: APIResponse, expected: ExpectedProduct) {
